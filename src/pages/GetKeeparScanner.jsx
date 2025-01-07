@@ -622,7 +622,7 @@ const GetKeeparScanner = () => {
                     const guestName = response.data.data.guestName;
 
                     setEventDetails(eventDetails);
-
+                    setUniqueQRCodeData(parsedData.uniqueQRCodeData)
                     if (parsedData.type === "Guest" && guestName) {
                         setUserDetails({
                             name: guestName,
@@ -634,7 +634,7 @@ const GetKeeparScanner = () => {
                         setUserDetails(userDetails);
                     } else {
                         setError("Member details not found.");
-                        handleReject()
+                        // handleReject()
                     }
 
                     setStatus("success");
@@ -681,8 +681,8 @@ const GetKeeparScanner = () => {
             }
         } catch (err) {
             console.error("Error marking attendance:", err);
-            setError(err.response.data.message || "Failed to mark attendance. Please try again.");
             setManualQRCode("");
+            setError(err.response.data.message || "Failed to mark attendance. Please try again.");
             setStatus("error");
         }
     };
@@ -695,7 +695,7 @@ const GetKeeparScanner = () => {
         setStatus("");
         setUniqueQRCodeData("");
         setManualQRCode("");
-        fetchAllAttendance(eventId);
+        // fetchAllAttendance(eventId);
     };
 
     const navigateToAllEvents = () => {
@@ -782,8 +782,8 @@ const GetKeeparScanner = () => {
                     )}
                     <h4>{userDetails.name}</h4>
                     <p><strong>Email:</strong> {userDetails.email}</p>
-                    <p><strong>Mobile:</strong> {userDetails.mobileNumber}</p>
-                    <p><strong>Member ID:</strong> {userDetails.memberId}</p>
+                    {/* <p><strong>Mobile:</strong> {userDetails.mobileNumber}</p>
+                    <p><strong>Member ID:</strong> {userDetails.memberId}</p> */}
                     <div>
                         <button style={styles.button} onClick={handleMarkAttendance}>
                             Accept

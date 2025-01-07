@@ -76,6 +76,10 @@ const AddMember = () => {
     const imageInput = useRef(null);
     const navigate = useNavigate();
     const [location, setLocation] = useState({ country: "India", state: null, city: null }); // Location state
+    const [vehicleModel, setVehicleModel] = useState("");
+    const [vehicleNumber, setVehicleNumber] = useState("");
+    const [drivingLicenceNumber, setDrivingLicenceNumber] = useState("");
+
 
     // Validation functions
     const validateName = (name) => name.trim() !== "";

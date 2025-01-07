@@ -94,7 +94,7 @@ export const WebSocketProvider = ({ children }) => {
 
         // Establish WebSocket connection
         // const socketConnection = io("http://localhost:3005"); // Replace with your WebSocket server URL
-        const socketConnection = io("https://13.53.129.30"); // Replace with your WebSocket server URL
+        const socketConnection = io("https://13.60.85.75/"); // Replace with your WebSocket server URL
         setSocket(socketConnection);
 
         // Listen for new requests

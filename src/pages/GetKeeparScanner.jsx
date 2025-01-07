@@ -615,11 +615,11 @@ const GetKeeparScanner = () => {
                 const parsedData = JSON.parse(data);
                 const qrdata = { qrData: parsedData };
                 const response = await fetchMemberDetails(token, qrdata);
-
+                console.log(response, "respponse")
                 if (response.status === 200) {
-                    const eventDetails = response.data.eventDetails;
-                    const userDetails = response.data.userDetails;
-                    const guestName = response.data.guestName;
+                    const eventDetails = response.data.data.eventDetails;
+                    const userDetails = response.data.data.userDetails;
+                    const guestName = response.data.data.guestName;
 
                     setEventDetails(eventDetails);
 
@@ -634,6 +634,7 @@ const GetKeeparScanner = () => {
                         setUserDetails(userDetails);
                     } else {
                         setError("Member details not found.");
+                        handleReject()
                     }
 
                     setStatus("success");
@@ -653,6 +654,7 @@ const GetKeeparScanner = () => {
         console.error("Error scanning QR code:", err);
         setError("Failed to scan QR code. Please try again.");
         setStatus("error");
+        handleReject()
     };
 
     const handleMarkAttendance = async () => {

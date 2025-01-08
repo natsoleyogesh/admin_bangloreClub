@@ -32,7 +32,7 @@ const GCMs = () => {
     // Define columns for the GCM table
     const GCMColumns = [
         {
-            accessorKey: "profileImage",
+            accessorKey: "image",
             header: "Profile Image",
             size: 100,
             Cell: ({ cell }) => (

@@ -403,6 +403,7 @@ const SingleGCM = () => {
         try {
             const response = await fetchGCMDetails(gcmId);
             setGcm(response.data.gcm);
+            console.log(gcm,"gb")
             setEditGcm(response.data.gcm);
         } catch (error) {
             console.error("Failed to fetch GCM details:", error);
@@ -531,7 +532,7 @@ const SingleGCM = () => {
                 <Grid container spacing={4}>
                     <Grid item xs={12} md={5}>
                         <img
-                            src={`${PUBLIC_API_URI}${gcm.profileImage}`}
+                            src={`${PUBLIC_API_URI}${gcm?.image}`}
                             alt={gcm.name || "GCM Image"}
                             style={{ width: "100%", height: "300px", objectFit: "cover" }}
                         />

@@ -450,7 +450,7 @@ const AddFamilyMember = () => {
             const response = await addMember(formData);
             if (response.status === 201) {
                 showToast("Family member added successfully!", "success");
-                navigate(`/customers/${parentUserId}`);
+                navigate(`/members/${parentUserId}`);
             } else {
                 showToast(response.message || "Failed to add family member.", "error");
             }

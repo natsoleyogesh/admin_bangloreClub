@@ -180,6 +180,10 @@ const SingleProduct = () => {
     maritalStatus,
     marriageDate,
     relation,
+    uploadProofs,
+    vehicleModel,
+    vehicleNumber,
+    drivingLicenceNumber,
     title, activatedDate } = member;
   console.log(member, "dfkk")
 
@@ -427,6 +431,51 @@ const SingleProduct = () => {
                     <TableCell><Typography variant="subtitle2">Membership Activated Date:</Typography></TableCell>
                     <TableCell><Typography variant="body2">{formatDate(activatedDate)}</Typography></TableCell>
                   </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Vehicle Model:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{vehicleModel || "N/A"}</Typography></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Vehicle Number:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{vehicleNumber || "N/A"}</Typography></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Driving Licence Number:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{drivingLicenceNumber || "N/A"}</Typography></TableCell>
+                  </TableRow>
+
+                  {/* <Box sx={{ position: "relative", display: "inline-block" }}>
+                    <Avatar
+                      src={profilePicture ? `${PUBLIC_API_URI}${profilePicture}` : ""}
+                      sx={{ width: "80px", height: "80px", mx: "auto" }}
+                    />
+                    <IconButton
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        right: 0,
+                        backgroundColor: "white",
+                        boxShadow: 1,
+                      }}
+                      onClick={handleProfilePictureChange}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box> */}
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                    {uploadProofs && uploadProofs.length > 0 && (
+                      uploadProofs.map((image, index) => (
+                        <Box key={index} sx={{ position: "relative" }}>
+                          <img src={`${PUBLIC_API_URI}${image}`} alt="Proof" height={120} width={120} />
+                          {/* Uncomment this if you want to enable the delete functionality */}
+                          {/* <IconButton onClick={() => handleDeleteImage(index)}>
+                    <FiTrash />
+                </IconButton> */}
+                        </Box>
+                      ))
+                    )}
+                  </Box>
+
                 </TableBody>
               </TableData>
             </Box>
@@ -673,6 +722,33 @@ const SingleProduct = () => {
             value={editMember.marriageDate || ""}
             onChange={handleInputChange}
             InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            margin="dense"
+            label="Driving Licence Number"
+            type="text"
+            fullWidth
+            name="drivingLicenceNumber"
+            value={editMember.drivingLicenceNumber || ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            label="Vehicle Model"
+            type="text"
+            fullWidth
+            name="vehicleModel"
+            value={editMember.vehicleModel || ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            label="Vehicle Number"
+            type="text"
+            fullWidth
+            name="vehicleNumber"
+            value={editMember.vehicleNumber || ""}
+            onChange={handleInputChange}
           />
 
           <TextField label="Status" select fullWidth margin="dense" name="status" value={editMember.status || ""} onChange={handleInputChange}>

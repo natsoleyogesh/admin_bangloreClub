@@ -267,7 +267,7 @@ const AddMember = () => {
             const response = await addMember(formData);
             if (response.status === 201) {
                 showToast("Member added successfully!", "success");
-                navigate("/customers");
+                navigate("/members");
             } else {
                 showToast(response.message || "Failed to add member. Please try again.", "error");
             }

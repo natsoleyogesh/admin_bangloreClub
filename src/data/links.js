@@ -80,10 +80,10 @@ export const links = [
       //   name: "Transacation",
       //   url: "/transactions",
       // },
-      {
-        name: "Booking Requests",
-        url: "/requests",
-      },
+      // {
+      //   name: "Booking Requests",
+      //   url: "/requests",
+      // },
     ],
   },
   {

@@ -16,7 +16,8 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Table as TableData
+  Table as TableData,
+  InputLabel
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
@@ -462,6 +463,8 @@ const SingleProduct = () => {
                       <EditIcon />
                     </IconButton>
                   </Box> */}
+                  <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Proof Image</InputLabel>
+
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                     {uploadProofs && uploadProofs.length > 0 && (
                       uploadProofs.map((image, index) => (

@@ -623,6 +623,8 @@ const AddMember = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
+                                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Proof Image</InputLabel>
+
                                     <UploadBox onClick={() => document.getElementById("proofs").click()}>
                                         <input
                                             type="file"

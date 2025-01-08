@@ -34,6 +34,7 @@ import ConfirmationDialog from "../api/ConfirmationDialog";
 import { FiPlus } from "react-icons/fi";
 import { deleteMemberApplication, fetchAllActiveMembers, fetchMemberApplicationDetails, updateMemberApplicationDetails, updateMemberApplicationStatus, updateMemberProfilePicture } from "../api/memberWaiting";
 import Breadcrumb from "../components/common/Breadcrumb";
+import LocationSelector from "../components/common/LocationSelector";
 
 
 const SingleApplication = () => {
@@ -473,7 +474,7 @@ const SingleApplication = () => {
                         value={editApplication.address2 || ""}
                         onChange={handleInputChange}
                     />
-                    <TextField
+                    {/* <TextField
                         margin="dense"
                         label="City"
                         type="text"
@@ -499,7 +500,27 @@ const SingleApplication = () => {
                         name="country"
                         value={editApplication.country || ""}
                         onChange={handleInputChange}
-                    />
+                    /> */}
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                            Location
+                        </Typography>
+                        <LocationSelector
+                            onLocationChange={(location) => {
+                                setEditApplication({
+                                    ...editApplication,
+                                    state: location.state,
+                                    city: location.city,
+                                    country: location.country, // Optional if country is editable
+                                });
+                            }}
+                            defaultLocation={{
+                                country: editApplication.country || "India", // Pre-fill country
+                                state: editApplication.state || "", // Pre-fill state if available
+                                city: editApplication.city || "", // Pre-fill city if available
+                            }}
+                        />
+                    </Box>
                     <TextField
                         margin="dense"
                         label="Pin Code"

@@ -1218,6 +1218,7 @@ const AddRoom = () => {
         breakfastIncluded: false,
         specialDayTariff: [],
         extraBedPrice: '',
+        pricingDetailDescription: ""
     });
     const [roomTypes, setRoomTypes] = useState([]);
     const [images, setImages] = useState([]);
@@ -1771,6 +1772,9 @@ const AddRoom = () => {
     const handleDiscriptionChange = (value) => {
         setRoomData({ ...roomData, description: value });
     };
+    const handlePricingDiscriptionChange = (value) => {
+        setRoomData({ ...roomData, pricingDetailDescription: value });
+    };
 
 
     const handleGuestCheckboxChange = (guestType, isChecked) => {
@@ -2282,6 +2286,21 @@ const AddRoom = () => {
                         value={roomData.description}
                         onChange={handleDiscriptionChange}
                         placeholder="Enter Room Facilities"
+                        style={{
+                            height: "100px",
+                            // border: "1px solid #ccc",
+                            borderRadius: "8px",
+                            marginBottom: "100px"
+                        }}
+                    />
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Pricing Detail Description</InputLabel>
+                    <ReactQuill
+                        name="description"
+                        value={roomData.pricingDetailDescription}
+                        onChange={handlePricingDiscriptionChange}
+                        placeholder="Enter pricing Detail Description"
                         style={{
                             height: "100px",
                             // border: "1px solid #ccc",

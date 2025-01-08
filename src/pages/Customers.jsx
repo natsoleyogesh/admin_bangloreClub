@@ -122,7 +122,7 @@ const Customers = () => {
         }}
       >
         <Typography variant="h6">
-          Members
+          Primary Members
         </Typography>
         <Link to="/member/add" style={{ textDecoration: "none" }}>
           <Button
@@ -148,7 +148,7 @@ const Customers = () => {
         enableEditing={true}
         enableColumnDragging={true}
         showPreview
-        routeLink="customers"
+        routeLink="members"
         handleDelete={handleDeleteClick}
         isLoading={loading}
       />

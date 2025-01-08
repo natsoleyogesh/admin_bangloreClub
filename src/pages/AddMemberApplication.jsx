@@ -196,6 +196,9 @@ const AddMemberApplication = () => {
 
     const handleLocationChange = (updatedLocation) => {
         setLocation(updatedLocation);
+        setCity(updatedLocation.city);
+        setState(updatedLocation.state);
+        setCountry(updatedLocation.country);
     };
     const handleSubmit = async (event) => {
         event.preventDefault();

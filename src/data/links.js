@@ -29,7 +29,7 @@ export const links = [
     subLinks: [
       {
         name: "Members",
-        url: "/customers",
+        url: "/members",
         icon: <MdEmojiEvents />,
       },
       {
@@ -344,11 +344,11 @@ export const links = [
   //   ],
   // },
 
-  {
-    name: "Settings",
-    icon: <FiSettings />,
-    url: "/settings",
-  },
+  // {
+  //   name: "Settings",
+  //   icon: <FiSettings />,
+  //   url: "/settings",
+  // },
   // {
   //   name: "Inbox",
   //   icon: <FiMail />,

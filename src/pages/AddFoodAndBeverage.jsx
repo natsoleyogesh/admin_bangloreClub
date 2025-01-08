@@ -1398,10 +1398,10 @@ const AddFoodAndBeverage = () => {
                         onChange={handleDescriptionChange}
                         placeholder="Enter Description"
                         style={{
-                            height: "80px",
+                            height: "100px",
                             // border: "1px solid #ccc",
-                            // borderRadius: "8px",
-                            // marginBottom: "100px"
+                            borderRadius: "8px",
+                            marginBottom: "80px"
                         }}
                     />
                     {errors.description && <FormHelperText error>{errors.description}</FormHelperText>}

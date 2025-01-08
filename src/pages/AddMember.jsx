@@ -16,6 +16,7 @@ import {
     CircularProgress,
     Alert,
     Avatar,
+    IconButton,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { BiImageAdd } from "react-icons/bi";
@@ -25,6 +26,7 @@ import { showToast } from "../api/toast";
 import { CrisisAlert, Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
 import LocationSelector from "../components/common/LocationSelector";
 import Breadcrumb from "../components/common/Breadcrumb";
+import { FiTrash } from "react-icons/fi";
 
 const UploadBox = styled(Box)(({ theme }) => ({
     marginTop: 20,
@@ -68,6 +70,8 @@ const AddMember = () => {
     const [marriageDate, setMarriageDate] = useState("");
     const [title, setTitle] = useState("Mr.");
     const [image, setImage] = useState(null);
+    const [proofs, setProofs] = useState([]);
+
     // const [age, setAge] = useState("");
     const [parentUserId, setParentUserId] = useState("");
     const [loading, setLoading] = useState(false);
@@ -156,6 +160,30 @@ const AddMember = () => {
         }));
     };
 
+    // // Form-level validation
+    // const validateForm = () => {
+    //     const errors = {};
+
+    //     if (!validateName(name)) errors.name = "Name is required.";
+    //     if (!validateEmail(email)) errors.email = "Invalid email address.";
+    //     if (!validateMobileNumber(mobileNumber))
+    //         errors.mobileNumber = "Mobile number must be 10 digits.";
+    //     // if (!validateAge(age)) errors.age = "Age must be between 1 and 120.";
+    //     if (!validateAddress(address)) errors.address = "Address is required.";
+    //     if (!validateRelation(relation)) errors.relation = "Relation is required.";
+    //     if (!validatePin(pin)) errors.pin = "Invalid PIN code.";
+
+    //     setValidationErrors(errors);
+    //     return Object.keys(errors).length === 0;
+    // };
+
+    // Validation functions for new fields
+    const validateVehicleModel = (model) => model.trim().length > 0; // Vehicle model must not be empty
+    const validateVehicleNumber = (number) =>
+        /^[A-Za-z0-9-]{5,15}$/.test(number); // Alphanumeric with dashes, length 5-15
+    const validateDrivingLicenceNumber = (number) =>
+        /^[A-Za-z0-9]{5,20}$/.test(number); // Alphanumeric, length 5-20
+
     // Form-level validation
     const validateForm = () => {
         const errors = {};
@@ -164,17 +192,32 @@ const AddMember = () => {
         if (!validateEmail(email)) errors.email = "Invalid email address.";
         if (!validateMobileNumber(mobileNumber))
             errors.mobileNumber = "Mobile number must be 10 digits.";
-        // if (!validateAge(age)) errors.age = "Age must be between 1 and 120.";
         if (!validateAddress(address)) errors.address = "Address is required.";
         if (!validateRelation(relation)) errors.relation = "Relation is required.";
         if (!validatePin(pin)) errors.pin = "Invalid PIN code.";
 
-        setValidationErrors(errors);
+        // New validations for additional fields
+        if (!validateVehicleModel(vehicleModel))
+            errors.vehicleModel = "Vehicle model is required.";
+        if (!validateVehicleNumber(vehicleNumber))
+            errors.vehicleNumber = "Invalid vehicle number format.";
+        if (!validateDrivingLicenceNumber(drivingLicenceNumber))
+            errors.drivingLicenceNumber = "Invalid driving licence number.";
+
+        // Display toast messages for errors
+        Object.values(errors).forEach((errorMessage) => {
+            showToast(errorMessage, "error"); // Display each error as a toast
+        });
+
+        // Return validation status
         return Object.keys(errors).length === 0;
     };
 
     const handleLocationChange = (updatedLocation) => {
         setLocation(updatedLocation);
+        setCity(updatedLocation.city);
+        setState(updatedLocation.state);
+        setCountry(updatedLocation.country);
     };
 
 
@@ -206,11 +249,19 @@ const AddMember = () => {
         formData.append("marriageDate", marriageDate);
         formData.append("title", title);
         formData.append("relation", relation);
+        formData.append("vehicleModel", vehicleModel);
+        formData.append("vehicleNumber", vehicleNumber);
+        formData.append("drivingLicenceNumber", drivingLicenceNumber);
+
         // formData.append("age", age);
         formData.append("parentUserId", parentUserId);
         if (image) {
             formData.append("profilePicture", image);
         }
+        if (proofs) {
+            proofs.forEach((proof) => formData.append('proofs', proof));
+        }
+
 
         try {
             const response = await addMember(formData);
@@ -221,7 +272,7 @@ const AddMember = () => {
                 showToast(response.message || "Failed to add member. Please try again.", "error");
             }
         } catch (error) {
-            showToast("An error occurred. Please try again.", "error");
+            showToast(error.response.data.message || "An error occurred. Please try again.", "error");
         } finally {
             setLoading(false);
         }
@@ -229,6 +280,45 @@ const AddMember = () => {
 
     const handleImageChange = (event) => {
         setImage(event.target.files[0]);
+    };
+
+    const handleProofImageChange = (e) => {
+        // const files = Array.from(e.target.files);
+        // setProofs((prev) => [...prev, ...files]);
+        const files = Array.from(e.target.files); // Convert FileList to an array
+        if (files.length > 3) {
+            showToast(
+                `only allow maximun 3 files`,
+                "error" // Assuming "error" is the type of toast for errors
+            );
+            return;
+        }
+        const maxSize = 100 * 1024; // 100KB in bytes
+
+        const validFiles = [];
+        const invalidFiles = [];
+
+        files.forEach((file) => {
+            if (file.size <= maxSize) {
+                validFiles.push(file); // Add valid files to the array
+            } else {
+                invalidFiles.push(file.name); // Collect names of invalid files
+            }
+        });
+
+        if (invalidFiles.length > 0) {
+            showToast(
+                `The following files exceed 100KB and were not added:\n${invalidFiles.join(", ")}`,
+                "error" // Assuming "error" is the type of toast for errors
+            );
+        }
+
+        // Add valid files to the images state
+        setProofs((prevImages) => [...prevImages, ...validFiles]);
+    };
+
+    const handleRemoveProofImage = (index) => {
+        setProofs((prev) => prev.filter((_, i) => i !== index));
     };
 
     return (
@@ -468,6 +558,42 @@ const AddMember = () => {
                                         </Select>
                                     </FormControl>
                                 </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Vehicle Model</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Your vehicle Model Name"
+                                        size="small"
+                                        variant="outlined"
+                                        type="text"
+                                        value={vehicleModel}
+                                        onChange={(e) => setVehicleModel(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Vehicle Number</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Your vehicle Number"
+                                        size="small"
+                                        variant="outlined"
+                                        type="text"
+                                        value={vehicleNumber}
+                                        onChange={(e) => setVehicleNumber(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Driving Licence Number</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Your Driving Licence Number"
+                                        size="small"
+                                        variant="outlined"
+                                        type="text"
+                                        value={drivingLicenceNumber}
+                                        onChange={(e) => setDrivingLicenceNumber(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
                                 <Grid item xs={12}>
                                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Profile Image</InputLabel>
                                     <UploadBox onClick={() => imageInput.current.click()}>
@@ -495,6 +621,38 @@ const AddMember = () => {
                                         ref={imageInput}
                                         onChange={handleImageChange}
                                     />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <UploadBox onClick={() => document.getElementById("proofs").click()}>
+                                        <input
+                                            type="file"
+                                            id="proofs"
+                                            multiple
+                                            style={{ display: "none" }}
+                                            onChange={handleProofImageChange}
+                                        />
+                                        <BiImageAdd size={30} />
+                                        <Typography variant="body2">Click to upload Proof images</Typography>
+                                        {/* {errors.bannerImages && <FormHelperText error>{errors.bannerImages}</FormHelperText>} */}
+                                    </UploadBox>
+
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2 }}>
+                                        {proofs.map((image, index) => (
+                                            <Box key={index} sx={{ position: "relative" }}>
+                                                <img
+                                                    src={URL.createObjectURL(image)}
+                                                    alt="proofs"
+                                                    style={{ width: 100, height: 100, borderRadius: 8 }}
+                                                />
+                                                <IconButton
+                                                    onClick={() => handleRemoveProofImage(index)}
+                                                    sx={{ position: "absolute", top: 0, right: 0 }}
+                                                >
+                                                    <FiTrash color="red" />
+                                                </IconButton>
+                                            </Box>
+                                        ))}
+                                    </Box>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <StyledButton

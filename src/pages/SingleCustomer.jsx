@@ -27,7 +27,7 @@ import { invoiceDataColumns } from "../data/invoiceList";
 import { formatDate, formatDateForInput, formatDateTime, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import ConfirmationDialog from "../api/ConfirmationDialog";
-import { FiPlus } from "react-icons/fi";
+import { FiEye, FiPlus } from "react-icons/fi";
 import LocationSelector from "../components/common/LocationSelector";
 import Breadcrumb from "../components/common/Breadcrumb";
 
@@ -179,8 +179,9 @@ const SingleProduct = () => {
     dateOfBirth,
     maritalStatus,
     marriageDate,
+    relation,
     title, activatedDate } = member;
-  console.log(profilePicture, "dfkk")
+  console.log(member, "dfkk")
 
 
   // Handle profile picture change
@@ -243,7 +244,7 @@ const SingleProduct = () => {
       }
     } catch (error) {
       console.error("Failed to update member details:", error);
-      showToast("Failed to update member details. Please try again.", "error");
+      showToast(error.response.data.message || "Failed to update member details. Please try again.", "error");
     }
   };
 
@@ -296,7 +297,7 @@ const SingleProduct = () => {
         <Typography variant="h5" sx={{ mb: 3 }}>
           Member Details
         </Typography>
-        <Button
+        {relation === "Primary" && (<Button
           variant="contained"
           color="primary"
           startIcon={<FiPlus />}
@@ -304,7 +305,7 @@ const SingleProduct = () => {
           onClick={handleAddFamilyMember}
         >
           Add Family Member
-        </Button>
+        </Button>)}
       </Box>
 
       <Grid container spacing={3}>
@@ -437,22 +438,25 @@ const SingleProduct = () => {
         </Grid>
 
         <Grid item xs={12} md={6} lg={8}>
-          <Typography variant="h6">Member List</Typography>
-          <Table
-            data={memberList}
-            fields={memberDataColumns}
-            numberOfRows={memberList?.length || 0}
-            enableTopToolBar={false}
-            enableBottomToolBar={false}
-            enablePagination={false}
-            enableRowSelection={false}
-            enableColumnFilters={false}
-            enableEditing={true}
-            enableColumnDragging={false}
-            // showPreview
-            routeLink="customers"
-            handleDelete={handleDeleteClick}
-          />
+          {relation === "Primary" && (
+            <><Typography variant="h6">Dependent List</Typography>
+              <Table
+                data={memberList}
+                fields={memberDataColumns}
+                numberOfRows={memberList?.length || 0}
+                enableTopToolBar={false}
+                enableBottomToolBar={false}
+                enablePagination={false}
+                enableRowSelection={false}
+                enableColumnFilters={false}
+                enableEditing={true}
+                enableColumnDragging={false}
+                showPreview
+                routeLink="members"
+                handleDelete={handleDeleteClick}
+              />
+            </>
+          )}
           {/* Action Buttons */}
           <Grid
             item
@@ -468,7 +472,7 @@ const SingleProduct = () => {
               <Button
                 variant="contained"
                 color="primary"
-                startIcon={<FiPlus />}
+                startIcon={<FiEye />}
                 sx={{
                   borderRadius: "20px",
                   textTransform: "capitalize",
@@ -484,7 +488,7 @@ const SingleProduct = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                startIcon={<FiPlus />}
+                startIcon={<FiEye />}
                 sx={{
                   borderRadius: "20px",
                   textTransform: "capitalize",

@@ -320,16 +320,16 @@ const AddBanquet = () => {
             newErrors.amenities = "At least one amenity is required.";
         }
 
-        // Validate features
-        if (banquetData.features.smokingAllowed === undefined) {
-            newErrors.smokingAllowed = "Smoking allowed field is required.";
-        }
-        if (banquetData.features.petFriendly === undefined) {
-            newErrors.petFriendly = "Pet-friendly field is required.";
-        }
-        if (banquetData.features.accessible === undefined) {
-            newErrors.accessible = "Accessible field is required.";
-        }
+        // // Validate features
+        // if (banquetData.features.smokingAllowed === undefined) {
+        //     newErrors.smokingAllowed = "Smoking allowed field is required.";
+        // }
+        // if (banquetData.features.petFriendly === undefined) {
+        //     newErrors.petFriendly = "Pet-friendly field is required.";
+        // }
+        // if (banquetData.features.accessible === undefined) {
+        //     newErrors.accessible = "Accessible field is required.";
+        // }
 
 
         // Validate taxTypes
@@ -828,7 +828,7 @@ const AddBanquet = () => {
                     </FormControl>
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Banquet Permissions</InputLabel>
                     <FormControlLabel
                         control={<Checkbox checked={banquetData.features.smokingAllowed} onChange={handleFeatureChange} name="smokingAllowed" />}
@@ -842,7 +842,7 @@ const AddBanquet = () => {
                         control={<Checkbox checked={banquetData.features.accessible} onChange={handleFeatureChange} name="accessible" />}
                         label="Accessible"
                     />
-                </Box>
+                </Box> */}
 
 
                 <Paper sx={{ p: 3, borderRadius: "12px", mt: 3 }}>

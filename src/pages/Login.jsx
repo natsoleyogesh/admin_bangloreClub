@@ -142,7 +142,7 @@ const Login = () => {
           // navigate("/gatekeeper/qrScanner");
           navigate("/gatekeeper/events");
 
-        } 
+        }
         else {
           navigate("/");
         }
@@ -169,7 +169,7 @@ const Login = () => {
   return (
     <LoginContainer>
       <LoginBox elevation={5}>
-        <Logo src="/assets/logo.png" alt="Bangalore Club Logo" />
+        <Logo src="/ClubLogo.png" alt="Bangalore Club Logo" />
         <Typography variant="h5" sx={{ mb: 3 }}>
           Welcome to Bangalore Club
         </Typography>

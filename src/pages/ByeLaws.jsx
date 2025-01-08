@@ -71,7 +71,7 @@ const ByeLaws = () => {
             },
         },
         { accessorKey: "type", header: "Type" },
-        { accessorKey: "category", header: "Category" },
+        // { accessorKey: "category", header: "Category" },
         { accessorKey: "status", header: "Status" },
         {
             accessorKey: "createdAt",

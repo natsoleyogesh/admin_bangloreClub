@@ -20,6 +20,7 @@ import { fetchRuleByeLawDetails, updateRuleByeLawDetails } from "../api/ruleByel
 import { showToast } from "../api/toast";
 import { FiEdit } from "react-icons/fi";
 import Breadcrumb from "../components/common/Breadcrumb";
+import ReactQuill from "react-quill";
 
 const SingleRuleByeLaw = () => {
     const { id } = useParams();
@@ -102,9 +103,9 @@ const SingleRuleByeLaw = () => {
                         <Typography variant="body1">
                             <strong>Type:</strong> {ruleByeLaw.type || "N/A"}
                         </Typography>
-                        <Typography variant="body1">
+                        {/* <Typography variant="body1">
                             <strong>Category:</strong> {ruleByeLaw.category || "N/A"}
-                        </Typography>
+                        </Typography> */}
                         <Typography variant="body1">
                             <strong>Status:</strong> {ruleByeLaw.status || "N/A"}
                         </Typography>
@@ -152,7 +153,7 @@ const SingleRuleByeLaw = () => {
                         value={editRuleByeLaw.title || ""}
                         onChange={handleInputChange}
                     />
-                    <TextField
+                    {/* <TextField
                         label="Description"
                         fullWidth
                         margin="dense"
@@ -161,6 +162,11 @@ const SingleRuleByeLaw = () => {
                         rows={3}
                         value={editRuleByeLaw.description || ""}
                         onChange={handleInputChange}
+                    /> */}
+                    <ReactQuill
+                        value={editRuleByeLaw.description || ""}
+                        onChange={(value) => setEditRuleByeLaw({ ...editRuleByeLaw, description: value })}
+                        style={{ height: "150px", marginBottom: "50px" }}
                     />
                     <TextField
                         label="Category"

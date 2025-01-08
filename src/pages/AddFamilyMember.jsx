@@ -311,13 +311,16 @@ const AddFamilyMember = () => {
     const [title, setTitle] = useState("Mr.");
     // const [age, setAge] = useState("");
     const [image, setImage] = useState(null);
+    const [proofs, setProofs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [validationErrors, setValidationErrors] = useState({});
     const imageInput = useRef(null);
     const navigate = useNavigate();
     const [location, setLocation] = useState({ country: "India", state: null, city: null }); // Location state
-
+    const [vehicleModel, setVehicleModel] = useState("");
+    const [vehicleNumber, setVehicleNumber] = useState("");
+    const [drivingLicenceNumber, setDrivingLicenceNumber] = useState("");
 
     // Validation functions
     const validateName = (name) => name.trim() !== "";
@@ -400,6 +403,9 @@ const AddFamilyMember = () => {
 
     const handleLocationChange = (updatedLocation) => {
         setLocation(updatedLocation);
+        setCity(updatedLocation.city);
+        setState(updatedLocation.state);
+        setCountry(updatedLocation.country);
     };
 
     const handleSubmit = async (event) => {
@@ -428,10 +434,16 @@ const AddFamilyMember = () => {
         formData.append("maritalStatus", maritalStatus);
         formData.append("marriageDate", marriageDate);
         formData.append("title", title);
+        formData.append("vehicleModel", vehicleModel);
+        formData.append("vehicleNumber", vehicleNumber);
+        formData.append("drivingLicenceNumber", drivingLicenceNumber);
         // formData.append("age", age);
         formData.append("parentUserId", parentUserId);
         if (image) {
             formData.append("profilePicture", image);
+        }
+        if (proofs) {
+            proofs.forEach((proof) => formData.append('proofs', proof));
         }
 
         try {

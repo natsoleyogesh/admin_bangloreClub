@@ -641,7 +641,7 @@ const EditBanquet = ({ editdata }) => {
             const response = await uploadBanquetImage(id, formData);
             if (response.status === 200) {
                 // Refresh data and show success message
-                getBanquetById();
+                getBanquetById(id);
                 showToast("Images uploaded successfully.", "success");
             } else {
                 showToast("Failed to upload images.", "error");
@@ -895,15 +895,54 @@ const EditBanquet = ({ editdata }) => {
                                 </Box>
                             ))}
                         </Box>
-                        <input type="file" hidden ref={imageInput} multiple onChange={handleUploadImage} />
+                        {/* <input type="file" hidden ref={imageInput} multiple onChange={handleUploadImage} />
                         <Button variant="outlined" component="label" onClick={() => imageInput.current.click()}>
                             Upload Image
                         </Button>
+                        <span>only 6 files allow (less than 100kb)</span> */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            {/* Hidden file input */}
+                            <input
+                                type="file"
+                                hidden
+                                ref={imageInput}
+                                multiple
+                                accept="image/*"
+                                onChange={handleUploadImage}
+                            />
+
+                            {/* Upload button */}
+                            <Button
+                                variant="outlined"
+                                component="label"
+                                onClick={() => imageInput.current.click()}
+                            >
+                                Upload Image
+                            </Button>
+
+                            {/* Small message */}
+                            <Typography variant="caption" color="textSecondary">
+                                Only 6 files are allowed, and each must be less than 100 KB.
+                            </Typography>
+                        </div>
                     </Grid>
 
                     <Grid item xs={12} md={7}>
+                        {/* Description */}
+                        <Box sx={{ mb: 3 }}>
+                            <InputLabel sx={{ fontWeight: "bold", mb: 1 }}>Pricing Details Description</InputLabel>
+                            <ReactQuill
+                                value={banquetData.pricingDetailDescription}
+                                onChange={(value) =>
+                                    setBanquetData((prev) => ({ ...prev, pricingDetailDescription: value }))
+                                }
+                                placeholder="Describe the pricing details"
+                                style={{ height: "120px", borderRadius: "8px", marginBottom: "100px" }}
+                            />
+                        </Box>
+
                         {/* <TextField label="Description" fullWidth multiline rows={3} margin="dense" name="description" value={banquetData.description} onChange={handleInputChange} /> */}
-                        <InputLabel sx={{ fontWeight: "bold", mt: 2 }}>Description</InputLabel>
+                        <InputLabel sx={{ fontWeight: "bold", mt: 2 }}>Facilities Description</InputLabel>
                         <ReactQuill
                             value={banquetData.description || ""}
                             onChange={(value) => setBanquetData({ ...banquetData, description: value })}
@@ -989,7 +1028,7 @@ const EditBanquet = ({ editdata }) => {
                             />
                         </Box>
 
-                        <Box sx={{ mb: 2 }}>
+                        {/* <Box sx={{ mb: 2 }}>
                             <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Room Permissions</InputLabel>
                             <FormControlLabel
                                 control={<Checkbox checked={banquetData.features.smokingAllowed} onChange={handleFeatureChange} name="smokingAllowed" />}
@@ -1003,7 +1042,7 @@ const EditBanquet = ({ editdata }) => {
                                 control={<Checkbox checked={banquetData.features.accessible} onChange={handleFeatureChange} name="accessible" />}
                                 label="Accessible"
                             />
-                        </Box>
+                        </Box> */}
 
                         {/* Cancellation Policy */}
                         <Box sx={{ mb: 2 }}>
@@ -1290,18 +1329,6 @@ const EditBanquet = ({ editdata }) => {
                             </Box>
                         </Paper>
 
-                        {/* Description */}
-                        <Box sx={{ mb: 3 }}>
-                            <InputLabel sx={{ fontWeight: "bold", mb: 1 }}>Pricing Details Description</InputLabel>
-                            <ReactQuill
-                                value={banquetData.pricingDetailDescription}
-                                onChange={(value) =>
-                                    setBanquetData((prev) => ({ ...prev, pricingDetailDescription: value }))
-                                }
-                                placeholder="Describe the pricing details"
-                                style={{ height: "120px", borderRadius: "8px", marginBottom: "100px" }}
-                            />
-                        </Box>
 
 
 

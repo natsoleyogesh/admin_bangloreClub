@@ -148,10 +148,10 @@ const Stats = ({ totalSales }) => {
                 <Typography sx={{ opacity: 0.7 }}>{title}</Typography>
               </Box>
               <Box sx={{ flex: 1 }}>
-                <LineChart
+                {/* <LineChart
                   chartOptions={chartOptions}
                   chartData={chartData}
-                />
+                /> */}
               </Box>
             </Item>
           </Grid>

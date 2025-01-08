@@ -83,12 +83,12 @@ const AddRuleByeLaw = () => {
             delete newErrors.type;
         }
 
-        // Category validation
-        if (name === "category" && !value) {
-            newErrors.category = "Category is required.";
-        } else {
-            delete newErrors.category;
-        }
+        // // Category validation
+        // if (name === "category" && !value) {
+        //     newErrors.category = "Category is required.";
+        // } else {
+        //     delete newErrors.category;
+        // }
 
         setErrors(newErrors);
     };
@@ -99,7 +99,7 @@ const AddRuleByeLaw = () => {
 
         if (!ruleByeLawData.title) validationErrors.title = "Title is required.";
         if (!ruleByeLawData.type) validationErrors.type = "Type is required.";
-        if (!ruleByeLawData.category) validationErrors.category = "Category is required.";
+        // if (!ruleByeLawData.category) validationErrors.category = "Category is required.";
 
         setErrors(validationErrors);
         return Object.keys(validationErrors).length === 0;
@@ -194,7 +194,7 @@ const AddRuleByeLaw = () => {
                 </Box>
 
                 {/* Category */}
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Category</InputLabel>
                     <FormControl fullWidth>
                         <Select
@@ -219,7 +219,7 @@ const AddRuleByeLaw = () => {
                             {errors.category}
                         </Typography>
                     )}
-                </Box>
+                </Box> */}
 
                 {/* Type */}
                 <Box sx={{ mb: 2 }}>

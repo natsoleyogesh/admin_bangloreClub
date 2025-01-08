@@ -203,7 +203,7 @@ function App() {
           />
 
           <Route
-            path="/customers"
+            path="/members"
             element={
               <ProtectedRoute>
                 <Customers />
@@ -211,7 +211,7 @@ function App() {
             }
           />
           <Route
-            path="/customers/:id"
+            path="/members/:id"
             element={
               <ProtectedRoute>
                 <SingleCustomer />

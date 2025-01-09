@@ -403,7 +403,7 @@ const SingleGCM = () => {
         try {
             const response = await fetchGCMDetails(gcmId);
             setGcm(response.data.gcm);
-            console.log(gcm,"gb")
+            console.log(gcm, "gb")
             setEditGcm(response.data.gcm);
         } catch (error) {
             console.error("Failed to fetch GCM details:", error);

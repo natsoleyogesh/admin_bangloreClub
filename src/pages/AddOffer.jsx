@@ -58,7 +58,7 @@ const AddOffer = () => {
         status: "Active",
         termsAndConditions: "",
         showExclusive: false,
-        discountOffer: false,
+        discountOffer: true,
         showBanner: false
     });
     const [image, setImage] = useState(null);
@@ -285,7 +285,7 @@ const AddOffer = () => {
                 </Box>
 
                 {/* Discount Percentage */}
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Discount Percentage</InputLabel>
                     <TextField
                         type="number"
@@ -298,9 +298,9 @@ const AddOffer = () => {
                         helperText={errors.discountPercentage}
                         InputProps={{ startAdornment: <Percent sx={{ color: "gray", mr: 1 }} /> }}
                     />
-                </Box>
+                </Box> */}
                 {/* Discount Amount */}
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Discount Amount</InputLabel>
                     <TextField
                         type="number"
@@ -313,7 +313,51 @@ const AddOffer = () => {
                         // helperText={errors.discountAmount}
                         InputProps={{ startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} /> }}
                     />
+                </Box> */}
+                {/* Discount Percentage */}
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Discount Percentage</InputLabel>
+                    <TextField
+                        type="number"
+                        placeholder="Enter discount percentage"
+                        fullWidth
+                        name="discountPercentage"
+                        value={offerData.discountPercentage}
+                        onChange={(e) => {
+                            handleInputChange(e);
+                            setOfferData((prev) => ({
+                                ...prev,
+                                discountAmount: e.target.value ? "" : prev.discountAmount, // Clear discountAmount if value is entered
+                            }));
+                        }}
+                        error={!!errors.discountPercentage}
+                        helperText={errors.discountPercentage}
+                        InputProps={{ startAdornment: <Percent sx={{ color: "gray", mr: 1 }} /> }}
+                        disabled={!!offerData.discountAmount} // Disable if discountAmount is entered
+                    />
                 </Box>
+
+                {/* Discount Amount */}
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Discount Amount</InputLabel>
+                    <TextField
+                        type="number"
+                        placeholder="Enter discount amount"
+                        fullWidth
+                        name="discountAmount"
+                        value={offerData.discountAmount}
+                        onChange={(e) => {
+                            handleInputChange(e);
+                            setOfferData((prev) => ({
+                                ...prev,
+                                discountPercentage: e.target.value ? "" : prev.discountPercentage, // Clear discountPercentage if value is entered
+                            }));
+                        }}
+                        InputProps={{ startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} /> }}
+                        disabled={!!offerData.discountPercentage} // Disable if discountPercentage is entered
+                    />
+                </Box>
+
 
                 {/* Coupon Code */}
                 <Box sx={{ mb: 2 }}>
@@ -473,7 +517,13 @@ const AddOffer = () => {
                         }
                         label="Show Exclusive"
                     />
+                    {offerData.showExclusive && (
+                        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                            Note: If "Show Exclusive" is selected, this offer will not be displayed in the app. It will only appear under the "Get Exclusive" button.
+                        </Typography>
+                    )}
                 </Box>
+
                 <Box sx={{ mb: 2 }}>
                     <FormControlLabel
                         control={

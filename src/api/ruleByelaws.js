@@ -12,9 +12,9 @@ const axiosInstance = axios.create({
 });
 
 // Function to fetch all users
-export const fetchAllRuleByeLaws = async (type) => {
+export const fetchAllRuleByeLaws = async () => {
     try {
-        const response = await axiosInstance.get(`/rulebyelaws?type=${type}`);
+        const response = await axiosInstance.get(`/rulebyelaws`);
         return response; // Assuming the API returns user data in `response.data`
     } catch (error) {
         console.error("Error fetching users:", error);
@@ -35,11 +35,16 @@ export const fetchRuleByeLawDetails = async (id) => {
     }
 };
 
-export const updateGCMDetails = async (id, formData) => {
+export const updateRuleByeLawDetails = async (id, formData) => {
     try {
         const response = await axios.put(
             `${PUBLIC_API_URI}/rulebyelaw/update-rulebyelaw/${id}`,
-            formData
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
         );
         return response;
     } catch (error) {
@@ -50,7 +55,12 @@ export const updateGCMDetails = async (id, formData) => {
 
 export const addRuleByeLaw = async (formData) => {
     try {
-        const response = await axios.post(`${PUBLIC_API_URI}/rulebyelaw/create`, formData,);
+        // const response = await axios.post(`${PUBLIC_API_URI}/rulebyelaw/create`, formData,);
+        const response = await axios.post(`${PUBLIC_API_URI}/rulebyelaw/create`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         return response;
     } catch (error) {
         console.error("API Error:", error);

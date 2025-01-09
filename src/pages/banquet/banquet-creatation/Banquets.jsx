@@ -410,7 +410,7 @@ const Banquets = () => {
                 showPreview
                 routeLink="banquet"
                 isLoading={loading}
-                handleDelete={handleDeleteClick}
+            // handleDelete={handleDeleteClick}
             />
 
             <ConfirmationDialog

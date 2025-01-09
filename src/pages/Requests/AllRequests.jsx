@@ -26,6 +26,7 @@ const AllRequests = () => {
 
     // Table columns definition
     const columns = [
+        { accessorKey: "primaryMemberId.memberId", header: "MemberShip ID" },
         { accessorKey: "primaryMemberId.name", header: "Member" },
         { accessorKey: "department", header: "Department" },
         { accessorKey: "status", header: "Status" },

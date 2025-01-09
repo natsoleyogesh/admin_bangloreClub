@@ -348,7 +348,7 @@ const AddBanquet = () => {
 
         // Validate specialDayTariff
         if (banquetData.specialDayTariff.length > 0) {
-            newErrors.specialDayTariff = "please add the special day tariff"
+            // newErrors.specialDayTariff = "please add the special day tariff"
             banquetData.specialDayTariff.forEach((tariff, index) => {
                 if (!tariff.special_day_name) {
                     newErrors[`specialDayName_${index}`] = "Special day name is required.";
@@ -1096,8 +1096,8 @@ const AddBanquet = () => {
                                 label="Special Day Name"
                                 value={tariff.special_day_name}
                                 onChange={handleChange}
-                                error={!!errors[`special_day_name${index}`]}
-                                helperText={errors[`special_day_name${index}`]}
+                                error={!!errors[`specialDayName_${index}`]}
+                                helperText={errors[`specialDayName_${index}`]}
                                 sx={{ mb: 2 }}
                             />
                             <TextField
@@ -1110,8 +1110,8 @@ const AddBanquet = () => {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                error={!!errors[`startDate${index}`]}
-                                helperText={errors[`startDate${index}`]}
+                                error={!!errors[`startDate_${index}`]}
+                                helperText={errors[`startDate_${index}`]}
                                 inputProps={{ min: new Date().toISOString().split("T")[0] }} // Allow only today and future dates
                                 sx={{ mb: 2 }}
                             />
@@ -1125,8 +1125,8 @@ const AddBanquet = () => {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                error={!!errors[`endDate${index}`]}
-                                helperText={errors[`endDate${index}`]}
+                                error={!!errors[`endDate_${index}`]}
+                                helperText={errors[`endDate_${index}`]}
                                 inputProps={{ min: new Date().toISOString().split("T")[0] }} // Allow only today and future dates
                                 sx={{ mb: 2 }}
                             />
@@ -1137,8 +1137,8 @@ const AddBanquet = () => {
                                 type="number"
                                 value={tariff.extraCharge}
                                 onChange={handleChange}
-                                error={!!errors[`extraCharge${index}`]}
-                                helperText={errors[`extraCharge${index}`]}
+                                error={!!errors[`extraCharge_${index}`]}
+                                helperText={errors[`extraCharge_${index}`]}
                                 sx={{ mb: 2 }}
                             />
 

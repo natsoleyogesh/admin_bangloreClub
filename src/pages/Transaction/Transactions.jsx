@@ -163,6 +163,7 @@ const Transactions = () => {
     // Table columns definition
     const columns = [
         { accessorKey: "transactionId", header: "Transaction ID" },
+        { accessorKey: "memberId.memberId", header: "MemberShip ID" },
         { accessorKey: "memberId.name", header: "Member Name" },
         { accessorKey: "billingId.invoiceNumber", header: "Invoice Number" },
         {

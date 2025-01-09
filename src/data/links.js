@@ -268,17 +268,13 @@ export const links = [
     icon: <Gavel />, // Icon for rules and byelaws
     subLinks: [
       {
-        name: "All Club Rules",
-        url: "/rules",
+        name: "All Club Rules/ByeLaw",
+        url: "/allrulebyelaws",
       },
-      {
-        name: "All Club ByeLaws",
-        url: "/byeLaws",
-      },
-      {
-        name: "All FAQs",
-        url: "/faqs",
-      },
+      // {
+      //   name: "All FAQs",
+      //   url: "/faqs",
+      // },
       // {
       //   name: "Add Club Rule & ByeLaw",
       //   url: "/ruleByeLaw/add",

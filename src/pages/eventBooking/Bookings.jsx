@@ -136,20 +136,32 @@
 // export default Bookings;
 
 import React, { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import { showToast } from "../../api/toast";
 import { deleteBooking, fetchAllBookings } from "../../api/event";
 import ConfirmationDialog from "../../api/ConfirmationDialog";
-import { formatDateTime } from "../../api/config";
+import { formatDateCommon, formatDateTime } from "../../api/config";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { fetchAllMembers } from "../../api/member";
 
 const Bookings = () => {
     const [bookings, setBookings] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [loading, setLoading] = useState(null)
+
+    const [filterType, setFilterType] = useState("all");
+    const [bookingStatus, setBookingStatus] = useState("all");
+    const [customStartDate, setCustomStartDate] = useState("");
+    const [customEndDate, setCustomEndDate] = useState("");
+    const [userId, setUserId] = useState("all");
+    const [activeMembers, setActiveMembers] = useState([]);
+
     // Utility function to format dates
     const formatDate = (dateString) => {
         const options = { year: "numeric", month: "long", day: "numeric" };
@@ -159,9 +171,10 @@ const Bookings = () => {
     // Table columns definition
     const columns = [
         { accessorKey: "eventId.eventTitle", header: "Event Title" },
+        { accessorKey: "primaryMemberId.memberId", header: "MemberShip ID" },
+        { accessorKey: "primaryMemberId.name", header: "Primary Member" },
         { accessorKey: "eventId.eventStartDate", header: "Event Start Date", Cell: ({ cell }) => formatDate(cell.getValue()) },
         { accessorKey: "eventId.eventEndDate", header: "Event End Date", Cell: ({ cell }) => formatDate(cell.getValue()) },
-        { accessorKey: "primaryMemberId.name", header: "Primary Member" },
         { accessorKey: "bookingStatus", header: "Booking Status" },
         { accessorKey: "ticketDetails.totalAmount", header: "Total Amount" },
         // {
@@ -180,7 +193,20 @@ const Bookings = () => {
     const fetchBookings = async () => {
         setLoading(true)
         try {
-            const response = await fetchAllBookings();
+
+            const queryParams = {
+                filterType,
+                customStartDate: customStartDate || undefined,
+                customEndDate: customEndDate || undefined,
+            };
+            if (bookingStatus !== "all") {
+                queryParams.bookingStatus = bookingStatus
+            }
+            if (userId !== "all") {
+                queryParams.userId = userId;
+            }
+
+            const response = await fetchAllBookings(queryParams);
             setBookings(response?.data?.bookings || []);
             setLoading(false)
         } catch (error) {
@@ -193,7 +219,9 @@ const Bookings = () => {
     // Fetch bookings on component mount
     useEffect(() => {
         fetchBookings();
-    }, []);
+    }, [filterType, bookingStatus, customStartDate, customEndDate, userId]);
+
+
 
     // Handle delete confirmation dialog
     const handleDeleteClick = (booking) => {
@@ -224,18 +252,120 @@ const Bookings = () => {
         setSelectedBooking(null);
     };
 
+    // // Utility function to format data for export
+    // const formatBookingData = (row) => ({
+    //     eventTitle: row.eventId?.eventTitle || "N/A",
+    //     membershipId: row.primaryMemberId?.memberId || "N/A",
+    //     primaryMember: row.primaryMemberId?.name || "N/A",
+    //     eventStartDate: formatDateCommon(row.eventId?.eventStartDate),
+    //     eventEndDate: formatDateCommon(row.eventId?.eventEndDate),
+    //     bookingStatus: row.bookingStatus,
+    //     totalAmount: `₹${row.ticketDetails?.totalAmount || 0}`,
+    // });
+
+    const getActiveMembers = async () => {
+        try {
+            const response = await fetchAllMembers();
+            setActiveMembers(response.users);
+        } catch (error) {
+            console.error("Failed to fetch members :", error);
+            showToast("Failed to fetch Members. Please try again.", "error");
+        }
+    };
+
+    // Fetch billings on component mount and when filters change
+    useEffect(() => {
+        getActiveMembers();
+    }, [])
+
+    // Export to PDF
+    const exportToPDF = () => {
+        try {
+            const doc = new jsPDF();
+            doc.text("Booking Records", 10, 10);
+
+            // Generate table headers and rows
+            const tableHeaders = ["Event Title", "Membership ID", "Primary Member", "Event Start Date", "Event End Date", "Booking Status", "Total Amount"];
+            const tableRows = bookings.map((row) => [
+                row.eventId?.eventTitle || "N/A",
+                row.primaryMemberId?.memberId || "N/A",
+                row.primaryMemberId?.name || "N/A",
+                formatDateCommon(row.eventId?.eventStartDate),
+                formatDateCommon(row.eventId?.eventEndDate),
+                row.bookingStatus,
+                `${row.ticketDetails?.totalAmount || 0}`,
+            ]);
+
+            // Generate the table
+            autoTable(doc, {
+                head: [tableHeaders],
+                body: tableRows,
+            });
+
+            // Save the PDF
+            doc.save("bookings.pdf");
+        } catch (error) {
+            console.error("Error exporting to PDF:", error);
+        }
+    };
+
+    // Export to CSV
+    const exportToCSV = () => {
+        try {
+            const csvData = bookings.map((row) => ({
+                "Event Title": row.eventId?.eventTitle || "N/A",
+                "Membership ID": row.primaryMemberId?.memberId || "N/A",
+                "Primary Member": row.primaryMemberId?.name || "N/A",
+                "Event Start Date": formatDateCommon(row.eventId?.eventStartDate),
+                "Event End Date": formatDateCommon(row.eventId?.eventEndDate),
+                "Booking Status": row.bookingStatus,
+                "Total Amount": `${row.ticketDetails?.totalAmount || 0}`,
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(csvData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
+            XLSX.writeFile(workbook, "bookings.csv");
+        } catch (error) {
+            console.error("Error exporting to CSV:", error);
+        }
+    };
+
+    // Export to XLS
+    const exportToXLS = () => {
+        try {
+            const xlsData = bookings.map((row) => ({
+                "Event Title": row.eventId?.eventTitle || "N/A",
+                "Membership ID": row.primaryMemberId?.memberId || "N/A",
+                "Primary Member": row.primaryMemberId?.name || "N/A",
+                "Event Start Date": formatDateCommon(row.eventId?.eventStartDate),
+                "Event End Date": formatDateCommon(row.eventId?.eventEndDate),
+                "Booking Status": row.bookingStatus,
+                "Total Amount": `${row.ticketDetails?.totalAmount || 0}`,
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(xlsData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
+            XLSX.writeFile(workbook, "bookings.xlsx");
+        } catch (error) {
+            console.error("Error exporting to XLS:", error);
+        }
+    };
+
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
             {/* Header Section */}
-            <Box
+            {/* <Box
                 sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
                     mb: 2,
                 }}
-            >
-                <Typography variant="h6">Event Bookings</Typography>
+            > */}
+            <Box sx={{ mb: 3 }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>Event Bookings</Typography>
                 {/* <Link to="/booking/add" style={{ textDecoration: "none" }}>
                     <Button
                         variant="contained"
@@ -246,6 +376,94 @@ const Bookings = () => {
                         Create Booking
                     </Button>
                 </Link> */}
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12} sm={3} md={2}>
+                        <InputLabel>Select Member</InputLabel>
+                        <FormControl fullWidth size="small">
+
+                            <Select
+                                name="userId"
+                                value={userId}
+                                onChange={(e) => setUserId(e.target.value)}
+                            >
+                                <MenuItem value="all">All</MenuItem>
+                                {activeMembers.map((member) => (
+                                    <MenuItem key={member._id} value={member._id}>
+                                        {member.name} (ID: {member.memberId})
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={3} md={2}>
+                        <InputLabel>Filter Type</InputLabel>
+                        <FormControl fullWidth size="small">
+                            <Select
+                                value={filterType}
+                                onChange={(e) => setFilterType(e.target.value)}
+                            >
+                                <MenuItem value="today">Today</MenuItem>
+                                <MenuItem value="last7days">Last 7 Days</MenuItem>
+                                <MenuItem value="lastMonth">Last Month</MenuItem>
+                                <MenuItem value="lastThreeMonths">Last 3 Months</MenuItem>
+                                <MenuItem value="lastSixMonths">Last 6 Months</MenuItem>
+                                <MenuItem value="last1year">Last 1 Year</MenuItem>
+                                <MenuItem value="custom">Custom</MenuItem>
+                                <MenuItem value="all">All</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={3} md={2}>
+                        <InputLabel>Booking Status</InputLabel>
+                        <FormControl fullWidth size="small">
+                            <Select
+                                value={bookingStatus}
+                                onChange={(e) => setBookingStatus(e.target.value)}
+                            >
+                                <MenuItem value="Confirmed">Confirmed</MenuItem>
+                                <MenuItem value="Cancelled">Cancelled</MenuItem>
+                                <MenuItem value="all">All</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    {filterType === "custom" && (
+                        <>
+                            <Grid item xs={12} sm={3} md={2}>
+                                <TextField
+                                    label="Start Date"
+                                    type="date"
+                                    fullWidth
+                                    size="small"
+                                    value={customStartDate}
+                                    onChange={(e) => setCustomStartDate(e.target.value)}
+                                    InputLabelProps={{ shrink: true }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={3} md={2}>
+                                <TextField
+                                    label="End Date"
+                                    type="date"
+                                    fullWidth
+                                    size="small"
+                                    value={customEndDate}
+                                    onChange={(e) => setCustomEndDate(e.target.value)}
+                                    InputLabelProps={{ shrink: true }}
+                                />
+                            </Grid>
+                        </>
+                    )}
+                </Grid>
+                <Box sx={{ mt: 3 }}>
+                    <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
+                        Export to PDF
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={exportToCSV} sx={{ mr: 1 }}>
+                        Export to CSV
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={exportToXLS}>
+                        Export to XLS
+                    </Button>
+                </Box>
             </Box>
 
             {/* Bookings Table */}
@@ -262,7 +480,7 @@ const Bookings = () => {
                 enableColumnDragging
                 showPreview
                 routeLink="booking"
-                handleDelete={handleDeleteClick}
+                // handleDelete={handleDeleteClick}
                 isLoading={loading}
             />
 

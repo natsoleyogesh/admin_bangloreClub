@@ -54,3 +54,17 @@ export const formatTo12Hour = (time) => {
     const formattedHours = hours % 12 || 12; // Convert to 12-hour format
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
 };
+
+
+export const formatDateCommon = (dateString) => {
+    const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true // Use 12-hour format
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+};

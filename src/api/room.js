@@ -135,9 +135,12 @@ export const uploadRoomImage = async (roomId, formData) => {
 
 
 // Fetch all banquets
-export const fetchAllRoomBookingss = async () => {
+export const fetchAllRoomBookingss = async (params) => {
     try {
-        const response = await axiosInstance.get("/room-bookings");
+        const queryString = new URLSearchParams(params).toString();
+
+        const response = await axiosInstance.get(`/room-bookings?${queryString}`);
+        // const response = await axiosInstance.get("/room-bookings");
         return response; // Assuming the data is in response.data
     } catch (error) {
         console.error("Error fetching all banquets:", error);

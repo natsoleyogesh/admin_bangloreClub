@@ -104,9 +104,11 @@ export const deleteEvent = async (eventId) => {
 
 
 // Function to fetch all users
-export const fetchAllBookings = async () => {
+export const fetchAllBookings = async (params) => {
     try {
-        const response = await axiosInstance.get("/event/all-bookings");
+        const queryString = new URLSearchParams(params).toString();
+
+        const response = await axiosInstance.get(`/event/all-bookings?${queryString}`);
         return response; // Assuming the API returns user data in `response.data`
     } catch (error) {
         console.error("Error fetching users:", error);

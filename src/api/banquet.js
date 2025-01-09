@@ -205,13 +205,16 @@ export const uploadBanquetImage = async (banquetId, formData) => {
 
 
 // Fetch all banquets
-export const fetchAllBanquetBookingss = async () => {
+export const fetchAllBanquetBookingss = async (params) => {
     try {
-        const response = await axiosInstance.get("/banquet-bookings");
+        const queryString = new URLSearchParams(params).toString();
+
+        const response = await axiosInstance.get(`/banquet-bookings?${queryString}`);
+        // const response = await axiosInstance.get("/banquet-bookings");
         return response; // Assuming the data is in response.data
     } catch (error) {
         console.error("Error fetching all banquets:", error);
-        throw new Error(error);
+        return error;
     }
 };
 

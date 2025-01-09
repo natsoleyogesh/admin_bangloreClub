@@ -223,7 +223,7 @@ const Events = () => {
                 enableColumnDragging={true}
                 showPreview={true}
                 routeLink="events"
-                handleDelete={handleDeleteClick}
+                // handleDelete={handleDeleteClick}
                 isLoading={loading}
             />
             <ConfirmationDialog

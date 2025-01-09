@@ -545,7 +545,7 @@ function App() {
 
           {/* RULE BYE LAWS Route */}
           <Route
-            path="/rules"
+            path="/allrulebyelaws"
             element={
               <ProtectedRoute>
                 <Rules />
@@ -553,15 +553,7 @@ function App() {
             }
           />
           <Route
-            path="/byeLaws"
-            element={
-              <ProtectedRoute>
-                <ByeLaws />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/ruleByeLaw/:id"
+            path="/rulebyelaw/:id"
             element={
               <ProtectedRoute>
                 < SingleRuleByeLaw />
@@ -569,7 +561,7 @@ function App() {
             }
           />
           <Route
-            path="/ruleByeLaw/add"
+            path="/rulebyelaw/add"
             element={
               <ProtectedRoute>
                 <AddRuleByeLaw />

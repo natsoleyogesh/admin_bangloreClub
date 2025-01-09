@@ -593,7 +593,7 @@ const RoomBookings = () => {
                 enableColumnDragging
                 showPreview
                 routeLink="room-booking"
-                handleDelete={handleDeleteClick}
+                // handleDelete={handleDeleteClick}
                 isLoading={loading}
             />
 

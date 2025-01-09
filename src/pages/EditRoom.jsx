@@ -43,8 +43,8 @@ import { PUBLIC_API_URI } from "../api/config";
 const guestTypeOptions = [
     'Member',
     'Member Spouse & Children',
-    'Corporate Member',
     'Guest of Member',
+    'Corporate Member',
     'Affiliated Club Member',
     'Nominee of Corporate Member',
     'Affiliated Foreign Club Member',
@@ -79,6 +79,7 @@ const EditRoom = () => {
         breakfastIncluded: false,
         specialDayTariff: [],
         extraBedPrice: '',
+        pricingDetailDescription: ""
     });
     const [roomTypes, setRoomTypes] = useState([]);
     const [images, setImages] = useState([]);
@@ -164,6 +165,7 @@ const EditRoom = () => {
                 breakfastIncluded: room.breakfastIncluded,
                 specialDayTariff: room.specialDayTariff,
                 extraBedPrice: room.extraBedPrice,
+                pricingDetailDescription: room.pricingDetailDescription,
             });
             setImages(room.images)
             setLoading(false);
@@ -737,6 +739,10 @@ const EditRoom = () => {
         setRoomData({ ...roomData, description: value });
     };
 
+    const handlePricingDiscriptionChange = (value) => {
+        setRoomData({ ...roomData, pricingDetailDescription: value });
+    };
+
 
     const handleGuestCheckboxChange = (guestType, isChecked) => {
         if (isChecked) {
@@ -1198,7 +1204,7 @@ const EditRoom = () => {
                     />
                 </Box>
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Guest Type Pricing</InputLabel>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Room Pricing</InputLabel>
                     {guestTypeOptions.map((guestType) => (
                         <Box
                             key={guestType}
@@ -1460,12 +1466,28 @@ const EditRoom = () => {
 
 
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Facilities</InputLabel>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Facilities Description</InputLabel>
                     <ReactQuill
                         name="description"
                         value={roomData.description}
                         onChange={handleDiscriptionChange}
                         placeholder="Enter Room Facilities"
+                        style={{
+                            height: "100px",
+                            // border: "1px solid #ccc",
+                            borderRadius: "8px",
+                            marginBottom: "100px"
+                        }}
+                    />
+                </Box>
+
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}> Pricing Detail Description</InputLabel>
+                    <ReactQuill
+                        name=" pricingDetailDescription"
+                        value={roomData.pricingDetailDescription}
+                        onChange={handleDiscriptionChange}
+                        placeholder="Enter Room  Pricing Detail Description"
                         style={{
                             height: "100px",
                             // border: "1px solid #ccc",

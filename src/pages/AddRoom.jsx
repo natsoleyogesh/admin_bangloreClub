@@ -1183,8 +1183,8 @@ import Breadcrumb from "../components/common/Breadcrumb";
 const guestTypeOptions = [
     'Member',
     'Member Spouse & Children',
-    'Corporate Member',
     'Guest of Member',
+    'Corporate Member',
     'Affiliated Club Member',
     'Nominee of Corporate Member',
     'Affiliated Foreign Club Member',
@@ -1292,7 +1292,7 @@ const AddRoom = () => {
     // };
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files); // Convert FileList to an array
-        const maxSize = 100 * 1024; // 100KB in bytes
+        const maxSize = 20 * 1024 * 1024; // 20 MB in bytes
 
         const validFiles = [];
         const invalidFiles = [];
@@ -2058,7 +2058,7 @@ const AddRoom = () => {
                     />
                 </Box>
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Guest Type Pricing</InputLabel>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Room Pricing</InputLabel>
                     {guestTypeOptions.map((guestType) => (
                         <Box
                             key={guestType}
@@ -2280,7 +2280,7 @@ const AddRoom = () => {
 
 
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Facilities</InputLabel>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Facilities Description</InputLabel>
                     <ReactQuill
                         name="description"
                         value={roomData.description}
@@ -2311,7 +2311,7 @@ const AddRoom = () => {
                 </Box>
 
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Room Images (less than 100kb)</InputLabel>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Room Images </InputLabel>
                     <UploadBox onClick={() => imageInput.current.click()} />
                     <input type="file" hidden ref={imageInput} multiple onChange={handleImageChange} />
 

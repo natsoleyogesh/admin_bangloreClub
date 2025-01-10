@@ -655,8 +655,8 @@ const AddEvent = () => {
         eventEndDate: "",
         startTime: "09:00", // Default: 12:00 AM
         endTime: "21:00", // Default: 11:00 PM
-        ticketPrice: "",
-        availableTickets: "",
+        ticketPrice: 0,
+        // availableTickets: "",
         location: "",
         aboutEvent: "",
         organizer: "",
@@ -665,7 +665,15 @@ const AddEvent = () => {
         dependentMemberPrice: "",
         guestMemberPrice: "",
         taxTypes: [],
-        showBanner: false
+        showBanner: false,
+        allottedTicketsGuest: 0,
+        allottedTicketsMember: 0,
+        totalAvailableTickets: 0,
+        bookingPermissionPrimary: true,
+        bookingPermissionSpouse: false,
+        bookingPermissionSon: false,
+        bookingPermissionDaughter: false,
+        bookingPermissionSeniorDependent: false,
     });
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -674,12 +682,32 @@ const AddEvent = () => {
     const imageInput = useRef(null);
     const navigate = useNavigate();
 
-    // Handle input changes and validate fields
+    // // Handle input changes and validate fields
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setEventData({ ...eventData, [name]: value });
+    //     // validateField(name, value);
+    // };
+    // Handle input changes and calculate totalAvailableTickets
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setEventData({ ...eventData, [name]: value });
-        // validateField(name, value);
+
+        // Update the specific field
+        const updatedEventData = {
+            ...eventData,
+            [name]: value,
+        };
+
+        // Calculate the total available tickets if the relevant fields are updated
+        if (name === "allottedTicketsMember" || name === "allottedTicketsGuest") {
+            updatedEventData.totalAvailableTickets =
+                parseInt(updatedEventData.allottedTicketsMember || 0) +
+                parseInt(updatedEventData.allottedTicketsGuest || 0);
+        }
+
+        setEventData(updatedEventData);
     };
+
 
     useEffect(() => {
         fetchTaxTypes();
@@ -814,10 +842,16 @@ const AddEvent = () => {
         }
 
         // Validate available tickets
-        if (!eventData.availableTickets) {
-            validationErrors.push("Available tickets are required.");
-        } else if (isNaN(eventData.availableTickets) || Number(eventData.availableTickets) <= 0) {
-            validationErrors.push("Available tickets must be a valid positive number.");
+        if (!eventData.allottedTicketsMember) {
+            validationErrors.push("Allotted Tickets For Member are required.");
+        } else if (isNaN(eventData.allottedTicketsMember) || Number(eventData.allottedTicketsMember) <= 0) {
+            validationErrors.push("Allotted Tickets For Member must be a valid positive number.");
+        }
+        // Validate available tickets
+        if (!eventData.allottedTicketsGuest) {
+            validationErrors.push("Allotted Tickets For Guest are required.");
+        } else if (isNaN(eventData.allottedTicketsGuest) || Number(eventData.allottedTicketsGuest) <= 0) {
+            validationErrors.push("Allotted Tickets For Guest must be a valid positive number.");
         }
 
         // Validate location
@@ -1127,21 +1161,103 @@ const AddEvent = () => {
                         </div>
                     </FormControl>
                 </Box>
-
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Available Tickets</InputLabel>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Allotted Tickets for Members</InputLabel>
                     <TextField
                         type="number"
-                        placeholder="Enter number of available tickets"
+                        placeholder="Enter number of Allotted Tickets for Members"
                         fullWidth
-                        name="availableTickets"
-                        value={eventData.availableTickets}
+                        name="allottedTicketsMember"
+                        value={eventData.allottedTicketsMember}
                         onChange={handleInputChange}
-                        error={!!errors.availableTickets}
-                        helperText={errors.availableTickets}
+                        error={!!errors.allottedTicketsMember}
+                        helperText={errors.allottedTicketsMember}
                         InputProps={{ startAdornment: <AirplaneTicket sx={{ color: "gray", mr: 1 }} /> }}
                     />
                 </Box>
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Allotted Tickets for Guests</InputLabel>
+                    <TextField
+                        type="number"
+                        placeholder="Enter number of Allotted Tickets for Guests"
+                        fullWidth
+                        name="allottedTicketsGuest"
+                        value={eventData.allottedTicketsGuest}
+                        onChange={handleInputChange}
+                        error={!!errors.allottedTicketsGuest}
+                        helperText={errors.allottedTicketsGuest}
+                        InputProps={{ startAdornment: <AirplaneTicket sx={{ color: "gray", mr: 1 }} /> }}
+                    />
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Total Available Tickets</InputLabel>
+                    <TextField
+                        type="number"
+                        placeholder="Total Available Tickets"
+                        fullWidth
+                        name="totalAvailableTickets"
+                        value={eventData.totalAvailableTickets}
+                        InputProps={{ startAdornment: <AirplaneTicket sx={{ color: "gray", mr: 1 }} /> }}
+                        disabled
+                    />
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Booking Permissioin</InputLabel>
+
+                    <FormControl fullWidth>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="bookingPermissionPrimary"
+                                    checked={eventData.bookingPermissionPrimary}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Primary Member"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="bookingPermissionSpouse"
+                                    checked={eventData.bookingPermissionSpouse}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Spouse"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="bookingPermissionSon"
+                                    checked={eventData.bookingPermissionSon}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Son"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="bookingPermissionDaughter"
+                                    checked={eventData.bookingPermissionDaughter}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Daughter"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="bookingPermissionSeniorDependent"
+                                    checked={eventData.bookingPermissionSeniorDependent}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Senior Dependent Member"
+                        />
+                    </FormControl>
+                </Box>
+
                 <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Location</InputLabel>
                     <TextField

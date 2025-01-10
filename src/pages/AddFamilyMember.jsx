@@ -699,6 +699,7 @@ const AddFamilyMember = () => {
                                             <MenuItem value="Spouse">Spouse</MenuItem>
                                             <MenuItem value="Daughter">Daughter</MenuItem>
                                             <MenuItem value="Son">Son</MenuItem>
+                                            <MenuItem value="Senior Dependent">Senior Dependent</MenuItem>
                                         </Select>
                                         {validationErrors.relation && (
                                             <Typography color="error">{validationErrors.relation}</Typography>

@@ -108,11 +108,32 @@ const SingleEvent = () => {
         setSelectedImage(null);
     };
 
-    // Handle form input changes
+    // // Handle form input changes
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setEditEvent({ ...editEvent, [name]: value });
+    // };
+
+    // Handle input changes and calculate totalAvailableTickets
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setEditEvent({ ...editEvent, [name]: value });
+
+        // Update the specific field
+        const updatedEventData = {
+            ...editEvent,
+            [name]: value,
+        };
+
+        // Calculate the total available tickets if the relevant fields are updated
+        if (name === "allottedTicketsMember" || name === "allottedTicketsGuest") {
+            updatedEventData.totalAvailableTickets =
+                parseInt(updatedEventData.allottedTicketsMember || 0) +
+                parseInt(updatedEventData.allottedTicketsGuest || 0);
+        }
+
+        setEditEvent(updatedEventData);
     };
+
 
     // Handle image file selection
     const handleImageChange = (e) => {
@@ -234,7 +255,13 @@ const SingleEvent = () => {
                             <strong>Time:</strong> {formatTime(event.startTime)} - {formatTime(event.endTime)}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Total Ticket:</strong> ₹ {event.availableTickets}
+                            <strong>Total Available Tickets:</strong>  {event.totalAvailableTickets}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Allotted Tickets for Members:</strong>  {event.allottedTicketsMember}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Allotted Tickets for Guests:</strong>  {event.allottedTicketsGuest}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Ticket Price:</strong> ₹ {event.ticketPrice}
@@ -266,6 +293,47 @@ const SingleEvent = () => {
                         <Typography variant="body1" >
                             <strong>Show Banner Home:</strong> {event.showBanner === true ? "Yes" : "No"}
                         </Typography>
+                        {/* <Typography variant="body1" >
+                            <strong>Booking Permissioins</strong> <br />
+                            <strong>Primary Member :-</strong>{event.bookingPermissionPrimary === true ? "Yes" : "No"} <br />
+                            <strong>Spouse :-</strong>{event.bookingPermissionSpouse === true ? "Yes" : "No"} <br />
+                            <strong>Son :-</strong>{event.bookingPermissionSon === true ? "Yes" : "No"} <br />
+                            <strong>Daughter :-</strong>{event.bookingPermissionDaughter === true ? "Yes" : "No"} <br />
+                            <strong>Senior Dependent Member :-</strong>{event.bookingPermissionSeniorDependent === true ? "Yes" : "No"} <br />
+                        </Typography> */}
+                        <Box >
+                            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+                                Booking Permissions
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6} sm={4}>
+                                    <Typography variant="body2">
+                                        <strong>Primary Member:</strong> {event.bookingPermissionPrimary ? "Yes" : "No"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={6} sm={4}>
+                                    <Typography variant="body2">
+                                        <strong>Spouse:</strong> {event.bookingPermissionSpouse ? "Yes" : "No"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={6} sm={4}>
+                                    <Typography variant="body2">
+                                        <strong>Son:</strong> {event.bookingPermissionSon ? "Yes" : "No"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={6} sm={4}>
+                                    <Typography variant="body2">
+                                        <strong>Daughter:</strong> {event.bookingPermissionDaughter ? "Yes" : "No"}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={6} sm={4}>
+                                    <Typography variant="body2">
+                                        <strong>Senior Dependent Member:</strong> {event.bookingPermissionSeniorDependent ? "Yes" : "No"}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Box>
+
                         <Button variant="contained" color="primary" startIcon={<FiEdit />} onClick={handleEditClick}>
                             Edit Event
                         </Button>
@@ -288,11 +356,69 @@ const SingleEvent = () => {
                         onChange={handleInputChange} />
                     <TextField label="Start Time" type="time" fullWidth margin="dense" name="startTime" value={editEvent.startTime || ""} onChange={handleInputChange} />
                     <TextField label="End Time" type="time" fullWidth margin="dense" name="endTime" value={editEvent.endTime || ""} onChange={handleInputChange} />
-                    <TextField label="Acailable Ticket" fullWidth margin="dense" name="availableTickets" value={editEvent.availableTickets || ""} onChange={handleInputChange} />
+                    <TextField label="Total Available Tickets" fullWidth margin="dense" name="totalAvailableTickets" value={editEvent.totalAvailableTickets || ""} disabled />
+                    <TextField label="Allotted Tickets for Members" fullWidth margin="dense" name="allottedTicketsMember" value={editEvent.allottedTicketsMember || ""} onChange={handleInputChange} />
+                    <TextField label="Allotted Tickets for Guests" fullWidth margin="dense" name="allottedTicketsGuest" value={editEvent.allottedTicketsGuest || ""} onChange={handleInputChange} />
                     <TextField label="Ticket Price" fullWidth margin="dense" name="ticketPrice" value={editEvent.ticketPrice || ""} onChange={handleInputChange} />
                     <TextField label="Primary Member Ticket Price" fullWidth margin="dense" name="primaryMemberPrice" value={editEvent.primaryMemberPrice || ""} onChange={handleInputChange} />
                     <TextField label="Dependent Member Ticket Price" fullWidth margin="dense" name="dependentMemberPrice" value={editEvent.dependentMemberPrice || ""} onChange={handleInputChange} />
                     <TextField label="Guest Member Ticket Price" fullWidth margin="dense" name="guestMemberPrice" value={editEvent.guestMemberPrice || ""} onChange={handleInputChange} />
+                    <Box sx={{ mb: 2 }}>
+                        <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Booking Permissioin</InputLabel>
+
+                        <FormControl fullWidth>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name="bookingPermissionPrimary"
+                                        checked={editEvent.bookingPermissionPrimary}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label="Primary Member"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name="bookingPermissionSpouse"
+                                        checked={editEvent.bookingPermissionSpouse}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label="Spouse"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name="bookingPermissionSon"
+                                        checked={editEvent.bookingPermissionSon}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label="Son"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name="bookingPermissionDaughter"
+                                        checked={editEvent.bookingPermissionDaughter}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label="Daughter"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name="bookingPermissionSeniorDependent"
+                                        checked={editEvent.bookingPermissionSeniorDependent}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label="Senior Dependent Member"
+                            />
+                        </FormControl>
+                    </Box>
                     {/* <TextField label="Tax Rate In %" fullWidth margin="dense" name="taxRate" value={editEvent.taxRate || ""} onChange={handleInputChange} /> */}
                     {/* Use ReactQuill for About Event */}
                     <Box sx={{ mb: 2 }}>
@@ -330,12 +456,14 @@ const SingleEvent = () => {
                             </div>
                         </FormControl>
                     </Box>
-                    <InputLabel sx={{ fontWeight: "bold", mt: 2 }}>About Event</InputLabel>
-                    <ReactQuill
-                        value={editEvent.aboutEvent || ""}
-                        onChange={(value) => setEditEvent({ ...editEvent, aboutEvent: value })}
-                        style={{ height: "150px", marginBottom: "50px" }}
-                    />
+                    <Box sx={{ mb: 2 }}>
+                        <InputLabel sx={{ fontWeight: "bold", mt: 2 }}>About Event</InputLabel>
+                        <ReactQuill
+                            value={editEvent.aboutEvent || ""}
+                            onChange={(value) => setEditEvent({ ...editEvent, aboutEvent: value })}
+                            style={{ height: "120px", marginBottom: "100px" }}
+                        />
+                    </Box>
                     <TextField label="Status" select fullWidth margin="dense" name="status" value={editEvent.status || ""} onChange={handleInputChange}>
                         <MenuItem value="Active">Active</MenuItem>
                         <MenuItem value="Inactive">Inactive</MenuItem>

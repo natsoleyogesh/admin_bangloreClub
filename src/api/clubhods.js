@@ -55,7 +55,13 @@ export const updateHodDetails = async (hodId, formData) => {
 
 export const addHod = async (formData) => {
     try {
-        const response = await axios.post(`${PUBLIC_API_URI}/hod/create`, formData);
+        const response = await axios.post(`${PUBLIC_API_URI}/hod/create`, formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
         return response;
     } catch (error) {
         console.error("API Error:", error);

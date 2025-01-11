@@ -118,3 +118,37 @@ export const fetchAllActiveDepartments = async () => {
         throw error;
     }
 };
+
+
+
+
+
+export const uploadProofsImages = async (userId, formData) => {
+    try {
+        const response = await axiosInstance.put(
+            `${PUBLIC_API_URI}/user/${userId}/proofs`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error("API Error:", error);
+        throw error;
+    }
+};
+
+
+// Delete a banquet image
+export const deleteProofs = async (userId, index) => {
+    try {
+        const response = await axiosInstance.delete(`/user/${userId}/proofs/${index}`);
+        return response; // Assuming the response confirms successful deletion
+    } catch (error) {
+        console.error("Error deleting banquet image:", error);
+        throw new Error(error);
+    }
+};

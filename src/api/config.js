@@ -57,6 +57,8 @@ export const formatTo12Hour = (time) => {
 
 
 export const formatDateCommon = (dateString) => {
+    if (!dateString) return "N/A";
+
     const options = {
         year: "numeric",
         month: "long",

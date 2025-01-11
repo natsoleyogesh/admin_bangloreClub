@@ -20,15 +20,15 @@ import {
   InputLabel
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteMember, fetchMemberDetails, updateMemberDetails, updateProfilePicture } from "../api/member";
+import { deleteMember, deleteProofs, fetchMemberDetails, updateMemberDetails, updateProfilePicture, uploadProofsImages } from "../api/member";
 import Table from "../components/Table";
 import { invoiceDataColumns } from "../data/invoiceList";
 import { formatDate, formatDateForInput, formatDateTime, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import ConfirmationDialog from "../api/ConfirmationDialog";
-import { FiEye, FiPlus } from "react-icons/fi";
+import { FiEye, FiPlus, FiTrash } from "react-icons/fi";
 import LocationSelector from "../components/common/LocationSelector";
 import Breadcrumb from "../components/common/Breadcrumb";
 
@@ -150,6 +150,7 @@ const SingleProduct = () => {
   const [editMember, setEditMember] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const imageInput = useRef(null);
   console.log(id)
   // Fetch member details
 
@@ -288,6 +289,72 @@ const SingleProduct = () => {
   };
 
 
+  const handleDeleteImage = async (index) => {
+    try {
+      await deleteProofs(id, index);
+      getMemberById(id);
+      showToast("Image deleted successfully.", "success");
+    } catch (error) {
+      showToast("Failed to delete image.", "error");
+    }
+  };
+
+  const handleUploadProofImage = async (event) => {
+    const files = Array.from(event.target.files); // Convert FileList to an array
+    const maxSize = 20 * 1024 * 1024 // 20 mb in bytes
+
+    if (!files || files.length === 0) {
+      showToast("No files selected.", "error");
+      return;
+    }
+
+    const validFiles = [];
+    const invalidFiles = [];
+
+    // Validate file sizes
+    files.forEach((file) => {
+      if (file.size <= maxSize) {
+        validFiles.push(file); // Add valid files to the array
+      } else {
+        invalidFiles.push(file.name); // Collect names of invalid files
+      }
+    });
+
+    // Show a toast for invalid files, if any
+    if (invalidFiles.length > 0) {
+      showToast(
+        `The following files exceed 100KB and were not added: ${invalidFiles.join(", ")}`,
+        "error"
+      );
+    }
+
+    // If no valid files, stop the upload process
+    if (validFiles.length === 0) {
+      showToast("No valid files to upload.", "error");
+      return;
+    }
+
+    // Create FormData and append valid files
+    const formData = new FormData();
+    validFiles.forEach((file) => formData.append("proofs", file));
+
+    try {
+      const response = await uploadProofsImages(id, formData);
+      if (response.status === 200) {
+        // Refresh data and show success message
+        getMemberById(id);
+        showToast("Images uploaded successfully.", "success");
+      } else {
+        showToast("Failed to upload images.", "error");
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      showToast(error.response.data.message || "Failed to upload images. Please try again.", "error");
+    }
+  };
+
+
+
   return (
     <Box sx={{ pt: "80px", pb: "20px" }}>
       <Breadcrumb />
@@ -350,25 +417,6 @@ const SingleProduct = () => {
             <Typography variant="body2" color="textSecondary">
               Member ID: {memberId || "N/A"}
             </Typography>
-
-            {/* <Box sx={{ mt: 2 }}>
-              <Typography variant="subtitle2">Title: <span style={{ opacity: 0.7 }}>{title || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Email: <span style={{ opacity: 0.7 }}>{email || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Phone: <span style={{ opacity: 0.7 }}>{mobileNumber || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Address: <span style={{ opacity: 0.7 }}>{address || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Address Line 1: <span style={{ opacity: 0.7 }}>{address1 || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Address Line 2: <span style={{ opacity: 0.7 }}>{address2 || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">City: <span style={{ opacity: 0.7 }}>{city || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">State: <span style={{ opacity: 0.7 }}>{state || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Country: <span style={{ opacity: 0.7 }}>{country || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Pin Code: <span style={{ opacity: 0.7 }}>{pin || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Date of Birth: <span style={{ opacity: 0.7 }}>{formatDate(dateOfBirth)}</span></Typography>
-              <Typography variant="subtitle2">Marital Status: <span style={{ opacity: 0.7 }}>{maritalStatus || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Marriage Date: <span style={{ opacity: 0.7 }}>{formatDate(marriageDate)}</span></Typography>
-              <Typography variant="subtitle2">Status: <span style={{ opacity: 0.7 }}>{status || "N/A"}</span></Typography>
-              <Typography variant="subtitle2">Membership Activated Date: <span style={{ opacity: 0.7 }}>{formatDate(activatedDate)}</span></Typography>
-
-            </Box> */}
             <Box sx={{ mt: 2 }}>
               <TableData>
                 <TableBody>
@@ -471,12 +519,38 @@ const SingleProduct = () => {
                         <Box key={index} sx={{ position: "relative" }}>
                           <img src={`${PUBLIC_API_URI}${image}`} alt="Proof" height={120} width={120} />
                           {/* Uncomment this if you want to enable the delete functionality */}
-                          {/* <IconButton onClick={() => handleDeleteImage(index)}>
-                    <FiTrash />
-                </IconButton> */}
+                          <IconButton onClick={() => handleDeleteImage(index)}>
+                            <FiTrash />
+                          </IconButton>
                         </Box>
                       ))
                     )}
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      {/* Hidden file input */}
+                      <input
+                        type="file"
+                        hidden
+                        ref={imageInput}
+                        multiple
+                        accept="image/*"
+                        onChange={handleUploadProofImage}
+                      />
+
+                      {/* Upload button */}
+                      <Button
+                        variant="outlined"
+                        component="label"
+                        onClick={() => imageInput.current.click()}
+                      >
+                        Upload New Proof Images
+                      </Button>
+
+                      {/* Small message */}
+                      <Typography variant="caption" color="textSecondary">
+                        Only 3 files are allowed, and each must be less than 20 MB.
+                      </Typography>
+                    </div>
                   </Box>
 
                 </TableBody>

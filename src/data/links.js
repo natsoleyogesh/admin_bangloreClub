@@ -13,6 +13,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { MdEmojiEvents, MdBed, MdCategory } from "react-icons/md";
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 
 // import NoteIcon from "../note.svg"
 
@@ -84,6 +85,16 @@ export const links = [
       //   name: "Booking Requests",
       //   url: "/requests",
       // },
+    ],
+  },
+  {
+    name: "Affiliated Clubs",
+    icon: <SportsSoccerIcon />,
+    subLinks: [
+      {
+        name: "All Affiliated Clubs",
+        url: "/affiliated-clubs",
+      },
     ],
   },
   {

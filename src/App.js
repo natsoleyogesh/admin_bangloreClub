@@ -99,6 +99,8 @@ import SingleRequest from "./pages/Requests/SingleRequest";
 import Notifications from "./pages/notification/Notifications";
 import SendNotification from "./pages/notification/SendNotification";
 import GetKeeparEvents from "./pages/GetKeeparEvents";
+import AffiliatedClubs from "./pages/AffiliatedClubs/AffiliatedClubs";
+import SingleAffiliatedClub from "./pages/AffiliatedClubs/SingleAffiliatedClubs";
 
 const sideBarWidth = 250;
 
@@ -900,6 +902,25 @@ function App() {
             element={
               <ProtectedRoute>
                 <SendNotification />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* All Affiliated Clubs */}
+          <Route
+            path="/affiliated-clubs"
+            element={
+              <ProtectedRoute>
+                <AffiliatedClubs />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="affiliated-club/:id"
+            element={
+              <ProtectedRoute>
+                <SingleAffiliatedClub />
               </ProtectedRoute>
             }
           />

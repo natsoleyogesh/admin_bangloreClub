@@ -61,12 +61,17 @@ const ClubHods = () => {
             header: "Hod Name",
         },
         {
-            accessorKey: "designation", //access nested data with dot notation
-            header: "Designation",
+            accessorKey: "email", //access nested data with dot notation
+            header: "Email",
         },
+
         {
             accessorKey: "contactNumber", //normal accessorKey
             header: "Hod Contact Number",
+        },
+        {
+            accessorKey: "designation", //access nested data with dot notation
+            header: "Designation",
         },
         {
             accessorKey: "department", //normal accessorKey

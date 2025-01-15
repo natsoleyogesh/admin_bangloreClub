@@ -9,6 +9,10 @@ import {
     InputLabel,
     Grid,
     TextField,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from "@mui/material";
 import Table from "../../components/Table";
 import { fetchAllBillings } from "../../api/billing";
@@ -20,7 +24,7 @@ import { fetchAllMembers } from "../../api/member"
 import { useParams } from "react-router-dom";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import { formatDateTime } from "../../api/config";
-import { getRequest } from "../../api/commonAPI";
+import { getRequest, postFormDataRequest } from "../../api/commonAPI";
 import { FiPlus } from "react-icons/fi";
 
 const formatMonthYear = (value) => {
@@ -41,6 +45,9 @@ const MonthlyBillings = () => {
     const [userId, setUserId] = useState(id || "all");
     const [activeMembers, setActiveMembers] = useState([]);
     const [loading, setLoading] = useState(null)
+
+    const [openFileDialog, setOpenFileDialog] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
 
 
     // Utility function to format dates and times
@@ -226,6 +233,26 @@ const MonthlyBillings = () => {
         XLSX.writeFile(workbook, "offline-billings.xlsx");
     };
 
+    const handleUploadFile = async () => {
+        if (!selectedFile) {
+            showToast("Please select a file first.", "error");
+            return;
+        }
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        try {
+            await postFormDataRequest("/upload-offline-bill", formData);
+            showToast("File uploaded and Bills updated successfully.", "success");
+            fetchAllOfflineBillingData();
+        } catch (error) {
+            console.error("Failed to upload file:", error);
+            showToast(error.message || "Failed to upload file.", "error");
+        } finally {
+            setOpenFileDialog(false);
+            setSelectedFile(null);
+        }
+    };
+
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -233,6 +260,16 @@ const MonthlyBillings = () => {
             {/* Header Section */}
             <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>Offline Billings</Typography>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<FiPlus />}
+                    sx={{ borderRadius: "20px" }}
+                    onClick={() => setOpenFileDialog(true)}
+                >
+                    Upload Bill
+                </Button>
 
                 <Grid container spacing={2} alignItems="center">
                     {!id && <Grid item xs={12} sm={3} md={2}>
@@ -279,7 +316,7 @@ const MonthlyBillings = () => {
                         />
                     </Grid>
                 </Grid>
-              
+
                 <Box sx={{ mt: 3 }}>
                     <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
                         Export to PDF
@@ -309,6 +346,25 @@ const MonthlyBillings = () => {
                 routeLink="monthly-billing"
                 isLoading={loading}
             />
+
+            {/* Dialog for File Upload */}
+            <Dialog open={openFileDialog} onClose={() => setOpenFileDialog(false)}>
+                <DialogTitle>Upload Monthly Bill</DialogTitle>
+                <DialogContent>
+                    <input
+                        type="file"
+                        accept=".xlsx, .xls"
+                        onChange={(e) => setSelectedFile(e.target.files[0])}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>
+                    <Button onClick={handleUploadFile} variant="contained" color="primary">
+                        Upload
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </Box>
     );
 };

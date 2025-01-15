@@ -101,6 +101,9 @@ import SendNotification from "./pages/notification/SendNotification";
 import GetKeeparEvents from "./pages/GetKeeparEvents";
 import AffiliatedClubs from "./pages/AffiliatedClubs/AffiliatedClubs";
 import SingleAffiliatedClub from "./pages/AffiliatedClubs/SingleAffiliatedClubs";
+import MonthlyBillings from "./pages/monthlyBilling/MonthlyBillings";
+import SingleMonthlyBilling from "./pages/monthlyBilling/SingleMonthlyBilling";
+import MonthlyBillTransactions from "./pages/MonthlyBillTransaction/MonthlyBillTransactions";
 
 const sideBarWidth = 250;
 
@@ -841,7 +844,27 @@ function App() {
             }
           /> */}
 
-          {/* Billing routes */}
+
+          {/*Monthly Offline Billing routes */}
+          <Route
+            path="/monthly-billings"
+            element={
+              <ProtectedRoute>
+                <MonthlyBillings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/monthly-billing/:id"
+            element={
+              <ProtectedRoute>
+                <SingleMonthlyBilling />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* Transaction routes */}
           <Route
             path="/transactions"
             element={
@@ -863,6 +886,17 @@ function App() {
             element={
               <ProtectedRoute>
                 < SingleBilling />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* Transaction routes */}
+          <Route
+            path="/monthly-bill-transactions"
+            element={
+              <ProtectedRoute>
+                <MonthlyBillTransactions />
               </ProtectedRoute>
             }
           />

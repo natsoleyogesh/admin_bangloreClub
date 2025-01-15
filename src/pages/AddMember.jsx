@@ -17,6 +17,9 @@ import {
     Alert,
     Avatar,
     IconButton,
+    FormControlLabel,
+    Checkbox,
+    Switch,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { BiImageAdd } from "react-icons/bi";
@@ -71,6 +74,9 @@ const AddMember = () => {
     const [title, setTitle] = useState("Mr.");
     const [image, setImage] = useState(null);
     const [proofs, setProofs] = useState([]);
+
+    const [creditStop, setCreditStop] = useState(false);
+    const [creditLimit, setCreditLimit] = useState(0)
 
     // const [age, setAge] = useState("");
     const [parentUserId, setParentUserId] = useState("");
@@ -213,6 +219,10 @@ const AddMember = () => {
         return Object.keys(errors).length === 0;
     };
 
+    const handleToggleChange = (event) => {
+        setCreditStop(event.target.checked); // Toggles between true (Yes) and false (No)
+    };
+
     const handleLocationChange = (updatedLocation) => {
         setLocation(updatedLocation);
         setCity(updatedLocation.city);
@@ -252,6 +262,9 @@ const AddMember = () => {
         formData.append("vehicleModel", vehicleModel);
         formData.append("vehicleNumber", vehicleNumber);
         formData.append("drivingLicenceNumber", drivingLicenceNumber);
+        formData.append("creditStop", creditStop);
+        formData.append("creditLimit", creditLimit);
+
 
         // formData.append("age", age);
         formData.append("parentUserId", parentUserId);
@@ -594,6 +607,40 @@ const AddMember = () => {
                                         fullWidth
                                     />
                                 </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Credit Stop</InputLabel>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                        <Typography>{creditStop ? "Yes" : "No"}</Typography>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={creditStop}
+                                                    onChange={handleToggleChange}
+                                                />
+                                            }
+                                            label=""
+                                        />
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Credit Limit</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Credit Limit"
+                                        size="small"
+                                        variant="outlined"
+                                        type="number" // Restrict input to numbers
+                                        value={creditLimit}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value >= 0 || value === "") {
+                                                setCreditLimit(value); // Allow only positive numbers or empty input
+                                            }
+                                        }}
+                                        fullWidth
+                                        inputProps={{ min: 0 }} // Prevent negative values when using number input
+                                    />
+                                </Grid>
+
                                 <Grid item xs={12}>
                                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Profile Image</InputLabel>
                                     <UploadBox onClick={() => imageInput.current.click()}>

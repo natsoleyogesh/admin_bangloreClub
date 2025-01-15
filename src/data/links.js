@@ -112,6 +112,20 @@ export const links = [
     ],
   },
   {
+    name: "Monthly Billings",
+    icon: <MdEmojiEvents />,
+    subLinks: [
+      {
+        name: "Monthly Bills",
+        url: "/monthly-billings",
+      },
+      {
+        name: "Monthly Bill Transactions",
+        url: "/monthly-bill-transactions",
+      },
+    ],
+  },
+  {
     name: "Club Events",
     icon: <MdEmojiEvents />,
     subLinks: [

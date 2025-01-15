@@ -17,7 +17,9 @@ import {
   TableRow,
   TableCell,
   Table as TableData,
-  InputLabel
+  InputLabel,
+  FormControlLabel,
+  Switch
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useRef, useState } from "react";
@@ -113,6 +115,29 @@ const memberDataColumns = [
     },
   },
   {
+    accessorKey: "creditStop", // Exclusive Offer Column
+    header: "Credit Stop",
+    Cell: ({ cell }) => {
+      const value = cell.getValue();
+      return (
+        <Typography
+          variant="body2"
+          sx={{
+            color: value ? "green" : "inherit",
+            fontWeight: value ? "bold" : "normal",
+          }}
+        >
+          {value ? "YES" : "NO"}
+        </Typography>
+      );
+    },
+  },
+  {
+    accessorKey: "creditLimit",
+    header: "Credit Limit",
+    Cell: ({ cell }) => cell.getValue() || 0,
+  },
+  {
     accessorKey: "activatedDate",
     header: "Activated Date",
     Cell: ({ cell }) => {
@@ -186,6 +211,8 @@ const SingleProduct = () => {
     vehicleModel,
     vehicleNumber,
     drivingLicenceNumber,
+    creditStop,
+    creditLimit,
     title, activatedDate } = member;
   console.log(member, "dfkk")
 
@@ -236,9 +263,14 @@ const SingleProduct = () => {
     setEditMember({ ...editMember, [name]: value });
   };
 
+  const handleToggleChange = (event) => {
+    setEditMember({ ...editMember, creditStop: event.target.checked }); // Toggles between true (Yes) and false (No)
+  };
+
   // Handle save changes
   const handleSaveChanges = async () => {
     try {
+      console.log(editMember, "editmem")
       // Call the update API with the edited member details
       const response = await updateMemberDetails(id, editMember);
       if (response.status === 200 && response.data.user) {
@@ -491,6 +523,14 @@ const SingleProduct = () => {
                   <TableRow>
                     <TableCell><Typography variant="subtitle2">Driving Licence Number:</Typography></TableCell>
                     <TableCell><Typography variant="body2">{drivingLicenceNumber || "N/A"}</Typography></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Credit Stop:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{creditStop ? "Yes" : "No"}</Typography></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Credit Limit:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{creditLimit || 0}</Typography></TableCell>
                   </TableRow>
 
                   {/* <Box sx={{ position: "relative", display: "inline-block" }}>
@@ -827,6 +867,28 @@ const SingleProduct = () => {
             value={editMember.vehicleNumber || ""}
             onChange={handleInputChange}
           />
+          <TextField
+            margin="dense"
+            label="Credit Limit"
+            type="number"
+            fullWidth
+            name="creditLimit"
+            value={editMember.creditLimit}
+            onChange={handleInputChange}
+            inputProps={{ min: 0 }} // Prevent negative values when using number input
+          />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Typography>{editMember.creditStop ? "Yes" : "No"}</Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={editMember.creditStop}
+                  onChange={handleToggleChange}
+                />
+              }
+              label="Credit Stop"
+            />
+          </Box>
 
           <TextField label="Status" select fullWidth margin="dense" name="status" value={editMember.status || ""} onChange={handleInputChange}>
             <MenuItem value="Active">Active</MenuItem>

@@ -49,6 +49,29 @@ const Customers = () => {
       header: "Address",
     },
     {
+      accessorKey: "creditStop", // Exclusive Offer Column
+      header: "Credit Stop",
+      Cell: ({ cell }) => {
+        const value = cell.getValue();
+        return (
+          <Typography
+            variant="body2"
+            sx={{
+              color: value ? "green" : "inherit",
+              fontWeight: value ? "bold" : "normal",
+            }}
+          >
+            {value ? "YES" : "NO"}
+          </Typography>
+        );
+      },
+    },
+    {
+      accessorKey: "creditLimit",
+      header: "Credit Limit",
+      Cell: ({ cell }) => cell.getValue() || 0,
+    },
+    {
       accessorKey: "createdAt",
       header: "Created Date & Time",
       Cell: ({ cell }) => formatDateTime(cell.getValue()),

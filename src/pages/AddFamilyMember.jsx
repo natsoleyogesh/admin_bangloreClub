@@ -309,6 +309,9 @@ const AddFamilyMember = () => {
     const [maritalStatus, setMaritalStatus] = useState("Single");
     const [marriageDate, setMarriageDate] = useState("");
     const [title, setTitle] = useState("Mr.");
+
+    const [creditStop, setCreditStop] = useState(false);
+    const [creditLimit, setCreditLimit] = useState(0)
     // const [age, setAge] = useState("");
     const [image, setImage] = useState(null);
     const [proofs, setProofs] = useState([]);
@@ -437,6 +440,8 @@ const AddFamilyMember = () => {
         formData.append("vehicleModel", vehicleModel);
         formData.append("vehicleNumber", vehicleNumber);
         formData.append("drivingLicenceNumber", drivingLicenceNumber);
+        formData.append("creditStop", creditStop);
+        formData.append("creditLimit", creditLimit);
         // formData.append("age", age);
         formData.append("parentUserId", parentUserId);
         if (image) {

@@ -58,6 +58,27 @@ export const fetchMemberDetails = async (token, data) => {
 };
 
 
+
+export const fetchMemberDetailsByQrCode = async (token, data) => {
+    try {
+        console.log(token, data, "data")
+        const response = await axios.post(
+            `${PUBLIC_API_URI}/getmember-details-qrCode`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error("API Error:", error);
+        throw error;
+    }
+};
+
 export const markAttendance = async (token, data) => {
     try {
         console.log(token, data, "data")

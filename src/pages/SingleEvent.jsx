@@ -20,12 +20,14 @@ import {
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchEventDetails, updateEventDetails } from "../api/event";
-import { PUBLIC_API_URI } from "../api/config";
+import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import { FiEdit } from "react-icons/fi";
 import ReactQuill from "react-quill";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveTaxTypes } from "../api/masterData/taxType";
+import { fetchEventAttendenceDetails } from "../api/getKeeper";
+import Table from "../components/Table";
 
 const SingleEvent = () => {
     const { id } = useParams();
@@ -34,6 +36,50 @@ const SingleEvent = () => {
     const [editEvent, setEditEvent] = useState({ taxTypes: [] });
     const [selectedImage, setSelectedImage] = useState(null);
     const [taxTypes, setTaxTypes] = useState([]);
+
+
+    const [attendance, setAttendance] = useState([]);
+    const [loading, setLoading] = useState(null);
+
+    // Define table columns
+    const columns = [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "email", header: "Email" },
+        { accessorKey: "mobileNumber", header: "Mobile Number" },
+
+        { accessorKey: "attendanceStatus", header: "Status" },
+        { accessorKey: "qrCode", header: "QR Code" },
+        { accessorKey: "gatekeeperName", header: "Gate Keeper Name" },
+        {
+            accessorKey: "scannedAt",
+            header: "Scanned At",
+            Cell: ({ cell }) => formatDateTime(cell.getValue()),
+        },
+    ];
+
+    // Fetch attendance data for the event
+    useEffect(() => {
+        fetchAllAttendance(id);
+    }, [id]);
+
+    const fetchAllAttendance = async (id) => {
+        setLoading(true)
+        try {
+            const response = await fetchEventAttendenceDetails(id);
+            if (response.status === 200) {
+                setAttendance(response.data.attendees);
+                setLoading(false)
+            } else {
+                setAttendance([]);
+                setLoading(false)
+            }
+        } catch (err) {
+            console.error("Error fetching attendance:", err);
+            setAttendance([]);
+            setLoading(false)
+        }
+    };
+
 
     // Fetch event details and tax types
     useEffect(() => {
@@ -340,6 +386,21 @@ const SingleEvent = () => {
                     </Grid>
                 </Grid>
             </Paper>
+
+            <div>Attendant Member List</div>
+            <Table
+                data={attendance}
+                fields={columns}
+                numberOfRows={attendance.length}
+                enableTopToolBar
+                enableBottomToolBar
+                enablePagination
+                enableRowSelection
+                enableColumnFilters
+                enableEditing
+                enableColumnDragging
+                isLoading={loading}
+            />
 
             {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onClose={handleDialogClose} fullWidth maxWidth="sm">

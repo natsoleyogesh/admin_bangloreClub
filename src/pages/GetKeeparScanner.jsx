@@ -549,7 +549,7 @@
 
 import React, { useEffect, useState } from "react";
 import { QrReader } from "react-qr-reader";
-import { fetchEventAttendenceDetails, fetchMemberDetails, markAttendance } from "../api/getKeeper";
+import { fetchEventAttendenceDetails, fetchMemberDetails, fetchMemberDetailsByQrCode, markAttendance } from "../api/getKeeper";
 import { formatDateTime } from "../api/config";
 import { useNavigate, useParams } from "react-router-dom";
 import Table from "../components/Table";
@@ -570,6 +570,9 @@ const GetKeeparScanner = () => {
     // Define table columns
     const columns = [
         { accessorKey: "name", header: "Name" },
+        { accessorKey: "email", header: "Email" },
+        { accessorKey: "mobileNumber", header: "Mobile Number" },
+
         { accessorKey: "attendanceStatus", header: "Status" },
         { accessorKey: "qrCode", header: "QR Code" },
         { accessorKey: "gatekeeperName", header: "Gate Keeper Name" },
@@ -613,24 +616,26 @@ const GetKeeparScanner = () => {
                 }
 
                 const parsedData = JSON.parse(data);
+                console.log(parsedData, "parsedDatat");
                 const qrdata = { qrData: parsedData };
                 const response = await fetchMemberDetails(token, qrdata);
                 console.log(response, "respponse")
                 if (response.status === 200) {
                     const eventDetails = response.data.data.eventDetails;
                     const userDetails = response.data.data.userDetails;
-                    const guestName = response.data.data.guestName;
+                    // const guestName = response.data.data.guestName;
 
                     setEventDetails(eventDetails);
                     setUniqueQRCodeData(parsedData.uniqueQRCodeData)
-                    if (parsedData.type === "Guest" && guestName) {
-                        setUserDetails({
-                            name: guestName,
-                            email: "N/A",
-                            mobileNumber: "N/A",
-                            memberId: "N/A",
-                        });
-                    } else if (userDetails) {
+                    // if (parsedData.type === "Guest" && guestName) {
+                    //     setUserDetails({
+                    //         name: guestName,
+                    //         email: parsedData.guestEmail || "N/A",
+                    //         mobileNumber: parsedData.guestContact || "N/A",
+                    //         memberId: "N/A",
+                    //     });
+                    // } else
+                    if (userDetails) {
                         setUserDetails(userDetails);
                     } else {
                         setError("Member details not found.");
@@ -649,6 +654,44 @@ const GetKeeparScanner = () => {
             }
         }
     };
+
+    const handleScanQrCode = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("User is not authenticated. Token is missing.");
+            }
+
+            // const parsedData = JSON.parse(data);
+            // console.log(parsedData, "parsedDatat");
+            // const qrdata = { qrData: parsedData };
+            const response = await fetchMemberDetailsByQrCode(token, { qrCode: manualQRCode });
+            console.log(response, "respponse")
+            if (response.status === 200) {
+                const eventDetails = response.data.data.eventDetails;
+                const userDetails = response.data.data.userDetails;
+                // const guestName = response.data.data.guestName;
+
+                setEventDetails(eventDetails);
+                setUniqueQRCodeData(manualQRCode)
+                if (userDetails) {
+                    setUserDetails(userDetails);
+                } else {
+                    setError("Member details not found.");
+                    // handleReject()
+                }
+
+                setStatus("success");
+            } else {
+                setError("Failed to fetch member details.");
+                setStatus("error");
+            }
+        } catch (err) {
+            console.error("Error handling scan:", err);
+            setError("Failed to fetch member details. Please try again.");
+            setStatus("error");
+        }
+    }
 
     const handleError = (err) => {
         console.error("Error scanning QR code:", err);
@@ -785,7 +828,7 @@ const GetKeeparScanner = () => {
                     onChange={(e) => setManualQRCode(e.target.value.trim())} // Updates the state
                     style={styles.textField}
                 />
-                <button style={styles.button} onClick={handleMarkAttendance}>
+                <button style={styles.button} onClick={handleScanQrCode}>
                     Verify
                 </button>
             </div>
@@ -799,8 +842,10 @@ const GetKeeparScanner = () => {
                             <p><strong>Date:</strong> {new Date(eventDetails.date).toLocaleDateString()}</p>
                         </>
                     )}
-                    <h4>{userDetails.name}</h4>
+                    <p><strong>Name:</strong>    <strong>{userDetails.name}</strong></p>
                     <p><strong>Email:</strong> {userDetails.email}</p>
+                    <p><strong>Mobile Number:</strong> {userDetails.mobileNumber}</p>
+
                     {/* <p><strong>Mobile:</strong> {userDetails.mobileNumber}</p>
                     <p><strong>Member ID:</strong> {userDetails.memberId}</p> */}
                     <div>

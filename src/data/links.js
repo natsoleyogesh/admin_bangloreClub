@@ -112,7 +112,7 @@ export const links = [
     ],
   },
   {
-    name: "Monthly Billings",
+    name: "Offline Billings",
     icon: <MdEmojiEvents />,
     subLinks: [
       {

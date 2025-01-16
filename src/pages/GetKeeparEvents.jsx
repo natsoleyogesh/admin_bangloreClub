@@ -137,7 +137,7 @@ const GetKeeparEvents = () => {
                                 <strong>Date:</strong> {new Date(event.eventStartDate).toLocaleDateString()}
                             </p>
                             <p style={styles.eventDetails}>
-                                <strong>Available Tickets:</strong> {event.availableTickets}
+                                <strong>Available Tickets:</strong> {event.totalAvailableTickets}
                             </p>
                             <button
                                 style={styles.button}

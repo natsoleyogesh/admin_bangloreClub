@@ -654,7 +654,14 @@ const GetKeeparScanner = () => {
         console.error("Error scanning QR code:", err);
         setError("Failed to scan QR code. Please try again.");
         setStatus("error");
-        handleReject()
+        // handleReject()
+
+        setScannedData("");
+        setUserDetails(null);
+        setEventDetails(null);
+        setError("");
+        setStatus("");
+        setUniqueQRCodeData("");
     };
 
     const handleMarkAttendance = async () => {
@@ -758,12 +765,24 @@ const GetKeeparScanner = () => {
                 </div>
             )}
 
-            <div>
+            {/* <div>
                 <input
                     type="text"
                     placeholder="Enter QR Code"
                     value={manualQRCode}
                     onChange={(e) => setManualQRCode(e.target.value)}
+                    style={styles.textField}
+                />
+                <button style={styles.button} onClick={handleMarkAttendance}>
+                    Verify
+                </button>
+            </div> */}
+            <div>
+                <input
+                    type="text"
+                    placeholder="Enter QR Code"
+                    value={manualQRCode} // Binds the input value to the state
+                    onChange={(e) => setManualQRCode(e.target.value.trim())} // Updates the state
                     style={styles.textField}
                 />
                 <button style={styles.button} onClick={handleMarkAttendance}>

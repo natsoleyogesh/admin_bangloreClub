@@ -1,245 +1,3 @@
-// import styled from "@emotion/styled";
-// import {
-//     Box,
-//     Button,
-//     Card,
-//     CardContent,
-//     CardHeader,
-//     FormControl,
-//     Grid,
-//     InputLabel,
-//     MenuItem,
-//     Select,
-//     TextField,
-//     Typography,
-//     CircularProgress,
-//     Alert,
-//     Avatar,
-// } from "@mui/material";
-// import React, { useRef, useState } from "react";
-// import { BiImageAdd } from "react-icons/bi";
-// import { addMember } from "../api/member";
-// import { useNavigate, useParams } from "react-router-dom";
-// import { showToast } from "../api/toast";
-
-// const UploadBox = styled(Box)(({ theme }) => ({
-//     marginTop: 20,
-//     height: 160,
-//     borderRadius: "10px",
-//     display: "flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     flexDirection: "column",
-//     border: `2px dashed ${theme.palette.divider}`,
-//     cursor: "pointer",
-//     backgroundColor: theme.palette.background.paper,
-//     transition: "0.3s",
-//     "&:hover": {
-//         backgroundColor: theme.palette.action.hover,
-//     },
-// }));
-
-// const StyledButton = styled(Button)({
-//     borderRadius: 8,
-//     padding: "10px 16px",
-//     fontWeight: 600,
-//     textTransform: "none",
-//     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-// });
-
-// const AddFamilyMember = () => {
-//     const { parentUserId } = useParams();
-//     const [name, setName] = useState("");
-//     const [email, setEmail] = useState("");
-//     const [mobileNumber, setMobileNumber] = useState("");
-//     const [relation, setRelation] = useState("");
-//     const [address, setAddress] = useState("");
-//     const [age, setAge] = useState("");
-//     const [image, setImage] = useState(null);
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState("");
-//     const [validationErrors, setValidationErrors] = useState({});
-//     const imageInput = useRef(null);
-//     const navigate = useNavigate();
-
-//     const handleSubmit = async (event) => {
-//         event.preventDefault();
-//         setLoading(true);
-//         setError("");
-
-//         const formData = new FormData();
-//         formData.append("name", name);
-//         formData.append("email", email);
-//         formData.append("mobileNumber", mobileNumber);
-//         formData.append("relation", relation);
-//         formData.append("address", address);
-//         formData.append("age", age);
-//         formData.append("parentUserId", parentUserId);
-//         if (image) {
-//             formData.append("profilePicture", image);
-//         }
-
-//         try {
-//             const response = await addMember(formData);
-//             if (response.status === 201) {
-//                 showToast("Family member added successfully!", "success");
-//                 navigate(`/customers/${parentUserId}`);
-//             } else {
-//                 showToast(response.message || "Failed to add family member.", "error");
-//             }
-//         } catch (error) {
-//             showToast("An error occurred. Please try again.", "error");
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-//     const handleImageChange = (event) => {
-//         setImage(event.target.files[0]);
-//     };
-
-//     return (
-//         <Box sx={{ pt: 5, pb: 5, display: "flex", justifyContent: "center" }}>
-//             <Card sx={{ maxWidth: 500, width: "100%", borderRadius: "16px", boxShadow: 4, marginTop: "50px" }}>
-//                 <CardHeader
-//                     title="Add Family Member"
-//                     subheader="Enter the details of the family member"
-//                     sx={{ textAlign: "center", color: "primary.main" }}
-//                 />
-//                 <CardContent>
-//                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-//                     <form onSubmit={handleSubmit}>
-//                         <Grid container spacing={2}>
-//                             <Grid item xs={12}>
-//                                 <InputLabel sx={{ fontWeight: "bold" }}>Member Name</InputLabel>
-//                                 <TextField
-//                                     placeholder="Enter full name"
-//                                     variant="outlined"
-//                                     fullWidth
-//                                     size="small"
-//                                     value={name}
-//                                     onChange={(e) => setName(e.target.value)}
-//                                     required
-//                                     sx={{ marginTop: "4px" }}
-//                                 />
-//                             </Grid>
-//                             <Grid item xs={12}>
-//                                 <InputLabel sx={{ fontWeight: "bold" }}>Email Address</InputLabel>
-//                                 <TextField
-//                                     placeholder="Enter email address"
-//                                     variant="outlined"
-//                                     fullWidth
-//                                     size="small"
-//                                     value={email}
-//                                     onChange={(e) => setEmail(e.target.value)}
-//                                     required
-//                                     sx={{ marginTop: "4px" }}
-//                                 />
-//                             </Grid>
-//                             <Grid item xs={12}>
-//                                 <InputLabel sx={{ fontWeight: "bold" }}>Phone Number</InputLabel>
-//                                 <TextField
-//                                     placeholder="Enter phone number"
-//                                     variant="outlined"
-//                                     fullWidth
-//                                     size="small"
-//                                     value={mobileNumber}
-//                                     onChange={(e) => setMobileNumber(e.target.value)}
-//                                     required
-//                                     sx={{ marginTop: "4px" }}
-//                                 />
-//                             </Grid>
-//                             <Grid item xs={12}>
-//                                 <InputLabel sx={{ fontWeight: "bold" }}>Relation</InputLabel>
-//                                 <FormControl fullWidth size="small"
-//                                     sx={{ marginTop: "4px" }}>
-//                                     <Select
-//                                         value={relation}
-//                                         onChange={(e) => setRelation(e.target.value)}
-//                                         required
-//                                         defaultValue=""
-//                                     >
-//                                         <MenuItem value="" disabled>Please Choose relation</MenuItem>
-//                                         <MenuItem value="Spouse">Spouse</MenuItem>
-//                                         <MenuItem value="Daughter">Daughter</MenuItem>
-//                                         <MenuItem value="Son">Son</MenuItem>
-//                                     </Select>
-//                                 </FormControl>
-//                             </Grid>
-//                             <Grid item xs={12}>
-//                                 <InputLabel sx={{ fontWeight: "bold" }}>Address</InputLabel>
-//                                 <TextField
-//                                     placeholder="Enter address"
-//                                     variant="outlined"
-//                                     fullWidth
-//                                     size="small"
-//                                     value={address}
-//                                     onChange={(e) => setAddress(e.target.value)}
-//                                     sx={{ marginTop: "4px" }}
-//                                 />
-//                             </Grid>
-//                             <Grid item xs={12}>
-//                                 <InputLabel sx={{ fontWeight: "bold" }}>Age</InputLabel>
-//                                 <TextField
-//                                     placeholder="Enter age"
-//                                     variant="outlined"
-//                                     fullWidth
-//                                     size="small"
-//                                     type="number"
-//                                     value={age}
-//                                     onChange={(e) => setAge(e.target.value)}
-//                                     sx={{ marginTop: "4px" }}
-//                                 />
-//                             </Grid>
-//                             <Grid item xs={12}>
-//                                 <UploadBox onClick={() => imageInput.current.click()}>
-//                                     {image ? (
-//                                         <Avatar
-//                                             src={URL.createObjectURL(image)}
-//                                             alt="Profile"
-//                                             sx={{ width: 100, height: 100 }}
-//                                         />
-//                                     ) : (
-//                                         <Box sx={{ textAlign: "center" }}>
-//                                             <BiImageAdd style={{ fontSize: "40px", color: "#027edd" }} />
-//                                             <Typography variant="body2" color="textSecondary">
-//                                                 Click to upload profile image
-//                                             </Typography>
-//                                             <Typography variant="caption" color="textSecondary">
-//                                                 (JPG, PNG, GIF)
-//                                             </Typography>
-//                                         </Box>
-//                                     )}
-//                                 </UploadBox>
-//                                 <input
-//                                     type="file"
-//                                     hidden
-//                                     ref={imageInput}
-//                                     onChange={handleImageChange}
-//                                 />
-//                             </Grid>
-//                             <Grid item xs={12}>
-//                                 <StyledButton
-//                                     type="submit"
-//                                     variant="contained"
-//                                     fullWidth
-//                                     color="primary"
-//                                     disabled={loading}
-//                                 >
-//                                     {loading ? <CircularProgress size={20} color="inherit" /> : "Add Family Member"}
-//                                 </StyledButton>
-//                             </Grid>
-//                         </Grid>
-//                     </form>
-//                 </CardContent>
-//             </Card>
-//         </Box>
-//     );
-// };
-
-// export default AddFamilyMember;
-
-
 import styled from "@emotion/styled";
 import {
     Box,
@@ -257,6 +15,7 @@ import {
     CircularProgress,
     Alert,
     Avatar,
+    IconButton,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { BiImageAdd } from "react-icons/bi";
@@ -266,6 +25,7 @@ import { showToast } from "../api/toast";
 import { CrisisAlert, Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
 import LocationSelector from "../components/common/LocationSelector";
 import Breadcrumb from "../components/common/Breadcrumb";
+import { FiTrash } from "react-icons/fi";
 
 const UploadBox = styled(Box)(({ theme }) => ({
     marginTop: 20,
@@ -411,15 +171,61 @@ const AddFamilyMember = () => {
         setCountry(updatedLocation.country);
     };
 
+    // Validation functions for new fields
+    const validateVehicleModel = (model) => model.trim().length > 0; // Vehicle model must not be empty
+    const validateVehicleNumber = (number) =>
+        /^[A-Za-z0-9-]{5,15}$/.test(number); // Alphanumeric with dashes, length 5-15
+    const validateDrivingLicenceNumber = (number) =>
+        /^[A-Za-z0-9]{5,20}$/.test(number); // Alphanumeric, length 5-20
+
+
+
+    // Form-level validation
+    const validateForm = () => {
+        const errors = {};
+
+        if (!validateName(name)) errors.name = "Name is required.";
+        if (!validateEmail(email)) errors.email = "Invalid email address.";
+        if (!validateMobileNumber(mobileNumber))
+            errors.mobileNumber = "Mobile number must be 10 digits.";
+        if (!validateAddress(address)) errors.address = "Address is required.";
+        if (!validateRelation(relation)) errors.relation = "Relation is required.";
+        if (!validatePin(pin)) errors.pin = "Invalid PIN code.";
+
+        // New validations for additional fields
+        if (!validateVehicleModel(vehicleModel))
+            errors.vehicleModel = "Vehicle model is required.";
+        if (!validateVehicleNumber(vehicleNumber))
+            errors.vehicleNumber = "Invalid vehicle number format.";
+        if (!validateDrivingLicenceNumber(drivingLicenceNumber))
+            errors.drivingLicenceNumber = "Invalid driving licence number.";
+
+        // Display toast messages for errors
+        Object.values(errors).forEach((errorMessage) => {
+            showToast(errorMessage, "error"); // Display each error as a toast
+        });
+
+        // Return validation status
+        return Object.keys(errors).length === 0;
+    };
+
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
 
-        if (Object.values(validationErrors).some((error) => error !== "")) {
-            showToast("Please fix the validation errors.", "error");
+        // Validate form before submission
+        if (!validateForm()) {
             setLoading(false);
+            //   showToast("Please fix the validation errors.", "error");
             return;
         }
+        // if (Object.values(validationErrors).some((error) => error !== "")) {
+        //     showToast("Please fix the validation errors.", "error");
+        //     setLoading(false);
+        //     return;
+        // }
 
         const formData = new FormData();
         formData.append("name", name);
@@ -471,6 +277,46 @@ const AddFamilyMember = () => {
         setImage(event.target.files[0]);
     };
 
+    const handleProofImageChange = (e) => {
+        // const files = Array.from(e.target.files);
+        // setProofs((prev) => [...prev, ...files]);
+        const files = Array.from(e.target.files); // Convert FileList to an array
+        if (files.length > 3) {
+            showToast(
+                `only allow maximun 3 files`,
+                "error" // Assuming "error" is the type of toast for errors
+            );
+            return;
+        }
+        const maxSize = 20 * 1024 * 1024; // 20MB in bytes
+
+        const validFiles = [];
+        const invalidFiles = [];
+
+        files.forEach((file) => {
+            if (file.size <= maxSize) {
+                validFiles.push(file); // Add valid files to the array
+            } else {
+                invalidFiles.push(file.name); // Collect names of invalid files
+            }
+        });
+
+        if (invalidFiles.length > 0) {
+            showToast(
+                `The following files exceed 100KB and were not added:\n${invalidFiles.join(", ")}`,
+                "error" // Assuming "error" is the type of toast for errors
+            );
+        }
+
+        // Add valid files to the images state
+        setProofs((prevImages) => [...prevImages, ...validFiles]);
+    };
+
+    const handleRemoveProofImage = (index) => {
+        setProofs((prev) => prev.filter((_, i) => i !== index));
+    };
+
+
     return (
         <Box sx={{ pt: "70px", pb: "20px", px: "10px" }}>
             <Breadcrumb />
@@ -513,7 +359,7 @@ const AddFamilyMember = () => {
                                         onChange={handleNameChange}
                                         error={!!validationErrors.name}
                                         helperText={validationErrors.name}
-                                        required
+                                        // required
                                         sx={{ marginTop: "4px" }}
                                         InputProps={{ startAdornment: <People sx={{ color: "gray", mr: 1 }} /> }}
                                     />
@@ -529,7 +375,7 @@ const AddFamilyMember = () => {
                                         onChange={handleEmailChange}
                                         error={!!validationErrors.email}
                                         helperText={validationErrors.email}
-                                        required
+                                        // required
                                         sx={{ marginTop: "4px" }}
                                         InputProps={{ startAdornment: <Email sx={{ color: "gray", mr: 1 }} /> }}
                                     />
@@ -545,7 +391,7 @@ const AddFamilyMember = () => {
                                         onChange={handleMobileChange}
                                         error={!!validationErrors.mobileNumber}
                                         helperText={validationErrors.mobileNumber}
-                                        required
+                                        // required
                                         sx={{ marginTop: "4px" }}
                                         InputProps={{ startAdornment: <Phone sx={{ color: "gray", mr: 1 }} /> }}
                                     />
@@ -588,39 +434,6 @@ const AddFamilyMember = () => {
                                         fullWidth
                                     />
                                 </Grid>
-                                {/* <Grid item xs={6}>
-                                    <InputLabel sx={{ fontWeight: "bold" }}>City</InputLabel>
-                                    <TextField
-                                        placeholder="Enter Your City"
-                                        size="small"
-                                        variant="outlined"
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <InputLabel sx={{ fontWeight: "bold" }}>State</InputLabel>
-                                    <TextField
-                                        placeholder="Enter Your State"
-                                        size="small"
-                                        variant="outlined"
-                                        value={state}
-                                        onChange={(e) => setState(e.target.value)}
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <InputLabel sx={{ fontWeight: "bold" }}>Country</InputLabel>
-                                    <TextField
-                                        placeholder="Enter Your Country"
-                                        size="small"
-                                        variant="outlined"
-                                        value={country}
-                                        onChange={(e) => setCountry(e.target.value)}
-                                        fullWidth
-                                    />
-                                </Grid> */}
                                 <Grid item xs={12}>
                                     <InputLabel sx={{ fontWeight: "bold" }}>Location</InputLabel>
                                     <LocationSelector
@@ -695,7 +508,7 @@ const AddFamilyMember = () => {
                                             value={relation}
                                             onChange={handleRelationChange}
                                             displayEmpty
-                                            required
+                                            // required
                                             startAdornment={<FamilyRestroom sx={{ color: "gray", mr: 1 }} />}
                                         >
                                             <MenuItem value="" disabled>
@@ -710,6 +523,42 @@ const AddFamilyMember = () => {
                                             <Typography color="error">{validationErrors.relation}</Typography>
                                         )}
                                     </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Vehicle Model</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Your vehicle Model Name"
+                                        size="small"
+                                        variant="outlined"
+                                        type="text"
+                                        value={vehicleModel}
+                                        onChange={(e) => setVehicleModel(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Vehicle Number</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Your vehicle Number"
+                                        size="small"
+                                        variant="outlined"
+                                        type="text"
+                                        value={vehicleNumber}
+                                        onChange={(e) => setVehicleNumber(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Driving Licence Number</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Your Driving Licence Number"
+                                        size="small"
+                                        variant="outlined"
+                                        type="text"
+                                        value={drivingLicenceNumber}
+                                        onChange={(e) => setDrivingLicenceNumber(e.target.value)}
+                                        fullWidth
+                                    />
                                 </Grid>
 
 
@@ -757,6 +606,40 @@ const AddFamilyMember = () => {
                                         ref={imageInput}
                                         onChange={handleImageChange}
                                     />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Proof Image</InputLabel>
+
+                                    <UploadBox onClick={() => document.getElementById("proofs").click()}>
+                                        <input
+                                            type="file"
+                                            id="proofs"
+                                            multiple
+                                            style={{ display: "none" }}
+                                            onChange={handleProofImageChange}
+                                        />
+                                        <BiImageAdd size={30} />
+                                        <Typography variant="body2">Click to upload Proof images</Typography>
+                                        {/* {errors.bannerImages && <FormHelperText error>{errors.bannerImages}</FormHelperText>} */}
+                                    </UploadBox>
+
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2 }}>
+                                        {proofs.map((image, index) => (
+                                            <Box key={index} sx={{ position: "relative" }}>
+                                                <img
+                                                    src={URL.createObjectURL(image)}
+                                                    alt="proofs"
+                                                    style={{ width: 100, height: 100, borderRadius: 8 }}
+                                                />
+                                                <IconButton
+                                                    onClick={() => handleRemoveProofImage(index)}
+                                                    sx={{ position: "absolute", top: 0, right: 0 }}
+                                                >
+                                                    <FiTrash color="red" />
+                                                </IconButton>
+                                            </Box>
+                                        ))}
+                                    </Box>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <StyledButton

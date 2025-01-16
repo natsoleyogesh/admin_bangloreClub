@@ -258,7 +258,14 @@ const MonthlyBillings = () => {
         <Box sx={{ pt: "80px", pb: "20px" }}>
             {/* <Breadcrumb onBack={() => console.log("Back button clicked!")} /> */}
             {/* Header Section */}
-            <Box sx={{ mb: 3 }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "14px",
+                }}
+            >
                 <Typography variant="h6" sx={{ mb: 2 }}>Offline Billings</Typography>
 
                 <Button
@@ -270,6 +277,9 @@ const MonthlyBillings = () => {
                 >
                     Upload Bill
                 </Button>
+            </Box>
+            <Box sx={{ mb: 3 }}>
+
 
                 <Grid container spacing={2} alignItems="center">
                     {!id && <Grid item xs={12} sm={3} md={2}>

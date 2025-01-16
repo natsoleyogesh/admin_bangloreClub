@@ -57,6 +57,7 @@ const StyledButton = styled(Button)({
 });
 
 const AddMember = () => {
+    const [memberId, setMemberId] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [mobileNumber, setMobileNumber] = useState("");
@@ -93,6 +94,7 @@ const AddMember = () => {
 
     // Validation functions
     const validateName = (name) => name.trim() !== "";
+    const validateMemberId = (memberId) => memberId.trim() !== "";
     const validateEmail = (email) =>
         /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
     const validateMobileNumber = (mobile) => /^[0-9]{10}$/.test(mobile);
@@ -110,6 +112,16 @@ const AddMember = () => {
             name: validateName(value) ? "" : "Name is required.",
         }));
     };
+
+    const handleMemberIdChange = (e) => {
+        const value = e.target.value;
+        setMemberId(value);
+        setValidationErrors((prev) => ({
+            ...prev,
+            name: validateMemberId(value) ? "" : "MemberShip ID is required.",
+        }));
+    };
+
 
     const handleEmailChange = (e) => {
         const value = e.target.value;
@@ -195,6 +207,7 @@ const AddMember = () => {
         const errors = {};
 
         if (!validateName(name)) errors.name = "Name is required.";
+        if (!validateMemberId(memberId)) errors.memberId = "MemberShip ID is required.";
         if (!validateEmail(email)) errors.email = "Invalid email address.";
         if (!validateMobileNumber(mobileNumber))
             errors.mobileNumber = "Mobile number must be 10 digits.";
@@ -244,6 +257,7 @@ const AddMember = () => {
         }
 
         const formData = new FormData();
+        formData.append("memberId", memberId);
         formData.append("name", name);
         formData.append("email", email);
         formData.append("mobileNumber", mobileNumber);
@@ -359,6 +373,23 @@ const AddMember = () => {
                                         <MenuItem value="Ms.">Ms.</MenuItem>
                                         <MenuItem value="Dr.">Dr.</MenuItem>
                                     </Select>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <InputLabel sx={{ fontWeight: "bold" }} >MemberShip ID </InputLabel>
+                                    <TextField
+                                        placeholder="Enter Member Ship ID"
+                                        variant="outlined"
+                                        fullWidth
+                                        size="small"
+                                        value={memberId}
+                                        onChange={handleMemberIdChange}
+                                        error={!!validationErrors.memberId}
+                                        helperText={validationErrors.memberId}
+
+                                        // required
+                                        sx={{ marginTop: "4px" }}
+                                        InputProps={{ startAdornment: <People sx={{ color: "gray", mr: 1 }} /> }}
+                                    />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <InputLabel sx={{ fontWeight: "bold" }} >Member Name</InputLabel>

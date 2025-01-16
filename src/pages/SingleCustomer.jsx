@@ -688,6 +688,16 @@ const SingleProduct = () => {
           </TextField>
           <TextField
             margin="dense"
+            label="MemberShip ID"
+            type="text"
+            fullWidth
+            name="memberId"
+            value={editMember.memberId || ""}
+            onChange={handleInputChange}
+            disabled={relation !== "Primary"}
+          />
+          <TextField
+            margin="dense"
             label="Name"
             type="text"
             fullWidth

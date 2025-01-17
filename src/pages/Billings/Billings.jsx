@@ -120,23 +120,7 @@ const Billings = () => {
         fetchAllBillingData();
     }, [filterType, paymentStatus, customStartDate, customEndDate, userId]);
 
-    // Export to PDF
-    // const exportToPDF = () => {
-    //     const doc = new jsPDF();
-    //     doc.text("Billing Records", 10, 10);
-    //     autoTable(doc, {
-    //         head: [columns.map((col) => col.header)],
-    //         body: billings.map((row) => [
-    //             row.invoiceNumber,
-    //             row.memberId?.name || "N/A",
-    //             row.serviceType,
-    //             row.paymentStatus,
-    //             formatDate(row.invoiceDate),
-    //             `₹${row.totalAmount}`,
-    //         ]),
-    //     });
-    //     doc.save("billings.pdf");
-    // };
+
     const exportToPDF = () => {
         const doc = new jsPDF();
         console.log(totals.totalOutstanding, "billings.totals.totalOutstanding")
@@ -167,22 +151,6 @@ const Billings = () => {
     };
 
 
-    // // Export to CSV
-    // const exportToCSV = () => {
-    //     const csvData = billings.map((row) => ({
-    //         InvoiceNumber: row.invoiceNumber,
-    //         MemberName: row.memberId?.name || "N/A",
-    //         ServiceType: row.serviceType,
-    //         PaymentStatus: row.paymentStatus,
-    //         InvoiceDate: formatDate(row.invoiceDate),
-    //         TotalAmount: `₹${row.totalAmount}`,
-    //     }));
-    //     const worksheet = XLSX.utils.json_to_sheet(csvData);
-    //     const workbook = XLSX.utils.book_new();
-    //     XLSX.utils.book_append_sheet(workbook, worksheet, "Billings");
-    //     XLSX.writeFile(workbook, "billings.csv");
-    // };
-
     const exportToCSV = () => {
         // Add totals to the top of the CSV
         const totalsRow = [
@@ -212,21 +180,6 @@ const Billings = () => {
     };
 
 
-    // // Export to XLS
-    // const exportToXLS = () => {
-    //     const xlsData = billings.map((row) => ({
-    //         InvoiceNumber: row.invoiceNumber,
-    //         MemberName: row.memberId?.name || "N/A",
-    //         ServiceType: row.serviceType,
-    //         PaymentStatus: row.paymentStatus,
-    //         InvoiceDate: formatDate(row.invoiceDate),
-    //         TotalAmount: `₹${row.totalAmount}`,
-    //     }));
-    //     const worksheet = XLSX.utils.json_to_sheet(xlsData);
-    //     const workbook = XLSX.utils.book_new();
-    //     XLSX.utils.book_append_sheet(workbook, worksheet, "Billings");
-    //     XLSX.writeFile(workbook, "billings.xlsx");
-    // };
     const exportToXLS = () => {
         // Add totals to the top of the XLS
         const totalsRow = [

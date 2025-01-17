@@ -1,17 +1,3 @@
-// // src/api/users.js
-
-// import axios from "axios";
-// import { PUBLIC_API_URI } from "./config";
-
-// // Axios instance (Optional, for setting base URL and headers)
-// const axiosInstance = axios.create({
-//     baseURL: PUBLIC_API_URI, // Change this to your base URL
-//     headers: {
-//         "Content-Type": "application/json",
-//     },
-// });
-
-// src/api/users.js
 
 import axios from "axios";
 import { PUBLIC_API_URI } from "./config";

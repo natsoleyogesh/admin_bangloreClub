@@ -215,14 +215,16 @@ const AddMember = () => {
         if (!validateRelation(relation)) errors.relation = "Relation is required.";
         if (!validatePin(pin)) errors.pin = "Invalid PIN code.";
 
-        // New validations for additional fields
-        if (!validateVehicleModel(vehicleModel))
+        // Conditional validations for optional fields
+        if (vehicleModel && !validateVehicleModel(vehicleModel)) {
             errors.vehicleModel = "Vehicle model is required.";
-        if (!validateVehicleNumber(vehicleNumber))
+        }
+        if (vehicleNumber && !validateVehicleNumber(vehicleNumber)) {
             errors.vehicleNumber = "Invalid vehicle number format.";
-        if (!validateDrivingLicenceNumber(drivingLicenceNumber))
+        }
+        if (drivingLicenceNumber && !validateDrivingLicenceNumber(drivingLicenceNumber)) {
             errors.drivingLicenceNumber = "Invalid driving licence number.";
-
+        }
         // Display toast messages for errors
         Object.values(errors).forEach((errorMessage) => {
             showToast(errorMessage, "error"); // Display each error as a toast

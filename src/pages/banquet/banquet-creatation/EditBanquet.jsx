@@ -258,7 +258,7 @@ const EditBanquet = ({ editdata }) => {
     const handleDeleteImage = async (index) => {
         try {
             await deleteBanquetImage(id, index);
-            getBanquetById();
+            getBanquetById(id);
             showToast("Image deleted successfully.", "success");
         } catch (error) {
             showToast("Failed to delete image.", "error");

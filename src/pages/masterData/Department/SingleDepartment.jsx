@@ -57,8 +57,38 @@ const SingleDepartment = () => {
     const handleEditClick = () => setEditDialogOpen(true);
     const handleDialogClose = () => setEditDialogOpen(false);
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return emailRegex.test(email);
+    };
+
+    const validateForm = () => {
+        const errors = [];
+
+        // Validate department name
+        if (!editDepartment.departmentName.trim()) {
+            errors.push("Department Name is required.");
+        }
+
+        // Validate email
+        if (!validateEmail(editDepartment.email)) {
+            errors.push("Invalid email address.");
+        }
+
+        // Show errors if any
+        if (errors.length > 0) {
+            errors.forEach((error) => showToast(error, "error"));
+            return false;
+        }
+
+        return true; // Form is valid
+    };
+
+
     // Save changes to the department
     const handleSaveChanges = async () => {
+        if (!validateForm()) return;
+
         try {
             const response = await updateDepartmentDetails(id, editDepartment);
             if (response.status === 200) {
@@ -95,6 +125,9 @@ const SingleDepartment = () => {
                     <Grid item xs={12}>
                         <Typography variant="h5">{department.departmentName || "N/A"}</Typography>
                         <Typography variant="body1">
+                            <strong>Department Email:</strong> {department.email || "N/A"}
+                        </Typography>
+                        <Typography variant="body1">
                             <strong>Status:</strong> {department.status || "N/A"}
                         </Typography>
                         <Typography variant="body1">
@@ -128,6 +161,14 @@ const SingleDepartment = () => {
                         margin="dense"
                         name="departmentName"
                         value={editDepartment.departmentName || ""}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        label="Department Email"
+                        fullWidth
+                        margin="dense"
+                        name="email"
+                        value={editDepartment.email || ""}
                         onChange={handleInputChange}
                     />
                     <FormControl fullWidth margin="dense">

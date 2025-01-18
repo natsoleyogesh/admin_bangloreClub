@@ -31,6 +31,8 @@ import dayjs from "dayjs";
 import Breadcrumb from "../../../components/common/Breadcrumb";
 
 const statusOptions = ["Active", "Inactive"];
+const BillableOptions = [true, false];
+
 const daysOptions = [
     "Monday",
     "Tuesday",
@@ -45,9 +47,10 @@ const AddBanquet = () => {
     const [banquetData, setBanquetData] = useState({
         banquetName: "",
         description: "",
-        checkInTime: "09:00",  // 12:00 PM
-        checkOutTime: "21:00",  // 11:00 AM
+        // checkInTime: "09:00",  // 12:00 PM
+        // checkOutTime: "21:00",  // 11:00 AM
         maxAllowedPerRoom: "",
+        minAllowedPerRoom: "",
         priceRange: { minPrice: "", maxPrice: "" },
         pricingDetails: [{ days: [], timeSlots: [{ start: "09:00", end: "21:00" }], price: "" }],
         amenities: [],
@@ -64,6 +67,7 @@ const AddBanquet = () => {
         specialDayTariff: [],
         pricingDetailDescription: "",
         status: 'Active',
+        billable: true
     });
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -127,7 +131,7 @@ const AddBanquet = () => {
 
         // Convert FileList to an array
         const files = Array.from(e.target.files);
-        const maxSize = 100 * 1024; // 100KB in bytes
+        const maxSize = 20 * 1024 * 1024; // 20 MB in bytes
 
         // Separate valid and invalid files
         const validFiles = [];
@@ -290,15 +294,22 @@ const AddBanquet = () => {
         // Validate description
         if (!banquetData.description) newErrors.description = "Banquet description is required.";
 
-        // Validate check-in and check-out times
-        if (!banquetData.checkInTime) newErrors.checkInTime = "Check-in time is required.";
-        if (!banquetData.checkOutTime) newErrors.checkOutTime = "Check-out time is required.";
+        // // Validate check-in and check-out times
+        // if (!banquetData.checkInTime) newErrors.checkInTime = "Check-in time is required.";
+        // if (!banquetData.checkOutTime) newErrors.checkOutTime = "Check-out time is required.";
 
         // Validate maximum occupancy per room
         if (!banquetData.maxAllowedPerRoom) {
             newErrors.maxAllowedPerRoom = "Maximum occupancy per banquet is required.";
         } else if (isNaN(banquetData.maxAllowedPerRoom) || Number(banquetData.maxAllowedPerRoom) <= 0) {
             newErrors.maxAllowedPerRoom = "Maximum occupancy must be a valid positive number.";
+        }
+
+        // Validate maximum occupancy per room
+        if (!banquetData.minAllowedPerRoom) {
+            newErrors.minAllowedPerRoom = "Minimum occupancy per banquet is required.";
+        } else if (isNaN(banquetData.minAllowedPerRoom) || Number(banquetData.minAllowedPerRoom) <= 0) {
+            newErrors.minAllowedPerRoom = "Minimum occupancy must be a valid positive number.";
         }
 
 
@@ -378,6 +389,8 @@ const AddBanquet = () => {
 
         // Validate status
         if (!banquetData.status) newErrors.status = "Banquet status is required.";
+        if (banquetData.billable === undefined) newErrors.billable = "Banquet Is Billable Or Non-Billable It Is Required.";
+
 
 
         console.log(newErrors, "newErr---------------")
@@ -688,7 +701,25 @@ const AddBanquet = () => {
                 </Box>
 
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Maxium Allowed Per Hall</InputLabel>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Minimum Allowed Guest</InputLabel>
+                    <TextField
+                        placeholder="Enter Minimum Allowed PerRoom"
+                        fullWidth
+                        margin="dense"
+                        name="minAllowedPerRoom"
+                        value={banquetData.minAllowedPerRoom}
+                        onChange={handleInputChange}
+                        error={!!errors.minAllowedPerRoom}
+                        helperText={errors.minAllowedPerRoom}
+                        InputProps={{
+                            startAdornment: <MeetingRoomIcon sx={{ color: "gray", mr: 1 }} />,
+                        }}
+                    />
+                </Box>
+
+
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Maxium Allowed Guest</InputLabel>
                     <TextField
                         placeholder="Enter Maxium Allowed PerRoom"
                         fullWidth
@@ -705,7 +736,7 @@ const AddBanquet = () => {
                 </Box>
 
                 {/* Check-In and Check-Out Time */}
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Check In Time</InputLabel>
                     <TextField
                         type="time"
@@ -738,7 +769,7 @@ const AddBanquet = () => {
                             startAdornment: <AccessTime sx={{ color: "gray", mr: 1 }} />,
                         }}
                     />
-                </Box>
+                </Box> */}
 
                 {/* Price Range */}
                 <Box sx={{ mb: 2 }}>
@@ -825,6 +856,22 @@ const AddBanquet = () => {
                             ))}
                         </Select>
                         {errors.status && <Typography color="error">{errors.status}</Typography>}
+                    </FormControl>
+                </Box>
+
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Billable Type</InputLabel>
+                    <FormControl fullWidth margin="dense" error={!!errors.billable}>
+                        <Select name="billable" value={banquetData.billable} onChange={handleInputChange} displayEmpty
+                            startAdornment={<HotelIcon sx={{ color: "gray", mr: 1 }} />}>
+                            <MenuItem value="" disabled>
+                                Please Select Billable Type
+                            </MenuItem>
+                            {BillableOptions.map((option) => (
+                                <MenuItem key={option} value={option}>{option ? "Billable" : "Non-Billable"}</MenuItem>
+                            ))}
+                        </Select>
+                        {errors.billable && <Typography color="error">{errors.billable}</Typography>}
                     </FormControl>
                 </Box>
 

@@ -50,6 +50,16 @@ const Bookings = () => {
         { accessorKey: "attendingGuests", header: "Guests" },
         { accessorKey: "bookingStatus", header: "Status" },
         {
+            accessorKey: "billable",
+            header: "Billable Type",
+            Cell: ({ row }) => (
+                row.original.billable === true
+                    ? <Typography color="green">Billable</Typography>
+                    : <Typography color="red">Non-Billable</Typography>
+            ),
+        },
+
+        {
             accessorKey: "bookingDates.checkIn",
             header: "Check-In",
             Cell: ({ cell }) => formatDate(cell.getValue()),

@@ -130,18 +130,30 @@ const SingleBanquet = () => {
 
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 2 }}>
+                            <strong>Billable Type:</strong>  <Chip
+                                label={banquet.billable == true ? "Billable" : "Non-Billable"}
+                                color={banquet.billable == true ? "success" : "default"} // Approved, Pending, Rejected
+                                size="small"
+                            />
+
+                        </Typography>
+                        <Typography variant="body1" sx={{ mb: 2 }}>
                             <strong>Price Range:</strong> ₹{banquet.priceRange?.minPrice || 0} - ₹
                             {banquet.priceRange?.maxPrice || 0}
                         </Typography>
-                        <Typography variant="body1" sx={{ mb: 2 }}>
+                        {/* <Typography variant="body1" sx={{ mb: 2 }}>
                             <strong>Check-In Time:</strong> {banquet.checkInTime || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 2 }}>
                             <strong>Check-Out Time:</strong> {banquet.checkOutTime || "N/A"}
+                        </Typography> */}
+                        <Typography variant="body1" sx={{ mb: 2 }}>
+                            <strong>Min Allowed Guest:</strong> {banquet.minAllowedPerRoom || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 2 }}>
-                            <strong>Max Allowed Per Room:</strong> {banquet.maxAllowedPerRoom || "N/A"}
+                            <strong>Max Allowed Guest:</strong> {banquet.maxAllowedPerRoom || "N/A"}
                         </Typography>
+
                         <Typography variant="body1" sx={{ mb: 2 }}>
                             <strong>Banquet Hall Size:</strong> {banquet.banquetHallSize || "N/A"} sqft
                         </Typography>

@@ -86,6 +86,15 @@ const Banquets = () => {
             ),
         },
         {
+            accessorKey: "billable",
+            header: "Billable Type",
+            Cell: ({ row }) => (
+                row.original.billable === true
+                    ? <Typography color="green">Billable</Typography>
+                    : <Typography color="red">Non-Billable</Typography>
+            ),
+        },
+        {
             accessorKey: "status",
             header: "Status",
             Cell: ({ row }) => (

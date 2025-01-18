@@ -12,7 +12,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { Description } from "@mui/icons-material"; // Optional for icons if necessary
+import { Description, Email } from "@mui/icons-material"; // Optional for icons if necessary
 import { useNavigate } from "react-router-dom";
 import { addDepartment } from "../../../api/masterData/department";
 import { showToast } from "../../../api/toast";
@@ -24,6 +24,7 @@ const AddDepartment = () => {
     const [departmentData, setDepartmentData] = useState({
         departmentName: "",
         status: "active",
+        email: ""
     });
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -59,21 +60,33 @@ const AddDepartment = () => {
     //     setErrors(validationErrors);
     //     return Object.keys(validationErrors).length === 0;
     // };
-
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return emailRegex.test(email);
+    };
 
     const validateForm = () => {
         const errors = [];
 
+        // Validate department name
         if (!departmentData.departmentName.trim()) {
-            errors.push("Department Name is required");
+            errors.push("Department Name is required.");
         }
 
+        // Validate email
+        if (!validateEmail(departmentData.email)) {
+            errors.push("Invalid email address.");
+        }
+
+        // Show errors if any
         if (errors.length > 0) {
             errors.forEach((error) => showToast(error, "error"));
             return false;
         }
-        return true;
+
+        return true; // Form is valid
     };
+
 
     // Handle form submission
     const handleSubmit = async () => {
@@ -129,6 +142,23 @@ const AddDepartment = () => {
                                 </InputAdornment>
                             ),
                         }}
+                    />
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold" }}>Email Address</InputLabel>
+                    <TextField
+                        placeholder="Enter email address"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        name="email"
+                        value={departmentData.email}
+                        onChange={handleInputChange}
+                        error={!!errors.email}
+                        helperText={errors.email}
+                        // required
+                        sx={{ marginTop: "4px" }}
+                        InputProps={{ startAdornment: <Email sx={{ color: "gray", mr: 1 }} /> }}
                     />
                 </Box>
 

@@ -18,6 +18,7 @@ import {
     ListItem,
     ListItemText,
     Divider,
+    CircularProgress,
 } from "@mui/material";
 import { FiCheck, FiEdit, FiX } from "react-icons/fi";
 import { useParams } from "react-router-dom";
@@ -47,6 +48,8 @@ const SingleBooking = () => {
     const [isEditDialogOpen, setEditDialogOpen] = useState(false);
     const [editBooking, setEditBooking] = useState({ bookingId: id, bookingStatus: "" });
 
+    const [loading, setLoading] = useState(false)
+
     // Fetch booking details
     useEffect(() => {
         getBookingById(id);
@@ -72,6 +75,7 @@ const SingleBooking = () => {
     const handleDialogClose = () => setEditDialogOpen(false);
 
     const handleSaveChanges = async (newStatus) => {
+        setLoading(true)
         try {
             const response = await updateBanquetBooking({
                 // bookingId: id,
@@ -89,8 +93,31 @@ const SingleBooking = () => {
         } catch (error) {
             console.error("Failed to update booking details:", error);
             showToast("Failed to update booking details. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
     };
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(255, 255, 255, 0.7)",
+                    zIndex: 1000,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        )
+    }
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -141,6 +168,18 @@ const SingleBooking = () => {
                                         : booking.bookingStatus === "Cancelled"
                                             ? "error"
                                             : "default"
+                                }
+                                size="small"
+                            />
+                        </Typography>
+                        <Typography variant="body1" sx={{ mb: 1 }}>
+                            <strong>Billable Type:</strong>{" "}
+                            <Chip
+                                label={booking.billable === true ? "Billable" : "Non-Billable"}
+                                color={
+                                    booking.billable === true
+                                        ? "success"
+                                        : "default"
                                 }
                                 size="small"
                             />
@@ -240,7 +279,7 @@ const SingleBooking = () => {
                     Edit Booking
                 </Button> */}
                 {/* Confirm and Cancel Buttons */}
-                {booking.bookingStatus === "Pending" && (
+                {/* {booking.bookingStatus === "Pending" && (
                     <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                         <Button
                             variant="contained"
@@ -259,7 +298,30 @@ const SingleBooking = () => {
                             Cancel
                         </Button>
                     </Box>
+                )} */}
+
+                {booking.billable && booking.billableDate && booking.bookingStatus === "Pending" && (
+                    <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
+                        <Button
+                            variant="contained"
+                            color="success"
+                            startIcon={<FiCheck />}
+                            onClick={() => handleSaveChanges("Confirmed")}
+                        >
+                            Confirm
+
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            startIcon={<FiX />}
+                            onClick={() => handleSaveChanges("Cancelled")}
+                        >
+                            Cancel
+                        </Button>
+                    </Box>
                 )}
+
             </Paper>
 
             {/* Edit Dialog */}

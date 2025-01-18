@@ -45,6 +45,8 @@ const daysOptions = [
 ];
 
 const statusOptions = ["Active", "Inactive"];
+const BillableOptions = [true, false];
+
 
 
 const EditBanquet = ({ editdata }) => {
@@ -54,9 +56,10 @@ const EditBanquet = ({ editdata }) => {
 
     const [banquetData, setBanquetData] = useState({
         description: "",
-        checkInTime: "",
-        checkOutTime: "",
+        // checkInTime: "",
+        // checkOutTime: "",
         maxAllowedPerRoom: "",
+        minAllowedPerRoom: "",
         priceRange: { minPrice: "", maxPrice: "" },
         pricingDetails: [{ days: [], timeSlots: [{ start: "", end: "" }], price: "" }],
         specialDayTariff: [{ special_day_name: "", startDate: "", endDate: "", extraCharge: "" }],
@@ -73,6 +76,7 @@ const EditBanquet = ({ editdata }) => {
         features: { smokingAllowed: false, petFriendly: false, accessible: false },
         status: "Active",
         pricingDetailDescription: "",
+        billable: null
     });
 
     const [images, setImages] = useState([]);
@@ -198,7 +202,7 @@ const EditBanquet = ({ editdata }) => {
 
     const handleUploadImage = async (event) => {
         const files = Array.from(event.target.files); // Convert FileList to an array
-        const maxSize = 100 * 1024; // 100KB in bytes
+        const maxSize = 100 * 1024 * 1024; // 20 MB in bytes
 
         if (!files || files.length === 0) {
             showToast("No files selected.", "error");
@@ -546,9 +550,10 @@ const EditBanquet = ({ editdata }) => {
                             onChange={(value) => setBanquetData({ ...banquetData, description: value })}
                             style={{ height: "150px", marginBottom: "80px" }}
                         />
-                        <TextField label="Check-In Time" type="time" fullWidth margin="dense" name="checkInTime" value={banquetData.checkInTime || ""} onChange={handleInputChange} />
-                        <TextField label="Check-Out Time" type="time" fullWidth margin="dense" name="checkOutTime" value={banquetData.checkOutTime || ""} onChange={handleInputChange} />
-                        <TextField label="Max Allowed Per Room" fullWidth margin="dense" name="maxAllowedPerRoom" value={banquetData.maxAllowedPerRoom || ""} onChange={handleInputChange} />
+                        {/* <TextField label="Check-In Time" type="time" fullWidth margin="dense" name="checkInTime" value={banquetData.checkInTime || ""} onChange={handleInputChange} />
+                        <TextField label="Check-Out Time" type="time" fullWidth margin="dense" name="checkOutTime" value={banquetData.checkOutTime || ""} onChange={handleInputChange} /> */}
+                        <TextField label="Min Allowed Guest" fullWidth margin="dense" name="minAllowedPerRoom" value={banquetData.minAllowedPerRoom || ""} onChange={handleInputChange} />
+                        <TextField label="Max Allowed Guest" fullWidth margin="dense" name="maxAllowedPerRoom" value={banquetData.maxAllowedPerRoom || ""} onChange={handleInputChange} />
                         <TextField label="Banquet Hall Size" fullWidth margin="dense" name="banquetHallSize" value={banquetData.banquetHallSize || ""} onChange={handleInputChange} />
                         {/* Price Range */}
                         <Box sx={{ mb: 2 }}>
@@ -931,7 +936,7 @@ const EditBanquet = ({ editdata }) => {
 
 
                         <Box sx={{ mb: 2 }}>
-                            <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Room Status</InputLabel>
+                            <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Banquet Status</InputLabel>
                             <FormControl fullWidth margin="dense" >
                                 <Select name="status" value={banquetData.status} onChange={handleInputChange} displayEmpty
                                 // startAdornment={<HotelIcon sx={{ color: "gray", mr: 1 }} />}
@@ -941,6 +946,23 @@ const EditBanquet = ({ editdata }) => {
                                     </MenuItem>
                                     {statusOptions.map((option) => (
                                         <MenuItem key={option} value={option}>{option}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
+
+                        <Box sx={{ mb: 2 }}>
+                            <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Billable Type</InputLabel>
+                            <FormControl fullWidth margin="dense" >
+                                <Select name="billable" value={banquetData.billable} onChange={handleInputChange} displayEmpty
+                                // startAdornment={<HotelIcon sx={{ color: "gray", mr: 1 }} />}
+                                >
+                                    <MenuItem value="" disabled>
+                                        Please Select Billable Type
+                                    </MenuItem>
+                                    {BillableOptions.map((option) => (
+                                        <MenuItem key={option} value={option}>{option ? "Billable" : "Non-Billable"}</MenuItem>
+
                                     ))}
                                 </Select>
                             </FormControl>

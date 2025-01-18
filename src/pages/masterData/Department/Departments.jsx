@@ -22,6 +22,7 @@ const Departments = () => {
     // Table columns definition
     const columns = [
         { accessorKey: "departmentName", header: "Department Name" },
+        { accessorKey: "email", header: "Department Email" },
         { accessorKey: "status", header: "Status" },
         {
             accessorKey: "createdAt",

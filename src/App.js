@@ -104,6 +104,9 @@ import SingleAffiliatedClub from "./pages/AffiliatedClubs/SingleAffiliatedClubs"
 import MonthlyBillings from "./pages/monthlyBilling/MonthlyBillings";
 import SingleMonthlyBilling from "./pages/monthlyBilling/SingleMonthlyBilling";
 import MonthlyBillTransactions from "./pages/MonthlyBillTransaction/MonthlyBillTransactions";
+import Designations from "./pages/masterData/Designation/Designations";
+import SingleDesignation from "./pages/masterData/Designation/SingleDesignation";
+import AddDesignation from "./pages/masterData/Designation/AddDesignation";
 
 const sideBarWidth = 250;
 
@@ -728,6 +731,32 @@ function App() {
             element={
               <ProtectedRoute>
                 <AddDepartment />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* designation routes */}
+          <Route
+            path="/designations"
+            element={
+              <ProtectedRoute>
+                <Designations />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/designation/:id"
+            element={
+              <ProtectedRoute>
+                < SingleDesignation />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/designation/add"
+            element={
+              <ProtectedRoute>
+                <AddDesignation />
               </ProtectedRoute>
             }
           />

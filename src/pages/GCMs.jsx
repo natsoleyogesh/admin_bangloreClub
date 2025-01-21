@@ -57,6 +57,10 @@ const GCMs = () => {
             header: "Designation",
         },
         {
+            accessorKey: "priority",
+            header: "Priority",
+        },
+        {
             accessorKey: "status",
             header: "Status",
         },

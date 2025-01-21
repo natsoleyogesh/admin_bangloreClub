@@ -12,7 +12,7 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import { MdEmojiEvents, MdBed, MdCategory } from "react-icons/md";
+import { MdEmojiEvents, MdBed, MdCategory, MdReceipt, MdAccountBalanceWallet, MdEvent, MdHotel, MdRoomService } from "react-icons/md";
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 
 // import NoteIcon from "../note.svg"
@@ -36,6 +36,10 @@ export const links = [
       {
         name: "Departments",
         url: "/departments",
+      },
+      {
+        name: "Designations",
+        url: "/designations",
       },
       {
         name: "Restaurants",
@@ -99,7 +103,7 @@ export const links = [
   },
   {
     name: "Billings",
-    icon: <MdEmojiEvents />,
+    icon: <MdReceipt />,
     subLinks: [
       {
         name: "Invoices",
@@ -113,7 +117,7 @@ export const links = [
   },
   {
     name: "Offline Billings",
-    icon: <MdEmojiEvents />,
+    icon: <MdAccountBalanceWallet />,
     subLinks: [
       {
         name: "Monthly Bills",
@@ -127,17 +131,13 @@ export const links = [
   },
   {
     name: "Club Events",
-    icon: <MdEmojiEvents />,
+    icon: <MdEvent />,
     subLinks: [
       {
         name: "All Events",
         url: "/events",
         icon: <MdEmojiEvents />,
       },
-      // {
-      //   name: "Add Event",
-      //   url: "/events/add",
-      // },
       {
         name: "Event Bookings",
         url: "bookings",
@@ -146,7 +146,7 @@ export const links = [
   },
   {
     name: "Room",
-    icon: <MdCategory />,
+    icon: <MdHotel />,
     subLinks: [
       {
         name: "Rooms",
@@ -160,7 +160,7 @@ export const links = [
   },
   {
     name: "Banquets",
-    icon: <MdEmojiEvents />,
+    icon: <MdRoomService />,
     subLinks: [
       {
         name: "Banquets",
@@ -274,7 +274,7 @@ export const links = [
   },
 
   {
-    name: "MemberShip Waiting List",
+    name: "Membership Waiting List",
     icon: <Group />, // Changed to a download-related icon
     subLinks: [
       {

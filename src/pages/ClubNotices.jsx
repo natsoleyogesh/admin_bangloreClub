@@ -32,6 +32,19 @@ const ClubNotices = () => {
 
     const NoticeColumns = [
         {
+            accessorKey: "bannerImage",
+            header: "Banner Image",
+            size: 100,
+            Cell: ({ cell }) => (
+                <Avatar
+                    src={`${PUBLIC_API_URI}${cell.getValue()}`}
+                    alt={"GCM Image"}
+                    variant="rounded"
+                    sx={{ width: 100, height: 100, objectFit: "cover" }}
+                />
+            ),
+        },
+        {
             accessorKey: "title",
             header: "Notice Title",
         },

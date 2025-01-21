@@ -50,9 +50,13 @@ const AddNotice = () => {
         showBanner: false
     });
     const [uploadedFile, setUploadedFile] = useState(null);
+    const [bannerImage, setBannerImage] = useState(null);
+
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const fileInput = useRef(null);
+    const imageInput = useRef(null);
+
     const navigate = useNavigate();
 
     // Handle input changes
@@ -77,6 +81,22 @@ const AddNotice = () => {
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 uploadedFile: "Only PDF, JPEG, JPG, PNG, and WEBP files are allowed.",
+            }));
+        }
+    };
+
+
+    // Handle file upload change
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+        if (file && allowedTypes.includes(file.type)) {
+            setBannerImage(file);
+            setErrors((prevErrors) => ({ ...prevErrors, bannerImage: null })); // Clear file-related errors
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                bannerImage: "Only JPEG, JPG, PNG, and WEBP files are allowed.",
             }));
         }
     };
@@ -136,6 +156,9 @@ const AddNotice = () => {
 
         if (uploadedFile) {
             formData.append("fileUrl", uploadedFile);
+        }
+        if (bannerImage) {
+            formData.append("bannerImage", bannerImage);
         }
 
         try {
@@ -271,6 +294,38 @@ const AddNotice = () => {
                         }
                         label="Show Banner In Home"
                     />
+                </Box>
+
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Upload Banner Image</InputLabel>
+                    <UploadBox onClick={() => imageInput.current.click()}>
+                        {bannerImage ? (
+                            <img
+                                src={URL.createObjectURL(bannerImage)}
+                                alt="BannerImage"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
+                        ) : (
+                            <Box sx={{ textAlign: "center" }}>
+                                <CloudUpload style={{ fontSize: "40px", color: "#027edd" }} />
+                                <Typography variant="body2" color="textSecondary">
+                                    Click to upload a BannerImage (JPEG, JPG, PNG, WEBP)
+                                </Typography>
+                            </Box>
+                        )}
+                        <input
+                            type="file"
+                            accept=".jpeg,.jpg,.png,.webp"
+                            hidden
+                            ref={imageInput}
+                            onChange={handleImageChange}
+                        />
+                    </UploadBox>
+                    {errors.bannerImage && (
+                        <Typography color="error" variant="body2">
+                            {errors.bannerImage}
+                        </Typography>
+                    )}
                 </Box>
 
                 {/* Upload File */}

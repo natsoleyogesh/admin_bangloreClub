@@ -29,6 +29,8 @@ const SingleNotice = () => {
     const [isEditDialogOpen, setEditDialogOpen] = useState(false);
     const [editNotice, setEditNotice] = useState({});
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
+
 
     // Allowed file types
     const allowedFileTypes = [
@@ -37,6 +39,13 @@ const SingleNotice = () => {
         "image/png",
         "image/webp",
         "application/pdf",
+    ];
+    // Allowed file types
+    const allowedImageTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
     ];
 
     // Fetch Notice details by ID
@@ -83,11 +92,22 @@ const SingleNotice = () => {
         }
     };
 
+    // Handle file selection
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file && allowedImageTypes.includes(file.type)) {
+            setSelectedImage(file);
+        } else {
+            showToast("Invalid file type. Only JPEG, JPG, PNG, And WEBP are allowed.", "error");
+        }
+    };
+
     // Handle dialog open/close
     const handleEditClick = () => setEditDialogOpen(true);
     const handleDialogClose = () => {
         setEditDialogOpen(false);
         setSelectedFile(null);
+        setSelectedImage(null)
     };
 
     // Handle checkbox change
@@ -107,6 +127,9 @@ const SingleNotice = () => {
 
             if (selectedFile) {
                 formData.append("fileUrl", selectedFile);
+            }
+            if (selectedImage) {
+                formData.append("bannerImage", selectedImage);
             }
 
             const response = await updateNoticeetails(id, formData);
@@ -167,6 +190,14 @@ const SingleNotice = () => {
                             </Button>
                         )}
                     </Grid> */}
+
+                    <Grid item xs={12} md={5}>
+                        <img
+                            src={`${PUBLIC_API_URI}${notice?.bannerImage}`}
+                            alt={notice.title || "Banner Image"}
+                            style={{ width: "100%", height: "300px", objectFit: "cover" }}
+                        />
+                    </Grid>
 
                     {/* Notice Details */}
                     <Grid item xs={12} md={7}>
@@ -287,9 +318,20 @@ const SingleNotice = () => {
                             label="Show Banner In Home"
                         />
                     </Box>
-
+                    <Box sx={{ mb: 2 }}>
+                        {selectedImage ? selectedImage.name : ""}
+                        <Button variant="contained" component="label" fullWidth>
+                            Upload New Banner Image (JPEG/JPG, PNG, WEBP)
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                hidden
+                                onChange={handleImageChange}
+                            />
+                        </Button>
+                    </Box>
                     <Button variant="contained" component="label" fullWidth>
-                        Upload New File (JPEG, PNG, WEBP, PDF)
+                        Upload New File (JPEG/JPG, PNG, WEBP, PDF)
                         <input
                             type="file"
                             accept="image/jpeg,image/jpg,image/png,image/webp,application/pdf"
@@ -297,6 +339,8 @@ const SingleNotice = () => {
                             onChange={handleFileChange}
                         />
                     </Button>
+                    {selectedFile ? selectedFile.name : ""}
+
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} color="secondary">

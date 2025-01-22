@@ -118,12 +118,18 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { PUBLIC_API_URI } from "../../api/config";
 import { showToast } from "../../api/toast";
+import { useTheme } from "@mui/material";
 
 const ProfileMenu = ({ role }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   // const [role, setRole] = React.useState('')
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+
+  const theme = useTheme();
+
+  const currentTheme = theme.palette.mode;
+
 
   // Retrieve the user role from localStorage or sessionStorage
   // const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
@@ -244,7 +250,9 @@ const ProfileMenu = ({ role }) => {
         >
           <Avatar
             sx={{ width: 32, height: 32 }}
-            src="/images/avatars/profile-avatar.png"
+            // src="/images/avatars/profile-avatar.png"
+            src="/favicon.png"
+
           />
         </IconButton>
       </Tooltip>

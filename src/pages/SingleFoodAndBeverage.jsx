@@ -76,7 +76,7 @@ const SingleFoodAndBeverage = () => {
                         <strong>Timings:</strong>
                         {foodAndBeverage.timings?.map((timing, i) => (
                             <div key={i}>
-                                {timing.startDay} - {timing.endDay}, {timing.startTime} - {timing.endTime}
+                                {timing.menu} - {timing.menuType}:- {timing.startDay} - {timing.endDay}, {timing.startTime} - {timing.endTime}
                             </div>
                         ))}
                     </Typography>

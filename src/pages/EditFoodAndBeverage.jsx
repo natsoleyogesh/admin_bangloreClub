@@ -16,11 +16,15 @@ import {
 } from "@mui/material";
 import { Delete, Save } from "@mui/icons-material";
 import { deleteFoodAndBeverage, deleteFoodAndbeverageImage, fetchEditFoodAndBeverageDetails, updateFoodAndBeverageDetails, uploadFoodAndbeveragesImage } from "../api/foodAndBeverage";
-import { PUBLIC_API_URI } from "../api/config";
+import { formatTo24Hour, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import ReactQuill from "react-quill";
+import { FiTrash } from "react-icons/fi";
 
 const dayOptions = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const menuOption = ["Buffet Menu", "A la carte Menu", "Both Menu"];
+const menuTypeOption = ["Breakfast", "Lunch", "Dinner", "Brunch", "Snacks", "Beverages", "Fine Dining", "Cafe Bistro", "Bar Lounge"]
+
 
 const EditFoodAndBeverage = ({ categoryId, isOpen, onClose, onSave }) => {
     const [editData, setEditData] = useState({});
@@ -90,7 +94,7 @@ const EditFoodAndBeverage = ({ categoryId, isOpen, onClose, onSave }) => {
             ...prev,
             timings: [
                 ...prev.timings,
-                { startDay: "", endDay: "", startTime: "", endTime: "" },
+                { menu: "Buffet Menu", menuType: "Breakfast", startDay: "Mon", endDay: "Sun", startTime: "09:00", endTime: "21:00" },
             ],
         }));
     };
@@ -171,12 +175,14 @@ const EditFoodAndBeverage = ({ categoryId, isOpen, onClose, onSave }) => {
                     <Typography variant="h6" sx={{ mb: 2 }}>
                         General Information
                     </Typography>
-                    <ReactQuill
-                        value={editData.description || ""}
-                        onChange={handleDescriptionChange}
-                        placeholder="Enter Description"
-                        style={{ height: "150px", borderRadius: "8px" }}
-                    />
+                    <Box sx={{ mb: 2 }}>
+                        <ReactQuill
+                            value={editData.description || ""}
+                            onChange={handleDescriptionChange}
+                            placeholder="Enter Description"
+                            style={{ height: "150px", borderRadius: "8px", marginBottom: "80px" }}
+                        />
+                    </Box>
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="subtitle1">Banner Images:</Typography>
                         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mt: 2 }}>
@@ -244,58 +250,196 @@ const EditFoodAndBeverage = ({ categoryId, isOpen, onClose, onSave }) => {
                         </Button>
                     </Box>
                 </Box>
+                {/* <Box sx={{ mb: 4 }}>
+                    <Typography variant="h6">Timings</Typography>
+                    {editData?.timings?.map((timing, timingIndex) => (
+                        <Box key={timingIndex} sx={{ display: "flex", gap: 2, mt: 2 }}>
+                            <FormControl fullWidth >
+                                <InputLabel>Menu</InputLabel>
+                                <Select
+                                    value={timing.menu}
+                                    onChange={(e) => handleTimingChange(timingIndex, "menu", e.target.value)}
+                                >
+                                    {menuOption.map((menu) => (
+                                        <MenuItem key={menu} value={menu}>
+                                            {menu}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth >
+                                <InputLabel>Menu Type</InputLabel>
+                                <Select
+                                    value={timing.menuType}
+                                    onChange={(e) => handleTimingChange(timingIndex, "menuType", e.target.value)}
+                                >
+                                    {menuTypeOption.map((menuType) => (
+                                        <MenuItem key={menuType} value={menuType}>
+                                            {menuType}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth >
+                                <InputLabel>Start Day</InputLabel>
+                                <Select
+                                    value={timing.startDay}
+                                    onChange={(e) => handleTimingChange(timingIndex, "startDay", e.target.value)}
+                                >
+                                    {dayOptions.map((day) => (
+                                        <MenuItem key={day} value={day}>
+                                            {day}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            <FormControl fullWidth>
+                                <InputLabel>End Day</InputLabel>
+                                <Select
+                                    value={timing.endDay}
+                                    onChange={(e) => handleTimingChange(timingIndex, "endDay", e.target.value)}
+                                >
+                                    {dayOptions.map((day) => (
+                                        <MenuItem key={day} value={day}>
+                                            {day}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            <TextField
+                                label="Start Time"
+                                type="time"
+                                value={timing.startTime}
+                                onChange={(e) => handleTimingChange(timingIndex, "startTime", formatTo24Hour(e.target.value))}
+                                placeholder="e.g., 12:00 AM"
+                                fullWidth
+                                InputLabelProps={{
+                                    shrink: false, // Ensures the label doesn't overlap the input
+                                }}
+                            />
+
+                            <TextField
+                                label="End Time"
+                                type="time"
+                                value={timing.endTime}
+                                onChange={(e) => handleTimingChange(timingIndex, "endTime", formatTo24Hour(e.target.value))}
+                                placeholder="e.g., 11:00 PM"
+                                fullWidth
+                                InputLabelProps={{
+                                    shrink: false, // Ensures the label doesn't overlap the input
+                                }}
+                            />
+
+
+                            <IconButton color="error" onClick={() => removeTiming(timingIndex)}>
+                                <FiTrash />
+                            </IconButton>
+                        </Box>
+                    ))}
+                    <Button variant="contained" onClick={addTiming} sx={{ mt: 2 }}>
+                        Add Timing
+                    </Button>
+                </Box> */}
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="h6">Timings</Typography>
                     {editData?.timings?.map((timing, timingIndex) => (
                         <Box key={timingIndex} sx={{ mt: 2 }}>
-                            <TextField
-                                label="Start Day"
-                                value={timing.startDay}
-                                onChange={(e) =>
-                                    handleTimingChange(timingIndex, "startDay", e.target.value)
-                                }
-                                fullWidth
-                            />
-                            <TextField
-                                label="End Day"
-                                value={timing.endDay}
-                                onChange={(e) =>
-                                    handleTimingChange(timingIndex, "endDay", e.target.value)
-                                }
-                                fullWidth
-                                sx={{ mt: 2 }}
-                            />
-                            <TextField
-                                label="Start Time"
-                                value={timing.startTime}
-                                onChange={(e) =>
-                                    handleTimingChange(timingIndex, "startTime", e.target.value)
-                                }
-                                fullWidth
-                                sx={{ mt: 2 }}
-                            />
-                            <TextField
-                                label="End Time"
-                                value={timing.endTime}
-                                onChange={(e) =>
-                                    handleTimingChange(timingIndex, "endTime", e.target.value)
-                                }
-                                fullWidth
-                                sx={{ mt: 2 }}
-                            />
-                            <Button
-                                color="error"
-                                onClick={() => removeTiming(timingIndex)}
-                                sx={{ mt: 2 }}
-                            >
-                                Remove Timing
-                            </Button>
+                            <Box sx={{ display: "flex", gap: 2 }}>
+                                <FormControl fullWidth>
+                                    <InputLabel>Menu</InputLabel>
+                                    <Select
+                                        value={timing.menu}
+                                        onChange={(e) => handleTimingChange(timingIndex, "menu", e.target.value)}
+                                    >
+                                        {menuOption.map((menu) => (
+                                            <MenuItem key={menu} value={menu}>
+                                                {menu}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+
+                                <FormControl fullWidth>
+                                    <InputLabel>Menu Type</InputLabel>
+                                    <Select
+                                        value={timing.menuType}
+                                        onChange={(e) => handleTimingChange(timingIndex, "menuType", e.target.value)}
+                                    >
+                                        {menuTypeOption.map((menuType) => (
+                                            <MenuItem key={menuType} value={menuType}>
+                                                {menuType}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+
+                            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+                                <FormControl fullWidth>
+                                    <InputLabel>Start Day</InputLabel>
+                                    <Select
+                                        value={timing.startDay}
+                                        onChange={(e) => handleTimingChange(timingIndex, "startDay", e.target.value)}
+                                    >
+                                        {dayOptions.map((day) => (
+                                            <MenuItem key={day} value={day}>
+                                                {day}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+
+                                <FormControl fullWidth>
+                                    <InputLabel>End Day</InputLabel>
+                                    <Select
+                                        value={timing.endDay}
+                                        onChange={(e) => handleTimingChange(timingIndex, "endDay", e.target.value)}
+                                    >
+                                        {dayOptions.map((day) => (
+                                            <MenuItem key={day} value={day}>
+                                                {day}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+
+                            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+                                <TextField
+                                    label="Start Time"
+                                    type="time"
+                                    value={timing.startTime}
+                                    onChange={(e) => handleTimingChange(timingIndex, "startTime", formatTo24Hour(e.target.value))}
+                                    fullWidth
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+
+                                <TextField
+                                    label="End Time"
+                                    type="time"
+                                    value={timing.endTime}
+                                    onChange={(e) => handleTimingChange(timingIndex, "endTime", formatTo24Hour(e.target.value))}
+                                    fullWidth
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+
+                                <IconButton color="error" onClick={() => removeTiming(timingIndex)}>
+                                    <FiTrash />
+                                </IconButton>
+                            </Box>
                         </Box>
                     ))}
                     <Button variant="contained" onClick={addTiming} sx={{ mt: 2 }}>
                         Add Timing
                     </Button>
                 </Box>
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="secondary">

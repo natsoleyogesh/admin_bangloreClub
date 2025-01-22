@@ -22,7 +22,7 @@ import { showToast } from "../api/toast";
 import ReactQuill from "react-quill";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveRestaurants } from "../api/masterData/restaurant";
-import { formatTo12Hour } from "../api/config";
+import { formatTo12Hour, formatTo24Hour } from "../api/config";
 
 const UploadBox = styled(Box)(({ theme }) => ({
     marginTop: 20,
@@ -43,13 +43,15 @@ const UploadBox = styled(Box)(({ theme }) => ({
 
 const statusOptions = ["Active", "Inactive"];
 const dayOptions = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const menuOption = ["Buffet Menu", "A la carte Menu", "Both Menu"];
+const menuTypeOption = ["Breakfast", "Lunch", "Dinner", "Brunch", "Snacks", "Beverages", "Fine Dining", "Cafe Bistro", "Bar Lounge"]
 
 const AddFoodAndBeverage = () => {
     const [formData, setFormData] = useState({
         name: "",
         description: "",
         status: "Active",
-        timings: [{ startDay: "Mon", endDay: "Sun", startTime: "09:00", endTime: "21:00" }],
+        timings: [{ menu: "Buffet Menu", menuType: "Breakfast", startDay: "Mon", endDay: "Sun", startTime: "09:00", endTime: "21:00" }],
         extansion_no: "",
         location: "",
     });
@@ -104,7 +106,7 @@ const AddFoodAndBeverage = () => {
         if (!formData.extansion_no) formErrors.extansion_no = "Extension number is required.";
         if (!formData.description) formErrors.description = "Description is required.";
 
-        if (formData.timings.some((timing) => !timing.startDay || !timing.endDay || !timing.startTime || !timing.endTime)) {
+        if (formData.timings.some((timing) => !timing.menu || !timing.menuType || !timing.startDay || !timing.endDay || !timing.startTime || !timing.endTime)) {
             formErrors.timings = "All timing fields are required.";
         }
 
@@ -134,10 +136,17 @@ const AddFoodAndBeverage = () => {
         setFormData((prev) => ({ ...prev, timings: updatedTimings }));
     };
 
+    // const handleCategoryMenuChange = (timingIndex, field, value) => {
+    //     const updatedTimings = [...formData.timings];
+    //     updatedTimings[timingIndex][field] = value;
+    //     setFormData((prev) => ({ ...prev, timings: updatedTimings }));
+    // };
+
+
     const addCategoryTiming = () => {
         setFormData((prev) => ({
             ...prev,
-            timings: [...prev.timings, { startDay: "Mon", endDay: "Sun", startTime: "09:00", endTime: "21:00" }],
+            timings: [...prev.timings, { menu: "Buffet Menu", menuType: "Breakfast", startDay: "Mon", endDay: "Sun", startTime: "09:00", endTime: "21:00" }],
         }));
     };
 
@@ -263,6 +272,32 @@ const AddFoodAndBeverage = () => {
                     {formData.timings.map((timing, timingIndex) => (
                         <Box key={timingIndex} sx={{ display: "flex", gap: 2, mt: 2 }}>
                             <FormControl fullWidth error={Boolean(errors.timings)}>
+                                <InputLabel>Menu</InputLabel>
+                                <Select
+                                    value={timing.menu}
+                                    onChange={(e) => handleDayChange(timingIndex, "menu", e.target.value)}
+                                >
+                                    {menuOption.map((menu) => (
+                                        <MenuItem key={menu} value={menu}>
+                                            {menu}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth error={Boolean(errors.timings)}>
+                                <InputLabel>Menu Type</InputLabel>
+                                <Select
+                                    value={timing.menuType}
+                                    onChange={(e) => handleDayChange(timingIndex, "menuType", e.target.value)}
+                                >
+                                    {menuTypeOption.map((menuType) => (
+                                        <MenuItem key={menuType} value={menuType}>
+                                            {menuType}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth error={Boolean(errors.timings)}>
                                 <InputLabel>Start Day</InputLabel>
                                 <Select
                                     value={timing.startDay}
@@ -294,7 +329,7 @@ const AddFoodAndBeverage = () => {
                                 label="Start Time"
                                 type="time"
                                 value={timing.startTime}
-                                onChange={(e) => handleCategoryTimingChange(timingIndex, "startTime", formatTo12Hour(e.target.value))}
+                                onChange={(e) => handleCategoryTimingChange(timingIndex, "startTime", formatTo24Hour(e.target.value))}
                                 placeholder="e.g., 12:00 AM"
                                 fullWidth
                                 InputLabelProps={{
@@ -306,7 +341,7 @@ const AddFoodAndBeverage = () => {
                                 label="End Time"
                                 type="time"
                                 value={timing.endTime}
-                                onChange={(e) => handleCategoryTimingChange(timingIndex, "endTime", formatTo12Hour(e.target.value))}
+                                onChange={(e) => handleCategoryTimingChange(timingIndex, "endTime", formatTo24Hour(e.target.value))}
                                 placeholder="e.g., 11:00 PM"
                                 fullWidth
                                 InputLabelProps={{

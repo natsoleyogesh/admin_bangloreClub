@@ -55,6 +55,21 @@ export const formatTo12Hour = (time) => {
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
 };
 
+export const formatTo24Hour = (time) => {
+    if (!time) return ""; // Return empty if no time is provided
+
+    const [timePart, period] = time.split(" ");
+    console.log(timePart, period, "period")
+    const [hours, minutes] = timePart.split(":").map(Number);
+
+    let formattedHours = period ? period.toUpperCase() === "PM" ? (hours % 12) + 12 : hours % 12 : timePart;
+    console.log(formattedHours, "formattedHours1")
+    formattedHours = formattedHours.toString().padStart(2, "0"); // Ensure two digits
+    console.log(formattedHours, "formattedHours2")
+
+    return `${formattedHours}:${minutes.toString().padStart(2, "0")}`;
+};
+
 
 export const formatDateCommon = (dateString) => {
     if (!dateString) return "N/A";

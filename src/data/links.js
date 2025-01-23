@@ -396,6 +396,7 @@ import {
   MdBed,
   MdPeopleAlt,
   MdPending,
+  MdNotificationAdd,
 } from "react-icons/md";
 import { FiHome, FiSettings } from "react-icons/fi";
 import { FaHandshake } from "react-icons/fa";
@@ -407,8 +408,16 @@ export const links = [
   {
     name: "Dashboard",
     icon: <FiHome style={iconProps} />,
-    url: "/",
-    roles: ["gate"]
+    // url: "/",
+    roles: ["admin"],
+    subLinks: [
+      {
+        name: "Dashboard",
+        url: "/",
+        icon: <FiHome style={iconProps} />,
+        roles: ["admin"],
+      },
+    ]
   },
   // MASTER DATA
   {
@@ -644,6 +653,17 @@ export const links = [
         name: "All Downloads",
         url: "/downloads",
         icon: <MdDownload style={iconProps} />,
+      },
+    ],
+  },
+  {
+    name: "Notifications",
+    icon: <MdNotificationAdd style={iconProps} />,
+    subLinks: [
+      {
+        name: "All Notifications",
+        url: "/notifications",
+        icon: <MdNotificationAdd style={iconProps} />,
       },
     ],
   },

@@ -123,9 +123,11 @@ const Notifications = () => {
         try {
             const queryParams = {
                 filterType,
-                customStartDate: customStartDate || undefined,
-                customEndDate: customEndDate || undefined,
             };
+            if (filterType === 'custom') {
+                queryParams.customStartDate = customStartDate
+                queryParams.customEndDate = customEndDate
+            }
 
             const response = await fetchAllNotifications(queryParams);
             setNotifications(response?.data?.data || []); // Set billings to the fetched data
@@ -144,6 +146,17 @@ const Notifications = () => {
 
 
 
+    // Handle filter changes
+    const handleFilterChange = (key, value) => {
+        if (key === "filterType" && value !== "custom") {
+            // Reset custom dates when filter type is not custom
+            setCustomStartDate("");
+            setCustomEndDate("");
+        }
+
+        // Update the filter type
+        setFilterType(value);
+    };
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
             {/* Header Section */}
@@ -165,12 +178,13 @@ const Notifications = () => {
                             <FormControl fullWidth size="small">
                                 <Select
                                     value={filterType}
-                                    onChange={(e) => setFilterType(e.target.value)}
+                                    // onChange={(e) => setFilterType(e.target.value)}
+                                    onChange={(e) => handleFilterChange("filterType", e.target.value)}
                                 >
-                                    <MenuItem value="60seconds">60 Seconds</MenuItem>
-                                    <MenuItem value="10minutes">Last 7 Days</MenuItem>
-                                    <MenuItem value="30minutes">Last Month</MenuItem>
-                                    <MenuItem value="1hour">Last 3 Months</MenuItem>
+                                    <MenuItem value="60seconds">Last Minutes</MenuItem>
+                                    <MenuItem value="10minutes">Last 10 Minutes</MenuItem>
+                                    <MenuItem value="30minutes">Last 30 Minutes</MenuItem>
+                                    <MenuItem value="1hour">Last Hour</MenuItem>
                                     <MenuItem value="custom">Custom</MenuItem>
                                     <MenuItem value="all">All</MenuItem>
                                 </Select>
@@ -187,6 +201,8 @@ const Notifications = () => {
                                         size="small"
                                         value={customStartDate}
                                         onChange={(e) => setCustomStartDate(e.target.value)}
+                                        // onChange={(e) => handleFilterChange("customStartDate", e.target.value)}
+
                                         InputLabelProps={{ shrink: false }}
                                     />
                                 </Grid>
@@ -199,6 +215,8 @@ const Notifications = () => {
                                         size="small"
                                         value={customEndDate}
                                         onChange={(e) => setCustomEndDate(e.target.value)}
+                                        // onChange={(e) => handleFilterChange("customEndDate", e.target.value)}
+
                                         InputLabelProps={{ shrink: false }}
                                     />
                                 </Grid>

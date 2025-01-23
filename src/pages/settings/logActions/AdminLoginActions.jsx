@@ -106,9 +106,20 @@ const AdminLoginActions = () => {
         setSelectedAction(null);
     };
 
+    // // Handle filter changes
+    // const handleFilterChange = (key, value) => {
+    //     setFilters((prev) => ({ ...prev, [key]: value }));
+    // };
     // Handle filter changes
     const handleFilterChange = (key, value) => {
-        setFilters((prev) => ({ ...prev, [key]: value }));
+        setFilters((prev) => {
+            const updatedFilters = { ...prev, [key]: value };
+            if (key === "filter" && value !== "custom") {
+                updatedFilters.startDate = "";
+                updatedFilters.endDate = "";
+            }
+            return updatedFilters;
+        });
     };
 
     // useEffect(() => {

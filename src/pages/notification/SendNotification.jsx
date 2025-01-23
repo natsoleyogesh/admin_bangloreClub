@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { sendNotification } from "../../api/notification";
 import ReactQuill from "react-quill";
 import { showToast } from "../../api/toast";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const departmentOptions = ["Offer", "Event"]; // Updated department options
 const sendToOptions = ["All"]; // Send To dropdown with only one option
@@ -121,6 +122,7 @@ const SendNotification = () => {
 
     return (
         <Box sx={{ pt: "70px", pb: "20px", px: "10px" }}>
+            <Breadcrumb />
             <Typography variant="h5" sx={{ mb: "20px", textAlign: "center", fontWeight: 600 }}>
                 Send Custom Notification
             </Typography>

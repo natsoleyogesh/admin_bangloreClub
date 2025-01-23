@@ -1,12 +1,16 @@
 import axios from 'axios';
 import { PUBLIC_API_URI } from './config';
 
+const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
 const axiosInstance = axios.create({
     baseURL: PUBLIC_API_URI, // Change this to your API base URL
     headers: {
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
     },
 });
+
 
 // Common GET Request Function
 export const getRequest = async (endpoint) => {

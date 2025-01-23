@@ -107,6 +107,9 @@ import MonthlyBillTransactions from "./pages/MonthlyBillTransaction/MonthlyBillT
 import Designations from "./pages/masterData/Designation/Designations";
 import SingleDesignation from "./pages/masterData/Designation/SingleDesignation";
 import AddDesignation from "./pages/masterData/Designation/AddDesignation";
+import SmtpSecret from "./pages/settings/smtpSecret/SmtpSecret";
+import UserLoginActions from "./pages/settings/logActions/UserLoginActions";
+import AdminLoginActions from "./pages/settings/logActions/AdminLoginActions";
 
 const sideBarWidth = 250;
 
@@ -991,10 +994,26 @@ function App() {
 
 
           <Route
-            path="/settings"
+            path="/smtpSecret"
             element={
               <ProtectedRoute>
-                <Settings />
+                <SmtpSecret />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-action-logs"
+            element={
+              <ProtectedRoute>
+                <UserLoginActions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-action-logs"
+            element={
+              <ProtectedRoute>
+                <AdminLoginActions />
               </ProtectedRoute>
             }
           />

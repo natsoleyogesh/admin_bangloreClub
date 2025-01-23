@@ -365,260 +365,18 @@
 //   //   ],
 //   // },
 
-//   // {
-//   //   name: "Settings",
-//   //   icon: <FiSettings />,
-//   //   url: "/settings",
-//   // },
-//   // {
+// {
+//   name: "Settings",
+//   icon: <FiSettings />,
+//   url: "/settings",
+// },
+// // {
 //   //   name: "Inbox",
 //   //   icon: <FiMail />,
 //   //   url: "/inbox",
 //   // },
 // ];
 
-
-// import { AddCircle, Download, Gavel, Group, ListAlt, LocalOffer, NotificationsActive, QuestionAnswer, RestaurantMenu, School } from "@mui/icons-material";
-// import { BsCurrencyDollar } from "react-icons/bs";
-// import { FaHandshake, FaShare } from "react-icons/fa";
-// import {
-//   FiHome,
-//   FiLayers,
-//   FiMail,
-//   FiMessageCircle,
-//   FiSettings,
-//   FiShoppingBag,
-//   FiShoppingCart,
-//   FiUser,
-//   FiUsers,
-// } from "react-icons/fi";
-// import { MdEmojiEvents, MdBed, MdCategory, MdReceipt, MdAccountBalanceWallet, MdEvent, MdHotel, MdRoomService, MdLocalOffer, MdRestaurantMenu, MdNotificationsActive, MdGroup, MdGavel, MdSchool, MdDownload } from "react-icons/md";
-// import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
-
-// export const links = [
-//   {
-//     name: "Dashboard",
-//     icon: <FiHome />,
-//     url: "/",
-//   },
-//   // MASTER DATA 
-//   {
-//     name: "Masters",
-//     icon: <MdEmojiEvents />,
-//     subLinks: [
-//       {
-//         name: "Members",
-//         url: "/members",
-//         icon: <MdEmojiEvents />,
-//       },
-//       {
-//         name: "Departments",
-//         url: "/departments",
-//       },
-//       {
-//         name: "Designations",
-//         url: "/designations",
-//       },
-//       {
-//         name: "Restaurants",
-//         url: "/restaurants",
-//       },
-//       {
-//         name: "Amenities",
-//         url: "/amenities",
-//       },
-//       {
-//         name: "Tax Types",
-//         url: "/taxTypes",
-//       },
-//       {
-//         name: "Banquet Categories",
-//         url: "/banquet-categories",
-//       },
-//       {
-//         name: "Room Categories",
-//         url: "/categories",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Affiliated Clubs",
-//     icon: <SportsSoccerIcon />,
-//     subLinks: [
-//       {
-//         name: "All Affiliated Clubs",
-//         url: "/affiliated-clubs",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Billings",
-//     icon: <MdReceipt />,
-//     subLinks: [
-//       {
-//         name: "Invoices",
-//         url: "/billings",
-//       },
-//       {
-//         name: "Transactions",
-//         url: "/transactions",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Offline Billings",
-//     icon: <MdAccountBalanceWallet />,
-//     subLinks: [
-//       {
-//         name: "Monthly Bills",
-//         url: "/monthly-billings",
-//       },
-//       {
-//         name: "Monthly Bill Transactions",
-//         url: "/monthly-bill-transactions",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Club Events",
-//     icon: <MdEvent />,
-//     subLinks: [
-//       {
-//         name: "All Events",
-//         url: "/events",
-//         icon: <MdEmojiEvents />,
-//       },
-//       {
-//         name: "Event Bookings",
-//         url: "bookings",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Room",
-//     icon: <MdHotel />,
-//     subLinks: [
-//       {
-//         name: "Rooms",
-//         url: "/roomwith-categories",
-//       },
-//       {
-//         name: "Room Bookings",
-//         url: "/room-bookings",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Banquets",
-//     icon: <MdRoomService />,
-//     subLinks: [
-//       {
-//         name: "Banquets",
-//         url: "/banquets",
-//       },
-//       {
-//         name: "Banquet Bookings",
-//         url: "/banquet-bookings",
-//       },
-//     ],
-//   },
-
-//   {
-//     name: "Offers",
-//     icon: <MdLocalOffer />,
-//     subLinks: [
-//       {
-//         name: "All Offers",
-//         url: "/offers",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Food & Beverages",
-//     icon: <MdRestaurantMenu />, // Changed to a download-related icon
-//     subLinks: [
-//       {
-//         name: "All Food & Beverages",
-//         url: "/foodAndBeverages",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Club Notices",
-//     icon: <MdNotificationsActive />, // Changed to a notifications-related icon
-//     subLinks: [
-//       {
-//         name: "All Club Notice",
-//         url: "/notices",
-//       },
-//     ],
-//   },
-
-//   {
-//     name: "Consideration Of Membership's",
-//     icon: <MdGroup />, // Changed to a download-related icon
-//     subLinks: [
-//       {
-//         name: "All COM's",
-//         url: "/coms",
-//       },
-//     ],
-//   },
-
-//   {
-//     name: "Membership Waiting List",
-//     icon: <MdGroup />, // Changed to a download-related icon
-//     subLinks: [
-//       {
-//         name: "All Application List",
-//         url: "/applications",
-//       },
-//     ],
-//   },
-
-//   {
-//     name: "Club Rules & ByeLaws",
-//     icon: <MdGavel />, // Icon for rules and byelaws
-//     subLinks: [
-//       {
-//         name: "All Club Rules/ByeLaw",
-//         url: "/allrulebyelaws",
-//       },
-//     ],
-//   },
-//   {
-//     name: "General Committee",
-//     icon: <MdGroup />, // Changed to a notifications-related icon
-//     subLinks: [
-//       {
-//         name: "All General Committee Member",
-//         url: "/gcms",
-//       },
-//     ],
-//   },
-
-//   {
-//     name: "Club HOD's",
-//     icon: <MdSchool />, // Changed to a school-related icon
-//     subLinks: [
-//       {
-//         name: "All HOD's",
-//         url: "/hods",
-//       },
-//     ],
-//   },
-//   {
-//     name: "Downloads",
-//     icon: <MdDownload />, // Changed to a download-related icon
-//     subLinks: [
-//       {
-//         name: "All Downloads",
-//         url: "/downloads",
-//       },
-//     ],
-//   },
-
-// ];
 
 import {
   MdEmojiEvents,
@@ -639,7 +397,7 @@ import {
   MdPeopleAlt,
   MdPending,
 } from "react-icons/md";
-import { FiHome } from "react-icons/fi";
+import { FiHome, FiSettings } from "react-icons/fi";
 import { FaHandshake } from "react-icons/fa";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 
@@ -650,6 +408,7 @@ export const links = [
     name: "Dashboard",
     icon: <FiHome style={iconProps} />,
     url: "/",
+    roles: ["gate"]
   },
   // MASTER DATA
   {
@@ -885,6 +644,31 @@ export const links = [
         name: "All Downloads",
         url: "/downloads",
         icon: <MdDownload style={iconProps} />,
+      },
+    ],
+  },
+  {
+    name: "Settings",
+    icon: <FiSettings style={iconProps} />,
+    roles: ["admin"],
+    subLinks: [
+      {
+        name: "SMTP Setting",
+        url: "/smtpSecret",
+        icon: <FiSettings style={iconProps} />,
+        roles: ["admin"], // Only accessible to admin
+      },
+      {
+        name: "User Action Logs",
+        url: "/user-action-logs",
+        icon: <FiSettings style={iconProps} />,
+        roles: ["admin"], // Only accessible to admin
+      },
+      {
+        name: "Admin Action Logs",
+        url: "/admin-action-logs",
+        icon: <FiSettings style={iconProps} />,
+        roles: ["admin"], // Only accessible to admin
       },
     ],
   },

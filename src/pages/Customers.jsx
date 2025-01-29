@@ -45,6 +45,11 @@ const Customers = () => {
       header: "Phone Number",
     },
     {
+      accessorKey: "relation",
+      header: "Relation ship",
+      Cell: ({ cell }) => cell.getValue() || "N/A",
+    },
+    {
       accessorKey: "address", //normal accessorKey
       header: "Address",
     },

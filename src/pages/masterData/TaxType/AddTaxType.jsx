@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import {
     Box,
     Button,
+    Checkbox,
     CircularProgress,
     FormControl,
+    FormControlLabel,
     InputAdornment,
     InputLabel,
     MenuItem,
@@ -25,6 +27,7 @@ const AddTaxType = () => {
         name: "",
         percentage: "",
         status: "active",
+        applyKids: false
     });
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -80,6 +83,12 @@ const AddTaxType = () => {
         return true;
     };
 
+
+    // Handle checkbox changes for showExclusive
+    const handleCheckboxChange = (e) => {
+        const { name, checked } = e.target;
+        setTaxTypeData((prev) => ({ ...prev, [name]: checked }));
+    };
 
     // Handle form submission
     const handleSubmit = async () => {
@@ -146,7 +155,12 @@ const AddTaxType = () => {
                         fullWidth
                         name="percentage"
                         value={taxTypeData.percentage}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                handleInputChange(e); // Call your existing input handler
+                            }
+                        }}
                         error={!!errors.percentage}
                         helperText={errors.percentage}
                         type="number"
@@ -154,6 +168,10 @@ const AddTaxType = () => {
                             startAdornment: (
                                 <InputAdornment position="start">%</InputAdornment>
                             ),
+                        }}
+                        inputProps={{
+                            min: 0, // Set minimum value
+                            max: 100, // Set maximum value
                         }}
                     />
                 </Box>
@@ -174,6 +192,23 @@ const AddTaxType = () => {
                             ))}
                         </Select>
                     </FormControl>
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                name="applyKids"
+                                checked={taxTypeData.applyKids}
+                                onChange={handleCheckboxChange}
+                            />
+                        }
+                        label="Tax Applicable In Kids"
+                    />
+                    {taxTypeData.applyKids && (
+                        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                            Note: If "Tax Applicable In Kids" is selected, this Tax will be displayed in the Kids Booking.
+                        </Typography>
+                    )}
                 </Box>
 
                 {/* Submit Button */}

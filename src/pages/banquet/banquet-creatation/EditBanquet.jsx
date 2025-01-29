@@ -76,7 +76,8 @@ const EditBanquet = ({ editdata }) => {
         features: { smokingAllowed: false, petFriendly: false, accessible: false },
         status: "Active",
         pricingDetailDescription: "",
-        billable: null
+        billable: null,
+        guideline: ""
     });
 
     const [images, setImages] = useState([]);
@@ -143,6 +144,7 @@ const EditBanquet = ({ editdata }) => {
                 },
                 features: banquet.features || { smokingAllowed: false, petFriendly: false, accessible: false },
                 pricingDetailDescription: banquet.pricingDetailDescription || "",
+                guideline: banquet.guideline || ""
             }));
 
             setImages(banquet.images || []);
@@ -550,11 +552,32 @@ const EditBanquet = ({ editdata }) => {
                             onChange={(value) => setBanquetData({ ...banquetData, description: value })}
                             style={{ height: "150px", marginBottom: "80px" }}
                         />
+
+                        <Box sx={{ mb: 3 }}>
+                            <InputLabel sx={{ fontWeight: "bold", mb: 1 }}>Banquet Guidelines</InputLabel>
+                            <ReactQuill
+                                value={banquetData.guideline}
+                                onChange={(value) =>
+                                    setBanquetData((prev) => ({ ...prev, guideline: value }))
+                                }
+                                placeholder="Describe the banquet guidelines"
+                                style={{ height: "120px", borderRadius: "8px", marginBottom: "100px" }}
+                            />
+                        </Box>
                         {/* <TextField label="Check-In Time" type="time" fullWidth margin="dense" name="checkInTime" value={banquetData.checkInTime || ""} onChange={handleInputChange} />
                         <TextField label="Check-Out Time" type="time" fullWidth margin="dense" name="checkOutTime" value={banquetData.checkOutTime || ""} onChange={handleInputChange} /> */}
-                        <TextField label="Min Allowed Guest" fullWidth margin="dense" name="minAllowedPerRoom" value={banquetData.minAllowedPerRoom || ""} onChange={handleInputChange} />
-                        <TextField label="Max Allowed Guest" fullWidth margin="dense" name="maxAllowedPerRoom" value={banquetData.maxAllowedPerRoom || ""} onChange={handleInputChange} />
-                        <TextField label="Banquet Hall Size" fullWidth margin="dense" name="banquetHallSize" value={banquetData.banquetHallSize || ""} onChange={handleInputChange} />
+                        <TextField type="number"
+                            inputProps={{
+                                min: 0, // Set minimum value
+                            }} label="Min Allowed Guest" fullWidth margin="dense" name="minAllowedPerRoom" value={banquetData.minAllowedPerRoom || ""} onChange={handleInputChange} />
+                        <TextField type="number"
+                            inputProps={{
+                                min: 0, // Set minimum value
+                            }} label="Max Allowed Guest" fullWidth margin="dense" name="maxAllowedPerRoom" value={banquetData.maxAllowedPerRoom || ""} onChange={handleInputChange} />
+                        <TextField type="number"
+                            inputProps={{
+                                min: 0, // Set minimum value
+                            }} label="Banquet Hall Size" fullWidth margin="dense" name="banquetHallSize" value={banquetData.banquetHallSize || ""} onChange={handleInputChange} />
                         {/* Price Range */}
                         <Box sx={{ mb: 2 }}>
                             <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Min Price</InputLabel>
@@ -568,6 +591,10 @@ const EditBanquet = ({ editdata }) => {
 
                                 InputProps={{
                                     startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
+                                }}
+                                type="number"
+                                inputProps={{
+                                    min: 0, // Set minimum value
                                 }}
                             />
                         </Box>
@@ -583,6 +610,10 @@ const EditBanquet = ({ editdata }) => {
 
                                 InputProps={{
                                     startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
+                                }}
+                                type="number"
+                                inputProps={{
+                                    min: 0, // Set minimum value
                                 }}
                             />
                         </Box>
@@ -657,9 +688,19 @@ const EditBanquet = ({ editdata }) => {
                                 <TextField
                                     fullWidth
                                     name="before7Days"
-                                    type="text"
+                                    type="number"
                                     value={banquetData.cancellationPolicy.before7Days}
-                                    onChange={handleCancalletionChange}
+                                    // onChange={handleCancalletionChange}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                            handleCancalletionChange(e); // Call your existing input handler
+                                        }
+                                    }}
+                                    inputProps={{
+                                        min: 0, // Set minimum value
+                                        max: 100, // Set maximum value
+                                    }}
                                     error={!!errors.before7Days}
                                     helperText={errors.before7Days}
                                 />
@@ -671,9 +712,19 @@ const EditBanquet = ({ editdata }) => {
                                 <TextField
                                     fullWidth
                                     name="between7To2Days"
-                                    type="text"
+                                    type="number"
                                     value={banquetData.cancellationPolicy.between7To2Days}
-                                    onChange={handleCancalletionChange}
+                                    // onChange={handleCancalletionChange}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                            handleCancalletionChange(e); // Call your existing input handler
+                                        }
+                                    }}
+                                    inputProps={{
+                                        min: 0, // Set minimum value
+                                        max: 100, // Set maximum value
+                                    }}
                                     error={!!errors.between7To2Days}
                                     helperText={errors.between7To2Days}
                                 />
@@ -685,9 +736,19 @@ const EditBanquet = ({ editdata }) => {
                                 <TextField
                                     fullWidth
                                     name="between48To24Hours"
-                                    type="text"
+                                    type="number"
                                     value={banquetData.cancellationPolicy.between48To24Hours}
-                                    onChange={handleCancalletionChange}
+                                    // onChange={handleCancalletionChange}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                            handleCancalletionChange(e); // Call your existing input handler
+                                        }
+                                    }}
+                                    inputProps={{
+                                        min: 0, // Set minimum value
+                                        max: 100, // Set maximum value
+                                    }}
                                     error={!!errors.between48To24Hours}
                                     helperText={errors.between48To24Hours}
                                 />
@@ -699,9 +760,19 @@ const EditBanquet = ({ editdata }) => {
                                 <TextField
                                     fullWidth
                                     name="lessThan24Hours"
-                                    type="text"
+                                    type="number"
                                     value={banquetData.cancellationPolicy.lessThan24Hours}
-                                    onChange={handleCancalletionChange}
+                                    // onChange={handleCancalletionChange}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                            handleCancalletionChange(e); // Call your existing input handler
+                                        }
+                                    }}
+                                    inputProps={{
+                                        min: 0, // Set minimum value
+                                        max: 100, // Set maximum value
+                                    }}
                                     error={!!errors.lessThan24Hours}
                                     helperText={errors.lessThan24Hours}
                                 />
@@ -751,10 +822,20 @@ const EditBanquet = ({ editdata }) => {
                                     <TextField
                                         fullWidth
                                         name={`specialDayTariff[${index}][extraCharge]`}
-                                        label="Extra Charge"
+                                        label="Extra Charge In %"
                                         type="number"
                                         value={tariff.extraCharge}
-                                        onChange={handleSpecialDayTariffChange}
+                                        // onChange={handleSpecialDayTariffChange}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                                handleSpecialDayTariffChange(e); // Call your existing input handler
+                                            }
+                                        }}
+                                        inputProps={{
+                                            min: 0, // Set minimum value
+                                            max: 100, // Set maximum value
+                                        }}
                                     />
 
                                     {/* Description */}
@@ -892,6 +973,7 @@ const EditBanquet = ({ editdata }) => {
                                     {/* Price */}
                                     <Box sx={{ mb: 2 }}>
                                         <TextField
+                                            type="number"
                                             label="Price"
                                             placeholder="Enter price"
                                             value={detail.price}
@@ -902,6 +984,9 @@ const EditBanquet = ({ editdata }) => {
                                             helperText={errors[`price_${index}`]}
                                             fullWidth
                                             size="small"
+                                            inputProps={{
+                                                min: 0, // Set minimum value
+                                            }}
                                         />
                                     </Box>
 

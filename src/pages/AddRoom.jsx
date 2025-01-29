@@ -747,6 +747,10 @@ const AddRoom = () => {
                         InputProps={{
                             startAdornment: <MeetingRoomIcon sx={{ color: "gray", mr: 1 }} />,
                         }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
+                        }}
                     />
                 </Box>
                 <Box sx={{ mb: 2 }}>
@@ -762,6 +766,10 @@ const AddRoom = () => {
                         helperText={errors.extraBedPrice}
                         InputProps={{
                             startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
+                        }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
                         }}
                     />
                 </Box>
@@ -814,6 +822,10 @@ const AddRoom = () => {
                         InputProps={{
                             startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
                         }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
+                        }}
                     />
                 </Box>
                 <Box sx={{ mb: 2 }}>
@@ -830,6 +842,10 @@ const AddRoom = () => {
                         InputProps={{
                             startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
                         }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
+                        }}
                     />
                 </Box>
                 <Box sx={{ mb: 2 }}>
@@ -845,6 +861,10 @@ const AddRoom = () => {
                         helperText={errors.roomSize}
                         InputProps={{
                             startAdornment: <SquareFootIcon sx={{ color: "gray", mr: 1 }} />,
+                        }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
                         }}
                     />
                 </Box>
@@ -957,6 +977,10 @@ const AddRoom = () => {
                                             InputProps={{
                                                 startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
                                             }}
+                                            type="number"
+                                            inputProps={{
+                                                min: 0, // Set minimum value
+                                            }}
                                         />
                                         <TextField
                                             placeholder="Enter Description"
@@ -1013,11 +1037,21 @@ const AddRoom = () => {
                         <TextField
                             fullWidth
                             name="before7Days"
-                            type="text"
+                            type="number"
                             value={roomData.cancellationPolicy.before7Days}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
                             error={!!errors.before7Days}
                             helperText={errors.before7Days}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                         />
                     </Box>
 
@@ -1027,11 +1061,22 @@ const AddRoom = () => {
                         <TextField
                             fullWidth
                             name="between7To2Days"
-                            type="text"
+                            type="number"
                             value={roomData.cancellationPolicy.between7To2Days}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                             error={!!errors.between7To2Days}
                             helperText={errors.between7To2Days}
+
                         />
                     </Box>
 
@@ -1041,9 +1086,19 @@ const AddRoom = () => {
                         <TextField
                             fullWidth
                             name="between48To24Hours"
-                            type="text"
+                            type="number"
                             value={roomData.cancellationPolicy.between48To24Hours}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                             error={!!errors.between48To24Hours}
                             helperText={errors.between48To24Hours}
                         />
@@ -1055,9 +1110,19 @@ const AddRoom = () => {
                         <TextField
                             fullWidth
                             name="lessThan24Hours"
-                            type="text"
+                            type="number"
                             value={roomData.cancellationPolicy.lessThan24Hours}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                             error={!!errors.lessThan24Hours}
                             helperText={errors.lessThan24Hours}
                         />
@@ -1115,7 +1180,17 @@ const AddRoom = () => {
                                 label="Extra Charge In %"
                                 type="number"
                                 value={tariff.extraCharge}
-                                onChange={handleChange}
+                                // onChange={handleChange}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                        handleChange(e); // Call your existing input handler
+                                    }
+                                }}
+                                inputProps={{
+                                    min: 0, // Set minimum value
+                                    max: 100, // Set maximum value
+                                }}
                                 style={{ margin: "5px" }}
                             />
 
@@ -1205,6 +1280,10 @@ const AddRoom = () => {
                                 name={`roomDetails.${index}.roomNumber`}
                                 value={room.roomNumber}
                                 onChange={handleRoomInputChange}
+                                type="number"
+                                inputProps={{
+                                    min: 0, // Set minimum value
+                                }}
                             />
 
                             <InputLabel sx={{ fontWeight: 'bold', mb: '4px' }}>Room {index + 1} - Status</InputLabel>

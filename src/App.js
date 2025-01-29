@@ -110,6 +110,18 @@ import AddDesignation from "./pages/masterData/Designation/AddDesignation";
 import SmtpSecret from "./pages/settings/smtpSecret/SmtpSecret";
 import UserLoginActions from "./pages/settings/logActions/UserLoginActions";
 import AdminLoginActions from "./pages/settings/logActions/AdminLoginActions";
+import Roles from "./pages/settings/role/Roles";
+import SingleRole from "./pages/settings/role/SingleRole";
+import AddRole from "./pages/settings/role/AddRole";
+import AddPermission from "./pages/settings/permission/AddPermission";
+import SinglePermission from "./pages/settings/permission/SinglePermission";
+import AboutUs from "./pages/settings/aboutUs/Abouts";
+import SingleAboutUs from "./pages/settings/aboutUs/SingleAbout";
+import AddAboutUs from "./pages/settings/aboutUs/AddAbout";
+import Contacts from "./pages/settings/contactUs/Contacts";
+import SingleContact from "./pages/settings/contactUs/SingleContact";
+import AddContact from "./pages/settings/contactUs/AddContact";
+import UploadData from "./pages/settings/uploadData/UploadData";
 
 const sideBarWidth = 250;
 
@@ -1017,6 +1029,124 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+
+          {/* Role routes */}
+          <Route
+            path="/roles"
+            element={
+              <ProtectedRoute>
+                <Roles />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/role/:id"
+            element={
+              <ProtectedRoute>
+                < SingleRole />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/role/add"
+            element={
+              <ProtectedRoute>
+                <AddRole />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Role routes */}
+          {/* <Route
+            path="/permissions"
+            element={
+              <ProtectedRoute>
+                <Roles />
+              </ProtectedRoute>
+            }
+          /> */}
+          <Route
+            path="/permission/:roleId"
+            element={
+              <ProtectedRoute>
+                < SinglePermission />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/permission/add"
+            element={
+              <ProtectedRoute>
+                <AddPermission />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* About Us routes */}
+          <Route
+            path="/aboutUs"
+            element={
+              <ProtectedRoute>
+                <AboutUs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/aboutUs/:id"
+            element={
+              <ProtectedRoute>
+                < SingleAboutUs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/aboutUs/add"
+            element={
+              <ProtectedRoute>
+                <AddAboutUs />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Contact Us routes */}
+          <Route
+            path="/contactUs"
+            element={
+              <ProtectedRoute>
+                <Contacts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contactUs/:id"
+            element={
+              <ProtectedRoute>
+                < SingleContact />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contactUs/add"
+            element={
+              <ProtectedRoute>
+                <AddContact />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* Contact Us routes */}
+          <Route
+            path="/upload-data"
+            element={
+              <ProtectedRoute>
+                <UploadData />
+              </ProtectedRoute>
+            }
+          />
+
           {/* <Route
             path="/inbox"
             element={

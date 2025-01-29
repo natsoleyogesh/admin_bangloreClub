@@ -69,6 +69,11 @@ const memberDataColumns = [
     Cell: ({ cell }) => cell.getValue() || "N/A",
   },
   {
+    accessorKey: "relation",
+    header: "Relation ship",
+    Cell: ({ cell }) => cell.getValue() || "N/A",
+  },
+  {
     accessorKey: "address", //normal accessorKey
     header: "Address",
     Cell: ({ cell }) => cell.getValue() || "N/A",
@@ -445,7 +450,7 @@ const SingleProduct = () => {
               style={{ display: "none" }}
               onChange={handleFileChange}
             />
-            <Typography variant="h6">{name || "N/A"}</Typography>
+            <Typography variant="h6">{title} {name || "N/A"}</Typography>
             <Typography variant="body2" color="textSecondary">
               Member ID: {memberId || "N/A"}
             </Typography>
@@ -453,8 +458,8 @@ const SingleProduct = () => {
               <TableData>
                 <TableBody>
                   <TableRow>
-                    <TableCell><Typography variant="subtitle2">Title:</Typography></TableCell>
-                    <TableCell><Typography variant="body2">{title || "N/A"}</Typography></TableCell>
+                    <TableCell><Typography variant="subtitle2">Relation ship:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{relation || "N/A"}</Typography></TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell><Typography variant="subtitle2">Email:</Typography></TableCell>
@@ -723,6 +728,23 @@ const SingleProduct = () => {
             value={editMember.mobileNumber || ""}
             onChange={handleInputChange}
           />
+
+          {editMember.relation !== "Primary" && <TextField
+            margin="dense"
+            label="Relation ship"
+            select
+            fullWidth
+            name="relation"
+            value={editMember.relation || ""}
+            onChange={handleInputChange}
+          >
+            <MenuItem value="Spouse">Spouse</MenuItem>
+            <MenuItem value="Daughter">Daughter</MenuItem>
+            <MenuItem value="Son">Son</MenuItem>
+            <MenuItem value="Dependent">Dependent</MenuItem>
+            <MenuItem value="Senior Dependent">Senior Dependent</MenuItem>
+          </TextField>}
+
           <TextField
             margin="dense"
             label="Address"

@@ -29,15 +29,32 @@ const AllRequests = () => {
         { accessorKey: "primaryMemberId.memberId", header: "MemberShip ID" },
         { accessorKey: "primaryMemberId.name", header: "Member" },
         { accessorKey: "department", header: "Department" },
+        // {
+        //     accessorKey: "departmentId.billable",
+        //     header: "Billable Type",
+        //     Cell: ({ row }) => (
+        //         row.original.departmentId?.billable === true
+        //             ? <Typography color="green">Billable</Typography>
+        //             : <Typography color="red">Non-Billable</Typography>
+        //     ),
+        // },
         {
             accessorKey: "departmentId.billable",
             header: "Billable Type",
-            Cell: ({ row }) => (
-                row.original.departmentId?.billable === true
-                    ? <Typography color="green">Billable</Typography>
-                    : <Typography color="red">Non-Billable</Typography>
-            ),
+            Cell: ({ row }) => {
+                const billable = row.original.departmentId?.billable;
+                return (
+                    billable === true ? (
+                        <Typography color="green">Billable</Typography>
+                    ) : billable === false ? (
+                        <Typography color="red">Non-Billable</Typography>
+                    ) : (
+                        <Typography color="textSecondary">N/A</Typography>
+                    )
+                );
+            },
         },
+
         { accessorKey: "status", header: "Status" },
         {
             accessorKey: "createdAt",

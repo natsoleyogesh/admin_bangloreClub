@@ -113,7 +113,7 @@ const MonthlyBillTransactions = () => {
         } catch (error) {
             console.error("Error fetching transactions:", error);
             setLoading(false)
-            showToast("Failed to fetch transactions. Please try again.", "error");
+            // showToast("Failed to fetch transactions. Please try again.", "error");
         }
     };
 
@@ -167,7 +167,7 @@ const MonthlyBillTransactions = () => {
             PaymentStatus: row.paymentStatus,
             PaymentMethod: row.paymentMethod || "N/A",
             PaymentDate: formatDate(row.paymentDate),
-            PaymentAmount: `₹${row.paymentAmount}`,
+            PaymentAmount: `${row.paymentAmount}`,
         }));
         const worksheet = XLSX.utils.json_to_sheet(csvData);
         const workbook = XLSX.utils.book_new();
@@ -185,7 +185,7 @@ const MonthlyBillTransactions = () => {
             PaymentStatus: row.paymentStatus,
             PaymentMethod: row.paymentMethod || "N/A",
             PaymentDate: formatDate(row.paymentDate),
-            PaymentAmount: `₹${row.paymentAmount}`,
+            PaymentAmount: `${row.paymentAmount}`,
         }));
         const worksheet = XLSX.utils.json_to_sheet(xlsData);
         const workbook = XLSX.utils.book_new();

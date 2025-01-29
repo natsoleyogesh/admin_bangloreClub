@@ -67,7 +67,8 @@ const AddBanquet = () => {
         specialDayTariff: [],
         pricingDetailDescription: "",
         status: 'Active',
-        billable: true
+        billable: true,
+        guideline: ""
     });
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -293,6 +294,8 @@ const AddBanquet = () => {
 
         // Validate description
         if (!banquetData.description) newErrors.description = "Banquet description is required.";
+        if (!banquetData.guideline) newErrors.guideline = "Banquet guideline is required.";
+
 
         // // Validate check-in and check-out times
         // if (!banquetData.checkInTime) newErrors.checkInTime = "Check-in time is required.";
@@ -714,6 +717,10 @@ const AddBanquet = () => {
                         InputProps={{
                             startAdornment: <MeetingRoomIcon sx={{ color: "gray", mr: 1 }} />,
                         }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
+                        }}
                     />
                 </Box>
 
@@ -731,6 +738,10 @@ const AddBanquet = () => {
                         helperText={errors.maxAllowedPerRoom}
                         InputProps={{
                             startAdornment: <MeetingRoomIcon sx={{ color: "gray", mr: 1 }} />,
+                        }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
                         }}
                     />
                 </Box>
@@ -786,6 +797,10 @@ const AddBanquet = () => {
                         InputProps={{
                             startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
                         }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
+                        }}
                     />
                 </Box>
                 <Box sx={{ mb: 2 }}>
@@ -801,6 +816,10 @@ const AddBanquet = () => {
                         helperText={errors.maxPrice}
                         InputProps={{
                             startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} />,
+                        }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
                         }}
                     />
                 </Box>
@@ -818,6 +837,10 @@ const AddBanquet = () => {
                         helperText={errors.banquetHallSize}
                         InputProps={{
                             startAdornment: <SquareFootIcon sx={{ color: "gray", mr: 1 }} />,
+                        }}
+                        type="number"
+                        inputProps={{
+                            min: 0, // Set minimum value
                         }}
                     />
                 </Box>
@@ -999,6 +1022,7 @@ const AddBanquet = () => {
                             {/* Price */}
                             <Box sx={{ mb: 2 }}>
                                 <TextField
+                                    type="number"
                                     label="Price"
                                     placeholder="Enter price"
                                     value={detail.price}
@@ -1009,6 +1033,9 @@ const AddBanquet = () => {
                                     helperText={errors[`price_${index}`]}
                                     fullWidth
                                     size="small"
+                                    inputProps={{
+                                        min: 0, // Set minimum value
+                                    }}
                                 />
                             </Box>
 
@@ -1074,9 +1101,19 @@ const AddBanquet = () => {
                         <TextField
                             fullWidth
                             name="before7Days"
-                            type="text"
+                            type="number"
                             value={banquetData.cancellationPolicy.before7Days}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                             error={!!errors.before7Days}
                             helperText={errors.before7Days}
                         />
@@ -1088,9 +1125,19 @@ const AddBanquet = () => {
                         <TextField
                             fullWidth
                             name="between7To2Days"
-                            type="text"
+                            type="number"
                             value={banquetData.cancellationPolicy.between7To2Days}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                             error={!!errors.between7To2Days}
                             helperText={errors.between7To2Days}
                         />
@@ -1102,9 +1149,19 @@ const AddBanquet = () => {
                         <TextField
                             fullWidth
                             name="between48To24Hours"
-                            type="text"
+                            type="number"
                             value={banquetData.cancellationPolicy.between48To24Hours}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                             error={!!errors.between48To24Hours}
                             helperText={errors.between48To24Hours}
                         />
@@ -1116,9 +1173,19 @@ const AddBanquet = () => {
                         <TextField
                             fullWidth
                             name="lessThan24Hours"
-                            type="text"
+                            type="number"
                             value={banquetData.cancellationPolicy.lessThan24Hours}
-                            onChange={handleCancalletionChange}
+                            // onChange={handleCancalletionChange}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                    handleCancalletionChange(e); // Call your existing input handler
+                                }
+                            }}
+                            inputProps={{
+                                min: 0, // Set minimum value
+                                max: 100, // Set maximum value
+                            }}
                             error={!!errors.lessThan24Hours}
                             helperText={errors.lessThan24Hours}
                         />
@@ -1183,10 +1250,20 @@ const AddBanquet = () => {
                                 label="Extra Charge In %"
                                 type="number"
                                 value={tariff.extraCharge}
-                                onChange={handleChange}
+                                // onChange={handleChange}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                        handleChange(e); // Call your existing input handler
+                                    }
+                                }}
                                 error={!!errors[`extraCharge_${index}`]}
                                 helperText={errors[`extraCharge_${index}`]}
                                 sx={{ mb: 2 }}
+                                inputProps={{
+                                    min: 0, // Set minimum value
+                                    max: 100, // Set maximum value
+                                }}
                             />
 
                             {/* Remove Button */}
@@ -1216,6 +1293,19 @@ const AddBanquet = () => {
                             setBanquetData((prev) => ({ ...prev, pricingDetailDescription: value }))
                         }
                         placeholder="Describe the banquet"
+                        style={{ height: "120px", borderRadius: "8px", marginBottom: "100px" }}
+                    />
+                </Box>
+
+                {/* Description */}
+                <Box sx={{ mb: 3 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: 1 }}>Banquet Guidelines</InputLabel>
+                    <ReactQuill
+                        value={banquetData.guideline}
+                        onChange={(value) =>
+                            setBanquetData((prev) => ({ ...prev, guideline: value }))
+                        }
+                        placeholder="Describe the banquet guidelines"
                         style={{ height: "120px", borderRadius: "8px", marginBottom: "100px" }}
                     />
                 </Box>

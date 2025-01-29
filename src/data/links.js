@@ -408,14 +408,11 @@ export const links = [
   {
     name: "Dashboard",
     icon: <FiHome style={iconProps} />,
-    // url: "/",
-    roles: ["admin"],
     subLinks: [
       {
         name: "Dashboard",
         url: "/",
         icon: <FiHome style={iconProps} />,
-        roles: ["admin"],
       },
     ]
   },
@@ -462,6 +459,11 @@ export const links = [
       {
         name: "Room Categories",
         url: "/categories",
+        icon: <MdBed style={iconProps} />,
+      },
+      {
+        name: "Upload Data",
+        url: "/upload-data",
         icon: <MdBed style={iconProps} />,
       },
     ],
@@ -670,25 +672,36 @@ export const links = [
   {
     name: "Settings",
     icon: <FiSettings style={iconProps} />,
-    roles: ["admin"],
     subLinks: [
+      // {
+      //   name: "Roles & Permissions",
+      //   url: "/roles",
+      //   icon: <FiSettings style={iconProps} />,
+      // },
       {
         name: "SMTP Setting",
         url: "/smtpSecret",
         icon: <FiSettings style={iconProps} />,
-        roles: ["admin"], // Only accessible to admin
       },
       {
         name: "User Action Logs",
         url: "/user-action-logs",
         icon: <FiSettings style={iconProps} />,
-        roles: ["admin"], // Only accessible to admin
       },
       {
         name: "Admin Action Logs",
         url: "/admin-action-logs",
         icon: <FiSettings style={iconProps} />,
-        roles: ["admin"], // Only accessible to admin
+      },
+      {
+        name: "About Us",
+        url: "/aboutUs",
+        icon: <FiSettings style={iconProps} />,
+      },
+      {
+        name: "Contact Us",
+        url: "/contactUs",
+        icon: <FiSettings style={iconProps} />,
       },
     ],
   },

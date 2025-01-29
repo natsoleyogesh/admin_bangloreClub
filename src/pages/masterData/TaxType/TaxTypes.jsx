@@ -25,6 +25,24 @@ const TaxTypes = () => {
         { accessorKey: "percentage", header: "Percentage" },
         { accessorKey: "status", header: "Status" },
         {
+            accessorKey: "applyKids", // Exclusive Offer Column
+            header: "Tax Applicable In Kids",
+            Cell: ({ cell }) => {
+                const value = cell.getValue();
+                return (
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: value ? "green" : "inherit",
+                            fontWeight: value ? "bold" : "normal",
+                        }}
+                    >
+                        {value ? "YES" : "NO"}
+                    </Typography>
+                );
+            },
+        },
+        {
             accessorKey: "createdAt",
             header: "Created Date & Time",
             Cell: ({ cell }) => formatDateTime(cell.getValue()),

@@ -14,6 +14,8 @@ import {
     Select,
     InputLabel,
     FormControl,
+    FormControlLabel,
+    Checkbox,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { FiEdit } from "react-icons/fi";
@@ -51,6 +53,12 @@ const SingleTaxType = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setEditTaxType((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // Handle checkbox changes for showExclusive
+    const handleCheckboxChange = (e) => {
+        const { name, checked } = e.target;
+        setEditTaxType((prev) => ({ ...prev, [name]: checked }));
     };
 
     // Open and close the edit dialog
@@ -100,6 +108,9 @@ const SingleTaxType = () => {
                         <Typography variant="body1">
                             <strong>Percentage:</strong> {taxType.percentage || "N/A"}%
                         </Typography>
+                        <Typography variant="body1" >
+                            <strong>Tax Is Applicable With Kids:</strong> {taxType.applyKids === true ? "Yes" : "No"}
+                        </Typography>
                         <Typography variant="body1">
                             <strong>Created At:</strong> {new Date(taxType.createdAt).toLocaleDateString() || "N/A"}
                         </Typography>
@@ -140,7 +151,13 @@ const SingleTaxType = () => {
                         name="percentage"
                         type="number"
                         value={editTaxType.percentage || ""}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                handleInputChange(e); // Call your existing input handler
+                            }
+                        }}
                     />
                     <FormControl fullWidth margin="dense">
                         <InputLabel>Status</InputLabel>
@@ -156,6 +173,19 @@ const SingleTaxType = () => {
                             ))}
                         </Select>
                     </FormControl>
+
+                    <Box sx={{ mb: 2 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="applyKids"
+                                    checked={editTaxType.applyKids}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Tax Applicable In Kids"
+                        />
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} color="secondary">

@@ -278,6 +278,15 @@ const SingleBanquet = () => {
                                 }}
                             />
                         </Typography>
+
+                        <Typography variant="body1" sx={{ mb: 2 }}>
+                            <strong>Banquet Guidelines:</strong>
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: banquet?.guideline || "N/A",
+                                }}
+                            />
+                        </Typography>
                         <Button
                             variant="contained"
                             color="primary"

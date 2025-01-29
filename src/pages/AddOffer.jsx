@@ -323,12 +323,26 @@ const AddOffer = () => {
                         fullWidth
                         name="discountPercentage"
                         value={offerData.discountPercentage}
+                        // onChange={(e) => {
+                        // handleInputChange(e);
+                        // setOfferData((prev) => ({
+                        //     ...prev,
+                        //     discountAmount: e.target.value ? "" : prev.discountAmount, // Clear discountAmount if value is entered
+                        // }));
+                        // }}
                         onChange={(e) => {
-                            handleInputChange(e);
-                            setOfferData((prev) => ({
-                                ...prev,
-                                discountAmount: e.target.value ? "" : prev.discountAmount, // Clear discountAmount if value is entered
-                            }));
+                            const value = e.target.value;
+                            if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                                handleInputChange(e);
+                                setOfferData((prev) => ({
+                                    ...prev,
+                                    discountAmount: e.target.value ? "" : prev.discountAmount, // Clear discountAmount if value is entered
+                                }));
+                            }
+                        }}
+                        inputProps={{
+                            min: 0, // Set minimum value
+                            max: 100, // Set maximum value
                         }}
                         error={!!errors.discountPercentage}
                         helperText={errors.discountPercentage}
@@ -355,6 +369,9 @@ const AddOffer = () => {
                         }}
                         InputProps={{ startAdornment: <CurrencyRupee sx={{ color: "gray", mr: 1 }} /> }}
                         disabled={!!offerData.discountPercentage} // Disable if discountPercentage is entered
+                        inputProps={{
+                            min: 0, // Set minimum value
+                        }}
                     />
                 </Box>
 

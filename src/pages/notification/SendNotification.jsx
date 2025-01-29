@@ -178,14 +178,33 @@ const SendNotification = () => {
                 {/* Push Message */}
                 <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Push Message</InputLabel>
-                    <ReactQuill
+                    {/* <ReactQuill
                         value={notificationData.push_message}
                         onChange={(value) =>
                             setNotificationData((prev) => ({ ...prev, push_message: value }))
                         }
                         placeholder="Please write the Notification Message"
                         style={{ height: "120px", borderRadius: "8px", marginBottom: "80px" }}
+                    /> */}
+                    <TextField
+                        placeholder="Please write the Notification Message"
+                        fullWidth
+                        name="push_message"
+                        value={notificationData.push_message}
+                        onChange={handleInputChange}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Description />
+                                </InputAdornment>
+                            ),
+                        }}
+                        multiline
+                        minRows={3}  // Initial number of rows
+                        maxRows={10} // Allow expansion up to 10 rows
+                        variant="outlined"  // Ensure proper UI appearance
                     />
+
                 </Box>
 
                 {/* Department */}

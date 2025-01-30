@@ -38,22 +38,22 @@ const AllRequests = () => {
         //             : <Typography color="red">Non-Billable</Typography>
         //     ),
         // },
-        {
-            accessorKey: "departmentId.billable",
-            header: "Billable Type",
-            Cell: ({ row }) => {
-                const billable = row.original.departmentId?.billable;
-                return (
-                    billable === true ? (
-                        <Typography color="green">Billable</Typography>
-                    ) : billable === false ? (
-                        <Typography color="red">Non-Billable</Typography>
-                    ) : (
-                        <Typography color="textSecondary">N/A</Typography>
-                    )
-                );
-            },
-        },
+        // {
+        //     accessorKey: "departmentId.billable",
+        //     header: "Billable Type",
+        //     Cell: ({ row }) => {
+        //         const billable = row.original.departmentId?.billable;
+        //         return (
+        //             billable === true ? (
+        //                 <Typography color="green">Billable</Typography>
+        //             ) : billable === false ? (
+        //                 <Typography color="red">Non-Billable</Typography>
+        //             ) : (
+        //                 <Typography color="textSecondary">N/A</Typography>
+        //             )
+        //         );
+        //     },
+        // },
 
         { accessorKey: "status", header: "Status" },
         {

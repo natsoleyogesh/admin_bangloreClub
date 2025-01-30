@@ -715,7 +715,7 @@ const AddEvent = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    name=" bookingPermissionDependent,"
+                                    name="bookingPermissionDependent"
                                     checked={eventData.bookingPermissionDependent}
                                     onChange={handleCheckboxChange}
                                 />

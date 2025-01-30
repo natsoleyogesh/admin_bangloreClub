@@ -269,8 +269,9 @@ const Billings = () => {
                     {filterType === "custom" && (
                         <>
                             <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom Start Date</InputLabel>
                                 <TextField
-                                    label="Start Date"
+                                    // label="Start Date"
                                     type="date"
                                     fullWidth
                                     size="small"
@@ -280,8 +281,9 @@ const Billings = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom End Date</InputLabel>
                                 <TextField
-                                    label="End Date"
+                                    // label="End Date"
                                     type="date"
                                     fullWidth
                                     size="small"

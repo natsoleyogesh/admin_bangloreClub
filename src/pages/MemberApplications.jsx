@@ -614,24 +614,74 @@ const MemberApplications = () => {
         }
     };
 
+    // const columns = useMemo(() => {
+    //     if (!applicationsList.length) return [];
+
+    //     const seconderKeys = new Set();
+    //     applicationsList.forEach((item) => {
+    //         Object.keys(item.seconders || {}).forEach((key) => seconderKeys.add(key));
+    //     });
+
+    //     const seconderColumns = Array.from(seconderKeys).flatMap((key) => [
+    //         {
+    //             accessorKey: `seconders.${key}.name`,
+    //             header: `${key.replace("seconder-", "Seconder-")}`,
+    //         },
+    //         {
+    //             accessorKey: `seconders.${key}.accountNumber`,
+    //             header: `A/C No`,
+    //         },
+    //     ]);
+
+    //     return [
+    //         {
+    //             accessorKey: "applicationNumber",
+    //             header: "Application Number",
+    //         },
+    //         {
+    //             accessorKey: "applicantName",
+    //             header: "Applicant Name",
+    //         },
+    //         {
+    //             accessorKey: "applicationDate",
+    //             header: "Application Date",
+    //             Cell: ({ cell }) => formatDateTime(cell.getValue()),
+    //         },
+    //         {
+    //             accessorKey: "proposer.name",
+    //             header: "Proposer Name",
+    //         },
+    //         {
+    //             accessorKey: "proposer.accountNumber",
+    //             header: "Proposer Account Number",
+    //         },
+    //         ...seconderColumns,
+    //     ];
+    // }, [applicationsList]);
+
+
     const columns = useMemo(() => {
         if (!applicationsList.length) return [];
 
-        const seconderKeys = new Set();
-        applicationsList.forEach((item) => {
-            Object.keys(item.seconders || {}).forEach((key) => seconderKeys.add(key));
-        });
+        // Determine the maximum number of seconders in any application
+        const maxSeconders = Math.max(
+            ...applicationsList.map((item) => (Array.isArray(item.seconders) ? item.seconders.length : 0)),
+            0
+        );
 
-        const seconderColumns = Array.from(seconderKeys).flatMap((key) => [
+        // Generate dynamic columns for each seconder
+        const seconderColumns = Array.from({ length: maxSeconders }, (_, index) => [
             {
-                accessorKey: `seconders.${key}.name`,
-                header: `${key.replace("seconder-", "Seconder-")}`,
+                accessorKey: `seconders[${index}].name`,
+                header: `Seconder-${index + 1}`,
+                accessorFn: (row) => row.seconders?.[index]?.name ?? "-", // Avoids undefined errors
             },
             {
-                accessorKey: `seconders.${key}.accountNumber`,
+                accessorKey: `seconders[${index}].accountNumber`,
                 header: `A/C No`,
+                accessorFn: (row) => row.seconders?.[index]?.accountNumber ?? "-", // Avoids undefined errors
             },
-        ]);
+        ]).flat();
 
         return [
             {
@@ -649,15 +699,16 @@ const MemberApplications = () => {
             },
             {
                 accessorKey: "proposer.name",
-                header: "Proposer Name",
+                header: "Proposer",
             },
             {
                 accessorKey: "proposer.accountNumber",
-                header: "Proposer Account Number",
+                header: "A/C No",
             },
             ...seconderColumns,
         ];
     }, [applicationsList]);
+
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>

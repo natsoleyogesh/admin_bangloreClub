@@ -122,6 +122,7 @@ import Contacts from "./pages/settings/contactUs/Contacts";
 import SingleContact from "./pages/settings/contactUs/SingleContact";
 import AddContact from "./pages/settings/contactUs/AddContact";
 import UploadData from "./pages/settings/uploadData/UploadData";
+import RoomGuidlineOrCondition from "./pages/RoomGuidlineOrCondition";
 
 const sideBarWidth = 250;
 
@@ -1143,6 +1144,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <UploadData />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/room-guidline-condition"
+            element={
+              <ProtectedRoute>
+                <RoomGuidlineOrCondition />
               </ProtectedRoute>
             }
           />

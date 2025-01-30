@@ -251,8 +251,9 @@ const Transactions = () => {
                     {filterType === "custom" && (
                         <>
                             <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom Start Date</InputLabel>
                                 <TextField
-                                    label="Start Date"
+                                    // label="Start Date"
                                     type="date"
                                     fullWidth
                                     size="small"
@@ -262,8 +263,9 @@ const Transactions = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom End Date</InputLabel>
                                 <TextField
-                                    label="End Date"
+                                    // label="End Date"
                                     type="date"
                                     fullWidth
                                     size="small"

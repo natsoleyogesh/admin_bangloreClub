@@ -146,25 +146,34 @@ const SingleBooking = () => {
                     <Grid item xs={12} sm={6}>
                         <Typography variant="h6">Ticket Details</Typography>
                         <Typography variant="body1">
-                            <strong>Primary Member Price:</strong> ₹{booking.ticketDetails?.primaryMemberPrice || "N/A"}
+                            <strong>Primary Member Price:</strong> ₹ {booking.ticketDetails?.primaryMemberPrice || 0}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Dependent Price:</strong> ₹{booking.ticketDetails?.dependentPrice || "N/A"}
+                            <strong>Dependent Price:</strong> ₹ {booking.ticketDetails?.dependentMemberPrice || 0}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Guest Price:</strong> ₹{booking.ticketDetails?.guestPrice || "N/A"}
+                            <strong>Spouse Price:</strong> ₹ {booking.ticketDetails?.spouseMemberPrice || 0}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Kids Price:</strong> ₹ {booking.ticketDetails?.kidsMemberPrice || 0}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Senior Dependent Price:</strong> ₹ {booking.ticketDetails?.seniorDependentMemberPrice || 0}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Guest Price:</strong> ₹ {booking.ticketDetails?.guestPrice || 0}
                         </Typography>
                         {/* <Typography variant="body1">
-                            <strong>Tax Rate:</strong> {booking.ticketDetails?.taxRate || "N/A"}%
+                            <strong>Tax Rate:</strong> {booking.ticketDetails?.taxRate || 0}%
                         </Typography> */}
                         <Typography variant="body1">
-                            <strong>Subtotal:</strong> ₹{booking.ticketDetails?.subtotal || "N/A"}
+                            <strong>Subtotal:</strong> ₹ {booking.ticketDetails?.subtotal || 0}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Tax Amount:</strong> ₹{booking.ticketDetails?.taxAmount || "N/A"}
+                            <strong>Tax Amount:</strong> ₹ {booking.ticketDetails?.taxAmount || 0}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Total Amount:</strong> ₹{booking.ticketDetails?.totalAmount || "N/A"}
+                            <strong>Total Amount:</strong> ₹ {booking.ticketDetails?.totalAmount || 0}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Payment Status:</strong>  <Chip
@@ -181,10 +190,10 @@ const SingleBooking = () => {
                             <strong>Primary Member:</strong> {booking.primaryMemberId?.name || "N/A"}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Dependents:</strong> {booking.dependents?.map((dep) => dep.userId?.name).join(", ") || "N/A"}
+                            <strong>Members:</strong> {booking.dependents?.map((dep) => dep.userId?.name).join(", ") || "N/A"}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Member Count:</strong> Primary: {booking.counts?.primaryMemberCount || 0}, Dependent: {booking.counts?.dependentMemberCount || 0}, Guest: {booking.counts?.guestMemberCount || 0}
+                            <strong>Member Count:</strong> Primary: {booking.counts?.primaryMemberCount || 0}, Dependent: {booking.counts?.dependentMemberCount || 0}, Spouse: {booking.counts?.spouseMemberCount || 0}, Kids: {booking.counts?.kidsMemberCount || 0}, Senior Dependent: {booking.counts?.seniorDependentMemberCount || 0}, Guest: {booking.counts?.guestMemberCount || 0}
                         </Typography>
                         <Button
                             variant="contained"

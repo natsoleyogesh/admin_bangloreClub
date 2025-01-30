@@ -496,7 +496,7 @@ export const links = [
     ],
   },
   {
-    name: "Offline Billings",
+    name: "Monthly Billings",
     icon: <MdAccountBalanceWallet style={iconProps} />,
     subLinks: [
       {
@@ -539,6 +539,11 @@ export const links = [
       {
         name: "Room Bookings",
         url: "/room-bookings",
+        icon: <MdReceipt style={iconProps} />,
+      },
+      {
+        name: "Room Guidelines & Conditions",
+        url: "/room-guidline-condition",
         icon: <MdReceipt style={iconProps} />,
       },
     ],

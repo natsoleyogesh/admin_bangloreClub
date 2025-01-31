@@ -3,12 +3,18 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typogra
 import { FiPlus } from "react-icons/fi";
 import axios from "axios";
 import { showToast } from "../../../api/toast";
+import { postFormDataRequest, postRequest } from "../../../api/commonAPI";
+import { useNavigate } from "react-router-dom";
+import Customers from "../../Customers";
 
 
 const UploadData = () => {
     const [openFileDialog, setOpenFileDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [buttonType, setButtonType] = useState(""); // Track which button was clicked
+    const navigate = useNavigate();
+
+    const [uploadData, setUploadData] = useState(true)
 
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
@@ -38,11 +44,15 @@ const UploadData = () => {
             }
             console.log(apiUrl, "url")
             // Call the corresponding API
-            const response = await axios.post(apiUrl, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            // const response = await axios.post(`${PUBLIC}${apiUrl}`, formData, {
+            const response = await postFormDataRequest(apiUrl, formData)
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            // });
+            if (response.status === 200) {
+                navigate("/members")
+            }
 
             showToast(response.data.message, "success");
             setSelectedFile(null); // Reset file input after upload
@@ -83,14 +93,14 @@ const UploadData = () => {
                     Upload Member Data
                 </Button>
 
-                <Button
+                {/* <Button
                     variant="contained"
                     color="secondary"
                     startIcon={<FiPlus />}
                     onClick={() => handleButtonClick("MemberAddress")}
                 >
                     Upload Member Address
-                </Button>
+                </Button> */}
 
                 {/* Hidden file input */}
                 {/* <input
@@ -101,6 +111,7 @@ const UploadData = () => {
                     accept=".xlsx, .xls"
                 /> */}
             </Box>
+            <Customers uploadData={uploadData} />
             {/* Dialog for File Upload */}
             <Dialog open={openFileDialog} onClose={() => setOpenFileDialog(false)}>
                 <DialogTitle>Upload File</DialogTitle>

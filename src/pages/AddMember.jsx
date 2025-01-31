@@ -374,6 +374,13 @@ const AddMember = () => {
                                         <MenuItem value="Mrs.">Mrs.</MenuItem>
                                         <MenuItem value="Ms.">Ms.</MenuItem>
                                         <MenuItem value="Dr.">Dr.</MenuItem>
+                                        <MenuItem value="Dr.(Mrs)">Dr.(Mrs)</MenuItem>
+                                        <MenuItem value="Dr.(Mr)">Dr.(Mr)</MenuItem>
+                                        <MenuItem value="Dr.(Ms)">Dr.(Ms)</MenuItem>
+                                        <MenuItem value="M/S.">M/S.</MenuItem>
+                                        <MenuItem value="Lt.Col.">Lt.Col.</MenuItem>
+                                        <MenuItem value="Gp.Capt.">Gp.Capt.</MenuItem>
+                                        <MenuItem value="Prof.">Prof.</MenuItem>
                                     </Select>
                                 </Grid>
                                 <Grid item xs={12}>

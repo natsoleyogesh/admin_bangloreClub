@@ -1,5 +1,6 @@
 import { Paper, Typography } from "@mui/material";
 import React from "react";
+import BuildVersion from "./BuildVersion";
 
 const Footer = () => {
   return (
@@ -18,7 +19,9 @@ const Footer = () => {
       <Typography>
         Created by <span style={{ color: "#027edd" }}>Bangalore Club</span> | All
         Rights Reserved &copy;
-        {new Date().getFullYear()}
+        {/* {new Date().getFullYear()} */}
+        2025 {" "}
+        <BuildVersion />
       </Typography>
     </Paper>
   );

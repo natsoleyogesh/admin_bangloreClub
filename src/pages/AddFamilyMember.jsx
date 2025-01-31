@@ -344,6 +344,13 @@ const AddFamilyMember = () => {
                                         <MenuItem value="Mrs.">Mrs.</MenuItem>
                                         <MenuItem value="Ms.">Ms.</MenuItem>
                                         <MenuItem value="Dr.">Dr.</MenuItem>
+                                        <MenuItem value="Dr.(Mrs)">Dr.(Mrs)</MenuItem>
+                                        <MenuItem value="Dr.(Mr)">Dr.(Mr)</MenuItem>
+                                        <MenuItem value="Dr.(Ms)">Dr.(Ms)</MenuItem>
+                                        <MenuItem value="M/S.">M/S.</MenuItem>
+                                        <MenuItem value="Lt.Col.">Lt.Col.</MenuItem>
+                                        <MenuItem value="Gp.Capt.">Gp.Capt.</MenuItem>
+                                        <MenuItem value="Prof.">Prof.</MenuItem>
                                     </Select>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -513,8 +520,8 @@ const AddFamilyMember = () => {
                                                 Please Choose Relation
                                             </MenuItem>
                                             <MenuItem value="Spouse">Spouse</MenuItem>
-                                            <MenuItem value="Daughter">Daughter</MenuItem>
-                                            <MenuItem value="Son">Son</MenuItem>
+                                            {/* <MenuItem value="Daughter">Daughter</MenuItem> */}
+                                            <MenuItem value="Child">Child</MenuItem>
                                             <MenuItem value="Dependent">Dependent</MenuItem>
                                             <MenuItem value="Senior Dependent">Senior Dependent</MenuItem>
                                         </Select>

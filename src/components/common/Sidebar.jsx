@@ -3,14 +3,17 @@ import React from "react";
 import { links } from "../../data/links";
 import SidebarItem from "./SidebarItem";
 import SidebarItemCollapse from "./SidebarItemCollapse";
+import BuildVersion from "./BuildVersion";
 
 const Sidebar = ({ window, sideBarWidth, mobileOpen, handleDrawerToggle }) => {
   const drawer = (
     <div>
       <Toolbar>
         <img src="/logo.png" alt="Logo" width="40" />
-        <Typography variant="h6" sx={{ fontWeight: "bold", ml: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: "500", ml: 2 }}>
           Bangalore Club
+          <br />
+          <BuildVersion />
         </Typography>
       </Toolbar>
       <Divider />

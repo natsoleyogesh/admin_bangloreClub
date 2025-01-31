@@ -1,6 +1,10 @@
 import { format } from "date-fns";
 
 
+export const REACT_APP_BUILD_VERSION = "2.0"
+export const REACT_APP_BUILD_DATE = "31012025.053810"
+
+
 // export const PUBLIC_API_URI = "http://localhost:3005/api"
 export const PUBLIC_API_URI = "https://13.60.85.75/api"
 
@@ -85,3 +89,9 @@ export const formatDateCommon = (dateString) => {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
+
+
+
+{/* <span style="font-size:8px;">Ver. 2.0 Build: 31012025.122810</span>
+
+Format: Build: <DDMMYYYY.HHMMSS></DDMMYYYY.HHMMSS> */}

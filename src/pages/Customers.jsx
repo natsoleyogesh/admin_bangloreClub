@@ -9,8 +9,9 @@ import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { FiPlus } from "react-icons/fi";
 
-const Customers = () => {
+const Customers = ({ uploadData }) => {
 
+  console.log(uploadData, "upload")
   const navigate = useNavigate();
 
   const [memberList, setmemberList] = useState([]);
@@ -152,7 +153,7 @@ const Customers = () => {
         <Typography variant="h6">
           Primary Members
         </Typography>
-        <Link to="/member/add" style={{ textDecoration: "none" }}>
+        {!uploadData && <Link to="/member/add" style={{ textDecoration: "none" }}>
           <Button
             variant="contained"
             color="primary"
@@ -161,7 +162,7 @@ const Customers = () => {
           >
             Add Member
           </Button>
-        </Link>
+        </Link>}
       </Box>
 
       <Table

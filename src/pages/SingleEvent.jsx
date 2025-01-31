@@ -373,14 +373,14 @@ const SingleEvent = () => {
                                 </Grid>
                                 <Grid item xs={6} sm={4}>
                                     <Typography variant="body2">
-                                        <strong>Son:</strong> {event.bookingPermissionSon ? "Yes" : "No"}
+                                        <strong>Child:</strong> {event.bookingPermissionChild ? "Yes" : "No"}
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={6} sm={4}>
+                                {/* <Grid item xs={6} sm={4}>
                                     <Typography variant="body2">
                                         <strong>Daughter:</strong> {event.bookingPermissionDaughter ? "Yes" : "No"}
                                     </Typography>
-                                </Grid>
+                                </Grid> */}
                                 <Grid item xs={6} sm={4}>
                                     <Typography variant="body2">
                                         <strong>Dependent Member:</strong> {event.bookingPermissionDependent ? "Yes" : "No"}
@@ -485,14 +485,14 @@ const SingleEvent = () => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        name="bookingPermissionSon"
-                                        checked={editEvent.bookingPermissionSon}
+                                        name="bookingPermissionChild"
+                                        checked={editEvent.bookingPermissionChild}
                                         onChange={handleCheckboxChange}
                                     />
                                 }
-                                label="Son"
+                                label="Child"
                             />
-                            <FormControlLabel
+                            {/* <FormControlLabel
                                 control={
                                     <Checkbox
                                         name="bookingPermissionDaughter"
@@ -501,7 +501,7 @@ const SingleEvent = () => {
                                     />
                                 }
                                 label="Daughter"
-                            />
+                            /> */}
                             <FormControlLabel
                                 control={
                                     <Checkbox

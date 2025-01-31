@@ -74,8 +74,8 @@ const AddEvent = () => {
         totalAvailableTickets: 0,
         bookingPermissionPrimary: true,
         bookingPermissionSpouse: false,
-        bookingPermissionSon: false,
-        bookingPermissionDaughter: false,
+        bookingPermissionChild: false,
+        // bookingPermissionDaughter: false,
         bookingPermissionDependent: false,
         bookingPermissionSeniorDependent: false,
     });
@@ -695,14 +695,14 @@ const AddEvent = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    name="bookingPermissionSon"
-                                    checked={eventData.bookingPermissionSon}
+                                    name="bookingPermissionChild"
+                                    checked={eventData.bookingPermissionChild}
                                     onChange={handleCheckboxChange}
                                 />
                             }
-                            label="Son"
+                            label="Child"
                         />
-                        <FormControlLabel
+                        {/* <FormControlLabel
                             control={
                                 <Checkbox
                                     name="bookingPermissionDaughter"
@@ -711,7 +711,7 @@ const AddEvent = () => {
                                 />
                             }
                             label="Daughter"
-                        />
+                        /> */}
                         <FormControlLabel
                             control={
                                 <Checkbox

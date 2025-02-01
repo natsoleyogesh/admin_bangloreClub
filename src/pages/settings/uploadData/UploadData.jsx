@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
 import axios from "axios";
 import { showToast } from "../../../api/toast";
@@ -13,6 +13,7 @@ const UploadData = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [buttonType, setButtonType] = useState(""); // Track which button was clicked
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const [uploadData, setUploadData] = useState(true)
 
@@ -34,13 +35,13 @@ const UploadData = () => {
 
         const formData = new FormData();
         formData.append("file", selectedFile);
-
+        setLoading(true);
         try {
             let apiUrl = "";
             if (buttonType === "MemberData") {
                 apiUrl = "/upload-members"; // Replace with your MemberData upload API endpoint
-            } else if (buttonType === "MemberAddress") {
-                apiUrl = "/upload-members-address"; // Replace with your MemberAddress upload API endpoint
+            } else if (buttonType === "MemberQRCode") {
+                apiUrl = "/upload-members-qrcode"; // Replace with your MemberQRCode upload API endpoint
             }
             console.log(apiUrl, "url")
             // Call the corresponding API
@@ -51,7 +52,8 @@ const UploadData = () => {
             //     },
             // });
             if (response.status === 200) {
-                navigate("/members")
+                // navigate("/members")
+                window.location.reload();
             }
 
             showToast(response.data.message, "success");
@@ -61,6 +63,7 @@ const UploadData = () => {
             showToast(error.message || "Failed to upload file.", "error");
         } finally {
             setOpenFileDialog(false);
+            setLoading(false);
         }
     };
 
@@ -93,14 +96,14 @@ const UploadData = () => {
                     Upload Member Data
                 </Button>
 
-                {/* <Button
+                <Button
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     startIcon={<FiPlus />}
-                    onClick={() => handleButtonClick("MemberAddress")}
+                    onClick={() => handleButtonClick("MemberQRCode")}
                 >
-                    Upload Member Address
-                </Button> */}
+                    Upload QRCode Data
+                </Button>
 
                 {/* Hidden file input */}
                 {/* <input
@@ -123,9 +126,11 @@ const UploadData = () => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>
+                    {!loading && <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>}
                     <Button onClick={handleUploadFile} variant="contained" color="primary">
-                        Upload
+
+                        {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Upload"}
+
                     </Button>
                 </DialogActions>
             </Dialog>

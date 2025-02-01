@@ -68,6 +68,8 @@ const AddFamilyMember = () => {
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [maritalStatus, setMaritalStatus] = useState("Single");
     const [marriageDate, setMarriageDate] = useState("");
+    const [qrCodeId, setQrCodeId] = useState("");
+    const [cardId, setCardId] = useState("");
     const [title, setTitle] = useState("Mr.");
 
     const [creditStop, setCreditStop] = useState(false);
@@ -246,6 +248,8 @@ const AddFamilyMember = () => {
         formData.append("drivingLicenceNumber", drivingLicenceNumber);
         formData.append("creditStop", creditStop);
         formData.append("creditLimit", creditLimit);
+        formData.append("qrCodeId", qrCodeId);
+        formData.append("cardId", cardId);
         // formData.append("age", age);
         formData.append("parentUserId", parentUserId);
         if (image) {
@@ -563,6 +567,28 @@ const AddFamilyMember = () => {
                                         type="text"
                                         value={drivingLicenceNumber}
                                         onChange={(e) => setDrivingLicenceNumber(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>QR Code ID</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Member QR Code Id"
+                                        size="small"
+                                        variant="outlined"
+                                        value={qrCodeId}
+                                        onChange={(e) => setQrCodeId(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Card ID</InputLabel>
+                                    <TextField
+                                        placeholder="Enter member Card ID"
+                                        size="small"
+                                        variant="outlined"
+                                        value={cardId}
+                                        onChange={(e) => setCardId(e.target.value)}
                                         fullWidth
                                     />
                                 </Grid>

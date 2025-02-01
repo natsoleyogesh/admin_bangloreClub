@@ -466,6 +466,11 @@ export const links = [
         url: "/upload-data",
         icon: <MdBed style={iconProps} />,
       },
+      {
+        name: "Update QR Data",
+        url: "/update-qr-code",
+        icon: <MdBed style={iconProps} />,
+      },
     ],
   },
   {

@@ -19,7 +19,8 @@ import {
   Table as TableData,
   InputLabel,
   FormControlLabel,
-  Switch
+  Switch,
+  Divider
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useRef, useState } from "react";
@@ -218,6 +219,9 @@ const SingleProduct = () => {
     drivingLicenceNumber,
     creditStop,
     creditLimit,
+    qrCodeId,
+    cardId,
+    qrCode,
     title, activatedDate } = member;
   console.log(member, "dfkk")
 
@@ -537,6 +541,28 @@ const SingleProduct = () => {
                     <TableCell><Typography variant="subtitle2">Credit Limit:</Typography></TableCell>
                     <TableCell><Typography variant="body2">{creditLimit || 0}</Typography></TableCell>
                   </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">QR Code ID:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{qrCodeId || "N/A"}</Typography></TableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Card ID:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{cardId || "N/A"}</Typography></TableCell>
+                  </TableRow>
+                  <Divider />
+                  <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>QR Code Image</InputLabel>
+                  <Box sx={{ position: "relative" }} mb={2}>
+                    <img src={`${qrCode}`} alt="qrCode" height={180} width={180} />
+                    {/* Uncomment this if you want to enable the delete functionality */}
+                    {/* <IconButton onClick={() => handleDeleteImage(index)}>
+                      <FiTrash />
+                    </IconButton> */}
+                  </Box>
+                  <Box mb={2}>
+                    <Divider />
+                  </Box>
+
 
                   {/* <Box sx={{ position: "relative", display: "inline-block" }}>
                     <Avatar

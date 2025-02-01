@@ -123,6 +123,7 @@ import SingleContact from "./pages/settings/contactUs/SingleContact";
 import AddContact from "./pages/settings/contactUs/AddContact";
 import UploadData from "./pages/settings/uploadData/UploadData";
 import RoomGuidlineOrCondition from "./pages/RoomGuidlineOrCondition";
+import UpdateQrData from "./pages/settings/uploadData/UpdateQRCode";
 
 const sideBarWidth = 250;
 
@@ -1153,6 +1154,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <RoomGuidlineOrCondition />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/update-qr-code"
+            element={
+              <ProtectedRoute>
+                <UpdateQrData />
               </ProtectedRoute>
             }
           />

@@ -73,6 +73,9 @@ const AddMember = () => {
     const [maritalStatus, setMaritalStatus] = useState("Single");
     const [marriageDate, setMarriageDate] = useState("");
     const [title, setTitle] = useState("Mr.");
+    const [qrCodeId, setQrCodeId] = useState("");
+    const [cardId, setCardId] = useState("");
+
     const [image, setImage] = useState(null);
     const [proofs, setProofs] = useState([]);
 
@@ -280,6 +283,8 @@ const AddMember = () => {
         formData.append("drivingLicenceNumber", drivingLicenceNumber);
         formData.append("creditStop", creditStop);
         formData.append("creditLimit", creditLimit);
+        formData.append("qrCodeId", qrCodeId);
+        formData.append("cardId", cardId);
 
 
         // formData.append("age", age);
@@ -678,6 +683,28 @@ const AddMember = () => {
                                         }}
                                         fullWidth
                                         inputProps={{ min: 0 }} // Prevent negative values when using number input
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>QR Code ID</InputLabel>
+                                    <TextField
+                                        placeholder="Enter Member QR Code Id"
+                                        size="small"
+                                        variant="outlined"
+                                        value={qrCodeId}
+                                        onChange={(e) => setQrCodeId(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Card ID</InputLabel>
+                                    <TextField
+                                        placeholder="Enter member Card ID"
+                                        size="small"
+                                        variant="outlined"
+                                        value={cardId}
+                                        onChange={(e) => setCardId(e.target.value)}
+                                        fullWidth
                                     />
                                 </Grid>
 

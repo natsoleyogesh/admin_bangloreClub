@@ -1,3 +1,4 @@
+
 // import React, { useState, useEffect } from "react";
 // import axios from "axios";
 // import { TextField, Button, MenuItem, Select, InputLabel, FormControl, CircularProgress, Box } from "@mui/material";
@@ -40,14 +41,18 @@
 //             setOldQrCodeId(userData.qrCodeId || ""); // Set the old QR Code ID
 //             setNewQrCodeId(userData.qrCodeId || ""); // Set the new QR Code ID (initially same as old)
 
-//             // Generate QR Code for the new QR Code ID
-//             if (userData.qrCode) {
+//             // Check if qrCode exists and is not blank, otherwise set it to ""
+//             console.log(userData, userData.qrCode, "userData");
+//             if (userData.qrCode && userData.qrCode !== "") {
 //                 setQrCodeImage(`${userData.qrCode}`); // Update with the correct endpoint for QR code image
+//             } else {
+//                 setQrCodeImage(""); // If qrCode is blank or not available, set it to ""
 //             }
 //         } catch (error) {
 //             console.error("Error fetching user details:", error);
 //         }
 //     };
+
 
 //     // Handle QR Code update
 //     const handleQrCodeUpdate = async () => {
@@ -115,6 +120,10 @@
 //                             <Box sx={{ marginBottom: 2 }}>
 //                                 <h3>QR Code Image</h3>
 //                                 <img src={qrCodeImage} alt="QR Code" height={220} width={220} />
+//                                 {/* Download Button */}
+//                                 <a href={qrCodeImage} download={`qrCode_${newQrCodeId}.png`}>
+//                                     <Button variant="outlined" sx={{ marginTop: 2 }}>Download QR Code</Button>
+//                                 </a>
 //                             </Box>
 //                         )}
 
@@ -139,7 +148,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, CircularProgress, Box } from "@mui/material";
+import { TextField, Button, CircularProgress, Box, Autocomplete } from "@mui/material";
 import { getRequest, putRequest } from "../../../api/commonAPI";
 import { PUBLIC_API_URI } from "../../../api/config";
 import { showToast } from "../../../api/toast";
@@ -147,40 +156,49 @@ import { showToast } from "../../../api/toast";
 const UpdateQrData = () => {
     // State variables
     const [users, setUsers] = useState([]); // To store the list of users
-    const [selectedUserId, setSelectedUserId] = useState(""); // To store selected userId
+    const [selectedUser, setSelectedUser] = useState(null); // To store selected user object
     const [oldQrCodeId, setOldQrCodeId] = useState(""); // To store old QR Code ID
     const [newQrCodeId, setNewQrCodeId] = useState(""); // To store new QR Code ID
     const [qrCodeImage, setQrCodeImage] = useState(""); // To store QR Code Image URL
     const [loading, setLoading] = useState(false); // To show loading state
+    const [fetching, setFetching] = useState(false); // To show loading while fetching users
 
     // Fetch all users when the component mounts
     useEffect(() => {
         const fetchUsers = async () => {
+            setFetching(true);
             try {
                 const response = await getRequest("/admin/get-users"); // Update with the correct API endpoint
-                setUsers(response.data.users); // Assuming the response has a 'users' array
+                setUsers(response.data.users || []); // Assuming the response has a 'users' array
             } catch (error) {
                 console.error("Error fetching users:", error);
+            } finally {
+                setFetching(false);
             }
         };
         fetchUsers();
     }, []);
 
     // Handle user selection
-    const handleUserChange = async (e) => {
-        const userId = e.target.value;
-        setSelectedUserId(userId);
+    const handleUserChange = async (event, selectedUser) => {
+        if (!selectedUser) {
+            setSelectedUser(null);
+            setOldQrCodeId("");
+            setNewQrCodeId("");
+            setQrCodeImage("");
+            return;
+        }
+
+        setSelectedUser(selectedUser);
 
         // Fetch the user details based on selected userId
         try {
-            const response = await getRequest(`/member-details/${userId}`); // Update with correct endpoint
+            const response = await getRequest(`/member-details/${selectedUser._id}`); // Update with correct endpoint
             const userData = response.data.user;
 
             setOldQrCodeId(userData.qrCodeId || ""); // Set the old QR Code ID
             setNewQrCodeId(userData.qrCodeId || ""); // Set the new QR Code ID (initially same as old)
 
-            // Check if qrCode exists and is not blank, otherwise set it to ""
-            console.log(userData, userData.qrCode, "userData");
             if (userData.qrCode && userData.qrCode !== "") {
                 setQrCodeImage(`${userData.qrCode}`); // Update with the correct endpoint for QR code image
             } else {
@@ -190,7 +208,6 @@ const UpdateQrData = () => {
             console.error("Error fetching user details:", error);
         }
     };
-
 
     // Handle QR Code update
     const handleQrCodeUpdate = async () => {
@@ -202,7 +219,7 @@ const UpdateQrData = () => {
         setLoading(true);
 
         try {
-            const response = await putRequest(`/update-qrCode/${selectedUserId}`, {
+            const response = await putRequest(`/update-qrCode/${selectedUser._id}`, {
                 qrCodeId: newQrCodeId, // The new QR code ID to update
             });
 
@@ -224,19 +241,33 @@ const UpdateQrData = () => {
             <Box sx={{ padding: 3, maxWidth: 500, margin: "0 auto", backgroundColor: "#f9f9f9", borderRadius: 2 }}>
                 <h2>Update QR Code</h2>
 
-                <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                    <InputLabel>Select User</InputLabel>
-                    <Select value={selectedUserId} onChange={handleUserChange} label="Select User">
-                        <MenuItem value="">Select a User</MenuItem>
-                        {users.map((user) => (
-                            <MenuItem key={user._id} value={user._id}>
-                                {user.name} ({user.memberId})
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                {/* Searchable User Dropdown */}
+                <Autocomplete
+                    options={users}
+                    getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                    value={selectedUser}
+                    onChange={handleUserChange}
+                    loading={fetching}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Select User"
+                            variant="outlined"
+                            fullWidth
+                            InputProps={{
+                                ...params.InputProps,
+                                endAdornment: (
+                                    <>
+                                        {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                        {params.InputProps.endAdornment}
+                                    </>
+                                ),
+                            }}
+                        />
+                    )}
+                />
 
-                {selectedUserId && (
+                {selectedUser && (
                     <div>
                         <TextField
                             label="Old QR Code ID"

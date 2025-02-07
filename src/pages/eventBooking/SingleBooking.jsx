@@ -43,7 +43,7 @@ const formatTimeInIST = (timeStr) => {
 };
 
 // Status options for the booking status dropdown
-const statusOptions = ['Confirmed', 'Cancelled'];
+const statusOptions = ['Cancelled', "Confirmed"];
 // Payment options for the payment status dropdown
 const paymentOptions = ['Pending', 'Completed', 'Failed'];
 
@@ -193,17 +193,22 @@ const SingleBooking = () => {
                             <strong>Members:</strong> {booking.dependents?.map((dep) => dep.userId?.name).join(", ") || "N/A"}
                         </Typography>
                         <Typography variant="body1">
+                            <strong>Guests:</strong> {booking.guests?.map((guest) => guest?.name).join(", ") || "N/A"}
+                        </Typography>
+                        <Typography variant="body1">
                             <strong>Member Count:</strong> Primary: {booking.counts?.primaryMemberCount || 0}, Dependent: {booking.counts?.dependentMemberCount || 0}, Spouse: {booking.counts?.spouseMemberCount || 0}, Kids: {booking.counts?.kidsMemberCount || 0}, Senior Dependent: {booking.counts?.seniorDependentMemberCount || 0}, Guest: {booking.counts?.guestMemberCount || 0}
                         </Typography>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<FiEdit />}
-                            onClick={handleEditClick}
-                            sx={{ mt: 2 }}
-                        >
-                            Edit Booking Details
-                        </Button>
+                        {booking.bookingStatus !== "Cancelled" &&
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<FiEdit />}
+                                onClick={handleEditClick}
+                                sx={{ mt: 2 }}
+                            >
+                                Edit Booking
+                            </Button>
+                        }
                     </Grid>
                 </Grid>
             </Paper>
@@ -236,7 +241,7 @@ const SingleBooking = () => {
                     </FormControl>
 
                     {/* Payment Status Dropdown */}
-                    <FormControl fullWidth margin="dense">
+                    {/* <FormControl fullWidth margin="dense">
                         <InputLabel id="payment-status-label">Payment Status</InputLabel>
                         <Select
                             labelId="payment-status-label"
@@ -251,7 +256,7 @@ const SingleBooking = () => {
                                 </MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </FormControl> */}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} color="secondary">

@@ -100,7 +100,7 @@ const GetKeeparScanner = () => {
                 }
             } catch (err) {
                 console.error("Error handling scan:", err);
-                setError("Failed to fetch member details. Please try again.");
+                setError(err.response.data.message || "Failed to fetch member details. Please try again.");
                 setStatus("error");
             }
         }
@@ -139,7 +139,7 @@ const GetKeeparScanner = () => {
             }
         } catch (err) {
             console.error("Error handling scan:", err);
-            setError("Failed to fetch member details. Please try again.");
+            setError(err.response.data.message || "Failed to fetch member details. Please try again.");
             setStatus("error");
         }
     }

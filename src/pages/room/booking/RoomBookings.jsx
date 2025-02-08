@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Typography, Grid, Paper, List, ListItem, ListItemText, InputLabel, FormControl, Select, MenuItem, TextField } from "@mui/material";
+import { Box, Button, Typography, Grid, Paper, List, ListItem, ListItemText, InputLabel, FormControl, Select, MenuItem, TextField, Autocomplete, CircularProgress } from "@mui/material";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import ConfirmationDialog from "../../../api/ConfirmationDialog";
@@ -33,7 +33,8 @@ const RoomBookings = () => {
     const [bookings, setBookings] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(null);
+    const [fetching, setFetching] = useState(false); // To show loading while fetching users
     // Table columns definition based on the provided structure
 
     const [filterType, setFilterType] = useState("all");
@@ -124,12 +125,15 @@ const RoomBookings = () => {
     };
 
     const getActiveMembers = async () => {
+        setFetching(true);
         try {
             const response = await fetchAllMembers();
             setActiveMembers(response.users);
         } catch (error) {
             console.error("Failed to fetch members :", error);
             // showToast("Failed to fetch Members. Please try again.", "error");
+        } finally {
+            setFetching(false);
         }
     };
 
@@ -325,19 +329,31 @@ const RoomBookings = () => {
                     <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Select Member</InputLabel>
                         <FormControl fullWidth size="small">
-
-                            <Select
-                                name="userId"
-                                value={userId}
-                                onChange={(e) => setUserId(e.target.value)}
-                            >
-                                <MenuItem value="all">All</MenuItem>
-                                {activeMembers.map((member) => (
-                                    <MenuItem key={member._id} value={member._id}>
-                                        {member.name} (ID: {member.memberId})
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                            <Autocomplete
+                                options={activeMembers}
+                                getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                                value={activeMembers.find((member) => member._id === userId) || null}
+                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
+                                loading={fetching}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        fullWidth
+                                        size="small"
+                                        sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                                <>
+                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {params.InputProps.endAdornment}
+                                                </>
+                                            ),
+                                        }}
+                                    />
+                                )}
+                            />
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={3} md={2}>
@@ -346,6 +362,7 @@ const RoomBookings = () => {
                             <Select
                                 value={filterType}
                                 onChange={(e) => setFilterType(e.target.value)}
+                                sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                             >
                                 <MenuItem value="today">Today</MenuItem>
                                 <MenuItem value="last7days">Last 7 Days</MenuItem>
@@ -364,6 +381,7 @@ const RoomBookings = () => {
                             <Select
                                 value={bookingStatus}
                                 onChange={(e) => setBookingStatus(e.target.value)}
+                                sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                             >
                                 <MenuItem value="Confirmed">Confirmed</MenuItem>
                                 <MenuItem value="Cancelled">Cancelled</MenuItem>
@@ -375,25 +393,29 @@ const RoomBookings = () => {
                     {filterType === "custom" && (
                         <>
                             <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom Start Date</InputLabel>
                                 <TextField
-                                    label="Start Date"
+                                    // label="Start Date"
                                     type="date"
                                     fullWidth
                                     size="small"
                                     value={customStartDate}
                                     onChange={(e) => setCustomStartDate(e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom End Date</InputLabel>
                                 <TextField
-                                    label="End Date"
+                                    // label="End Date"
                                     type="date"
                                     fullWidth
                                     size="small"
                                     value={customEndDate}
                                     onChange={(e) => setCustomEndDate(e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                                 />
                             </Grid>
                         </>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
+    Autocomplete,
     Box,
     Button,
+    CircularProgress,
     FormControl,
     Grid,
     InputLabel,
@@ -31,7 +33,8 @@ const Transactions = () => {
     // const [userId, setUserId] = useState("all");
     const [userId, setUserId] = useState(id || "all");
     const [activeMembers, setActiveMembers] = useState([]);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(null);
+    const [fetching, setFetching] = useState(false); // To show loading while fetching users
     // Utility function to format dates
     const formatDate = (dateString) => {
         const options = { year: "numeric", month: "long", day: "numeric" };
@@ -117,12 +120,15 @@ const Transactions = () => {
     };
 
     const getActiveMembers = async () => {
+        setFetching(true);
         try {
             const response = await fetchAllMembers();
             setActiveMembers(response.users);
         } catch (error) {
             console.error("Failed to fetch members :", error);
             showToast("Failed to fetch Members. Please try again.", "error");
+        } finally {
+            setFetching(false);
         }
     };
 
@@ -201,19 +207,31 @@ const Transactions = () => {
                     {!id && <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Select Member</InputLabel>
                         <FormControl fullWidth size="small">
-
-                            <Select
-                                name="userId"
-                                value={userId}
-                                onChange={(e) => setUserId(e.target.value)}
-                            >
-                                <MenuItem value="all">All</MenuItem>
-                                {activeMembers.map((member) => (
-                                    <MenuItem key={member._id} value={member._id}>
-                                        {member.name} (ID: {member.memberId})
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                            <Autocomplete
+                                options={activeMembers}
+                                getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                                value={activeMembers.find((member) => member._id === userId) || null}
+                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
+                                loading={fetching}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        fullWidth
+                                        size="small"
+                                        sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                                <>
+                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {params.InputProps.endAdornment}
+                                                </>
+                                            ),
+                                        }}
+                                    />
+                                )}
+                            />
                         </FormControl>
                     </Grid>}
                     <Grid item xs={12} sm={3} md={2}>
@@ -222,6 +240,7 @@ const Transactions = () => {
                             <Select
                                 value={filterType}
                                 onChange={(e) => setFilterType(e.target.value)}
+                                sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                             >
                                 <MenuItem value="today">Today</MenuItem>
                                 <MenuItem value="last7days">Last 7 Days</MenuItem>
@@ -240,6 +259,7 @@ const Transactions = () => {
                             <Select
                                 value={paymentStatus}
                                 onChange={(e) => setPaymentStatus(e.target.value)}
+                                sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                             >
                                 <MenuItem value="Success">Success</MenuItem>
                                 <MenuItem value="Failed">Failed</MenuItem>
@@ -260,6 +280,7 @@ const Transactions = () => {
                                     value={customStartDate}
                                     onChange={(e) => setCustomStartDate(e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                                 />
                             </Grid>
                             <Grid item xs={12} sm={3} md={2}>
@@ -272,6 +293,7 @@ const Transactions = () => {
                                     value={customEndDate}
                                     onChange={(e) => setCustomEndDate(e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                                 />
                             </Grid>
                         </>

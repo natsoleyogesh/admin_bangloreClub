@@ -13,6 +13,8 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    Autocomplete,
+    CircularProgress,
 } from "@mui/material";
 import Table from "../../components/Table";
 import { fetchAllBillings } from "../../api/billing";
@@ -44,7 +46,8 @@ const MonthlyBillings = () => {
     const [showtransactionMonth, setShowTransactionMonth] = useState("");
     const [userId, setUserId] = useState(id || "all");
     const [activeMembers, setActiveMembers] = useState([]);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(null);
+    const [fetching, setFetching] = useState(false); // To show loading while fetching users
 
     const [openFileDialog, setOpenFileDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -125,12 +128,15 @@ const MonthlyBillings = () => {
     };
 
     const getActiveMembers = async () => {
+        setFetching(true);
         try {
             const response = await fetchAllMembers();
             setActiveMembers(response.users);
         } catch (error) {
             console.error("Failed to fetch members :", error);
             showToast("Failed to fetch Members. Please try again.", "error");
+        } finally {
+            setFetching(false);
         }
     };
 
@@ -284,20 +290,33 @@ const MonthlyBillings = () => {
                 <Grid container spacing={2} alignItems="center">
                     {!id && <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Select Member</InputLabel>
-                        <FormControl fullWidth size="small">
 
-                            <Select
-                                name="userId"
-                                value={userId}
-                                onChange={(e) => setUserId(e.target.value)}
-                            >
-                                <MenuItem value="all">All</MenuItem>
-                                {activeMembers.map((member) => (
-                                    <MenuItem key={member._id} value={member._id}>
-                                        {member.name} (ID: {member.memberId})
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                        <FormControl fullWidth size="small">
+                            <Autocomplete
+                                options={activeMembers}
+                                getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                                value={activeMembers.find((member) => member._id === userId) || null}
+                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
+                                loading={fetching}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        fullWidth
+                                        size="small"
+                                        sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                                <>
+                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {params.InputProps.endAdornment}
+                                                </>
+                                            ),
+                                        }}
+                                    />
+                                )}
+                            />
                         </FormControl>
                     </Grid>}
                     <Grid item xs={12} sm={3} md={2}>
@@ -306,6 +325,7 @@ const MonthlyBillings = () => {
                             <Select
                                 value={paymentStatus}
                                 onChange={(e) => setPaymentStatus(e.target.value)}
+                                sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                             >
                                 <MenuItem value="Paid">Paid</MenuItem>
                                 <MenuItem value="Paid Offline">Paid Offline</MenuItem>
@@ -323,6 +343,7 @@ const MonthlyBillings = () => {
                             onChange={handleTransactionMonthChange}
                             fullWidth
                             size="small"
+                            sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
                         />
                     </Grid>
                 </Grid>

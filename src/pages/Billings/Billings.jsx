@@ -9,6 +9,8 @@ import {
     InputLabel,
     Grid,
     TextField,
+    Autocomplete,
+    CircularProgress,
 } from "@mui/material";
 import Table from "../../components/Table";
 import { fetchAllBillings } from "../../api/billing";
@@ -34,7 +36,8 @@ const Billings = () => {
     // const [userId, setUserId] = useState("all");
     const [userId, setUserId] = useState(id || "all");
     const [activeMembers, setActiveMembers] = useState([]);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(null);
+    const [fetching, setFetching] = useState(false); // To show loading while fetching users
 
 
     // Utility function to format dates and times
@@ -103,12 +106,15 @@ const Billings = () => {
     };
 
     const getActiveMembers = async () => {
+        setFetching(true);
         try {
             const response = await fetchAllMembers();
             setActiveMembers(response.users);
         } catch (error) {
             console.error("Failed to fetch members :", error);
             showToast("Failed to fetch Members. Please try again.", "error");
+        } finally {
+            setFetching(false);
         }
     };
 
@@ -215,23 +221,36 @@ const Billings = () => {
             {/* Header Section */}
             <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>Billings</Typography>
-                <Grid container spacing={2} alignItems="center">
+                {/* <Grid container spacing={2} alignItems="center">
                     {!id && <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Select Member</InputLabel>
                         <FormControl fullWidth size="small">
-
-                            <Select
-                                name="userId"
-                                value={userId}
-                                onChange={(e) => setUserId(e.target.value)}
-                            >
-                                <MenuItem value="all">All</MenuItem>
-                                {activeMembers.map((member) => (
-                                    <MenuItem key={member._id} value={member._id}>
-                                        {member.name} (ID: {member.memberId})
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                            <Autocomplete
+                                options={activeMembers}
+                                getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                                // value={option._id}
+                                // onChange={(e) => setUserId(e.target.value)}
+                                value={activeMembers.find((member) => member._id === userId) || null}  // Ensure proper default selection
+                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}  // Properly set `userId`
+                                loading={fetching}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        // label="Select User"
+                                        variant="outlined"
+                                        fullWidth
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                                <>
+                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {params.InputProps.endAdornment}
+                                                </>
+                                            ),
+                                        }}
+                                    />
+                                )}
+                            />
                         </FormControl>
                     </Grid>}
                     <Grid item xs={12} sm={3} md={2}>
@@ -294,7 +313,109 @@ const Billings = () => {
                             </Grid>
                         </>
                     )}
+                </Grid> */}
+                <Grid container spacing={2} alignItems="center">
+                    {!id && (
+                        <Grid item xs={12} sm={3} md={2}>
+                            <InputLabel>Select Member</InputLabel>
+                            <FormControl fullWidth size="small">
+                                <Autocomplete
+                                    options={activeMembers}
+                                    getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                                    value={activeMembers.find((member) => member._id === userId) || null}
+                                    onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
+                                    loading={fetching}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="outlined"
+                                            fullWidth
+                                            size="small"
+                                            sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                endAdornment: (
+                                                    <>
+                                                        {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                        {params.InputProps.endAdornment}
+                                                    </>
+                                                ),
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </FormControl>
+                        </Grid>
+                    )}
+
+                    <Grid item xs={12} sm={3} md={2}>
+                        <InputLabel>Filter Type</InputLabel>
+                        <FormControl fullWidth size="small">
+                            <Select
+                                value={filterType}
+                                onChange={(e) => setFilterType(e.target.value)}
+                                size="small"
+                                sx={{ minHeight: "40px" }}  // Uniform height
+                            >
+                                <MenuItem value="today">Today</MenuItem>
+                                <MenuItem value="last7days">Last 7 Days</MenuItem>
+                                <MenuItem value="lastMonth">Last Month</MenuItem>
+                                <MenuItem value="lastThreeMonths">Last 3 Months</MenuItem>
+                                <MenuItem value="lastSixMonths">Last 6 Months</MenuItem>
+                                <MenuItem value="last1year">Last 1 Year</MenuItem>
+                                <MenuItem value="custom">Custom</MenuItem>
+                                <MenuItem value="all">All</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={3} md={2}>
+                        <InputLabel>Payment Status</InputLabel>
+                        <FormControl fullWidth size="small">
+                            <Select
+                                value={paymentStatus}
+                                onChange={(e) => setPaymentStatus(e.target.value)}
+                                size="small"
+                                sx={{ minHeight: "40px" }}  // Uniform height
+                            >
+                                <MenuItem value="Paid">Paid</MenuItem>
+                                <MenuItem value="Due">Due</MenuItem>
+                                <MenuItem value="Overdue">Overdue</MenuItem>
+                                <MenuItem value="all">All</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    {filterType === "custom" && (
+                        <>
+                            <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom Start Date</InputLabel>
+                                <TextField
+                                    type="date"
+                                    fullWidth
+                                    size="small"
+                                    value={customStartDate}
+                                    onChange={(e) => setCustomStartDate(e.target.value)}
+                                    InputLabelProps={{ shrink: true }}
+                                    sx={{ minHeight: "40px" }}  // Ensures same height
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={3} md={2}>
+                                <InputLabel>Custom End Date</InputLabel>
+                                <TextField
+                                    type="date"
+                                    fullWidth
+                                    size="small"
+                                    value={customEndDate}
+                                    onChange={(e) => setCustomEndDate(e.target.value)}
+                                    InputLabelProps={{ shrink: true }}
+                                    sx={{ minHeight: "40px" }}  // Ensures same height
+                                />
+                            </Grid>
+                        </>
+                    )}
                 </Grid>
+
                 <Box sx={{ mt: 3 }}>
                     <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
                         Export to PDF

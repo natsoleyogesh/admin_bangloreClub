@@ -410,9 +410,20 @@ const SingleEvent = () => {
                             </Typography>
                         </Box>
 
-                        <Button variant="contained" color="primary" startIcon={<FiEdit />} onClick={handleEditClick}>
+                        {/* <Button variant="contained" color="primary" startIcon={<FiEdit />} onClick={handleEditClick}>
                             Edit Event
-                        </Button>
+                        </Button> */}
+                        {new Date(event?.eventStartDate) > new Date() && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<FiEdit />}
+                                onClick={handleEditClick}
+                                sx={{ marginTop: "20px" }}
+                            >
+                                Edit Event
+                            </Button>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>

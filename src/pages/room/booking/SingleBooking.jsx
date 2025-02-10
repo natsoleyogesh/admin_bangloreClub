@@ -25,7 +25,7 @@ import {
     fetchAvailableRooms,
     updateRoomBooking,
 } from "../../../api/room";
-import { formatDateTime } from "../../../api/config";
+import { formatDateMoment, formatDateTime } from "../../../api/config";
 
 const SingleRoomBooking = () => {
     const { id } = useParams();
@@ -180,11 +180,11 @@ const SingleRoomBooking = () => {
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Check-In:</strong>{" "}
-                            {new Date(booking.bookingDates?.checkIn).toLocaleDateString() || "N/A"}
+                            {formatDateMoment(booking.bookingDates?.checkIn) || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Check-Out:</strong>{" "}
-                            {new Date(booking.bookingDates?.checkOut).toLocaleDateString() || "N/A"}
+                            {formatDateMoment(booking.bookingDates?.checkOut) || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Status:</strong>{" "}

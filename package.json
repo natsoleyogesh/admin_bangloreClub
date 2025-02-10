@@ -19,6 +19,7 @@
     "jspdf-autotable": "^3.8.4",
     "jsqr": "^1.4.0",
     "material-react-table": "^1.5.4",
+    "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-circular-progressbar": "^2.1.0",

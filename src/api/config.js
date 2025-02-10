@@ -1,5 +1,6 @@
 import { format } from "date-fns";
-
+// utils/dateUtils.js
+import moment from "moment";
 
 export const REACT_APP_BUILD_VERSION = "2.0"
 export const REACT_APP_BUILD_DATE = "04022025.113810"
@@ -101,4 +102,9 @@ export const formatTime = (timeString) => {
         minute: '2-digit',
         hour12: true,
     });
+};
+
+
+export const formatDateMoment = (date) => {
+    return date ? moment(date).format("DD/MM/YYYY") : "N/A";
 };

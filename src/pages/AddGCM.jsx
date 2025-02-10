@@ -470,7 +470,6 @@ import {
     Box,
     Button,
     CircularProgress,
-    FormControl,
     InputAdornment,
     InputLabel,
     MenuItem,
@@ -500,8 +499,8 @@ import { fetchAllActiveDepartments } from "../api/masterData/department";
 import { getRequest } from "../api/commonAPI";
 
 const statusOptions = ["Active", "Inactive"];
-const categoryOptions = ["Chairperson", "Co-Chairperson", "Member"];
-const subCategoryOptions = ["Go Green", "Rooms", "Catering", "Sports"];
+// const categoryOptions = ["Chairperson", "Co-Chairperson", "Member"];
+// const subCategoryOptions = ["Go Green", "Rooms", "Catering", "Sports"];
 
 const UploadBox = styled(Box)(({ theme }) => ({
     marginTop: 20,
@@ -530,7 +529,7 @@ const AddGCM = () => {
     const [categories, setCategories] = useState([{ name: "", subCategories: [{ name: "" }] }]);
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
+    // const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const imageInput = useRef(null);
     const [activeMembers, setActiveMembers] = useState([]);

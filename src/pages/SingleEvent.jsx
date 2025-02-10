@@ -19,7 +19,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchEventDetails, updateEventDetails } from "../api/event";
-import { formatDateTime, PUBLIC_API_URI } from "../api/config";
+import { formatDateMoment, formatDateTime, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import { FiEdit } from "react-icons/fi";
 import ReactQuill from "react-quill";
@@ -27,6 +27,7 @@ import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveTaxTypes } from "../api/masterData/taxType";
 import { fetchEventAttendenceDetails } from "../api/getKeeper";
 import Table from "../components/Table";
+import moment from "moment";
 
 const SingleEvent = () => {
     const { id } = useParams();
@@ -294,7 +295,10 @@ const SingleEvent = () => {
                         <Typography variant="h4">{event.eventTitle}</Typography>
                         <Typography variant="subtitle1">{event.eventSubtitle}</Typography>
                         <Typography variant="body1">
-                            <strong>Date:</strong> {new Date(event.eventDate).toLocaleDateString()}
+                            <strong>Event Start Date:</strong> {formatDateMoment(event.eventStartDate)}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Event End Date:</strong> {formatDateMoment(event.eventEndDate)}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Time:</strong> {formatTime(event.startTime)} - {formatTime(event.endTime)}
@@ -409,10 +413,7 @@ const SingleEvent = () => {
                             </Typography>
                         </Box>
 
-                        {/* <Button variant="contained" color="primary" startIcon={<FiEdit />} onClick={handleEditClick}>
-                            Edit Event
-                        </Button> */}
-                        {new Date(event?.eventStartDate) > new Date() && (
+                        {moment(event?.eventStartDate).isSameOrAfter(moment().startOf('day')) && (
                             <Button
                                 variant="contained"
                                 color="primary"
@@ -423,6 +424,17 @@ const SingleEvent = () => {
                                 Edit Event
                             </Button>
                         )}
+                        {/* {new Date(event?.eventStartDate) > new Date() && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<FiEdit />}
+                                onClick={handleEditClick}
+                                sx={{ marginTop: "20px" }}
+                            >
+                                Edit Event
+                            </Button>
+                        )} */}
                     </Grid>
                 </Grid>
             </Paper>

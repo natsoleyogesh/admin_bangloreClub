@@ -25,7 +25,7 @@ import { useParams } from "react-router-dom";
 import { fetchBanquetBookingDetails, updateBanquetBooking } from "../../../api/banquet";
 import { showToast } from "../../../api/toast";
 import Breadcrumb from "../../../components/common/Breadcrumb";
-import { formatDateTime } from "../../../api/config";
+import { formatDateMoment, formatDateTime, formatTime } from "../../../api/config";
 
 // Format Time in AM/PM
 const formatTimeInIST = (timeStr) => {
@@ -147,14 +147,15 @@ const SingleBooking = () => {
                             <strong>Banquet:</strong> {booking?.banquetType?.banquetName?.name || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Booking Dates:</strong>{" "}
-                            {new Date(booking.bookingDates?.checkIn).toLocaleDateString() || "N/A"} -{" "}
-                            {new Date(booking.bookingDates?.checkOut).toLocaleDateString() || "N/A"}
+                            <strong>Booking Date:</strong>{" "}
+                            {formatDateMoment(booking.bookingDates?.checkIn) || "N/A"}
+                            {/* -{" "}
+                            {formatDateMoment(booking.bookingDates?.checkOut) || "N/A"} */}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Booking Time:</strong>{" "}
                             {booking.bookingTime
-                                ? `${formatTimeInIST(booking.bookingTime.from)} - ${formatTimeInIST(
+                                ? `${formatTime(booking.bookingTime.from)} - ${formatTime(
                                     booking.bookingTime.to
                                 )}`
                                 : "N/A"}

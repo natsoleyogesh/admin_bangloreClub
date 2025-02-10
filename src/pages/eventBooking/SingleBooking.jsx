@@ -21,27 +21,8 @@ import { showToast } from "../../api/toast";
 import { FiEdit } from "react-icons/fi";
 import { fetchBookingDetails, updateBookingDetails } from "../../api/event";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import { formatDateTime, formatTime } from "../../api/config";
+import { formatDateMoment, formatDateTime, formatTime } from "../../api/config";
 
-// Function to format time to IST (Indian Standard Time) in AM/PM format
-const formatTimeInIST = (timeStr) => {
-    if (!timeStr) return "N/A";
-
-    const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-
-    // Combine today's date with the time string and create a new Date object
-    const timeInUTC = new Date(`${todayDate}T${timeStr}:00Z`);
-
-    // Format the time in IST (Indian Standard Time) with AM/PM
-    const options = {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: 'Asia/Kolkata', // Indian Standard Time (IST)
-    };
-
-    return new Intl.DateTimeFormat('en-IN', options).format(timeInUTC);
-};
 
 // Status options for the booking status dropdown
 const statusOptions = ['Cancelled', "Confirmed"];
@@ -120,11 +101,21 @@ const SingleBooking = () => {
                     {/* Booking Details Display */}
                     <Grid item xs={12} sm={6}>
                         <Typography variant="h6">Event: {booking.eventId?.eventTitle || "N/A"}</Typography>
-                        <Typography variant="body1">
+                        {/* <Typography variant="body1">
                             <strong>Event Start Date:</strong> {new Date(booking.eventId?.eventStartDate).toLocaleDateString() || "N/A"}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Event End Date:</strong> {new Date(booking.eventId?.eventEndDate).toLocaleDateString() || "N/A"}
+                        </Typography> */}
+                        <Typography variant="body1">
+                            <strong>Event Start Date:</strong> {booking.eventId?.eventStartDate
+                                ? formatDateMoment(booking.eventId.eventStartDate)
+                                : "N/A"}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Event End Date:</strong> {booking.eventId?.eventEndDate
+                                ? formatDateMoment(booking.eventId.eventEndDate)
+                                : "N/A"}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Event Time:</strong>  {booking.eventId?.startTime ? formatTime(booking.eventId.startTime) : "N/A"} -  {booking.eventId?.endTime ? formatTime(booking.eventId.endTime) : "N/A"}

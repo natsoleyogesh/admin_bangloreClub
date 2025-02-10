@@ -6,7 +6,7 @@ import ConfirmationDialog from "../../../api/ConfirmationDialog";
 import Table from "../../../components/Table";
 import { deleteBanquetBooking, fetchAllBanquetBookingss } from "../../../api/banquet";
 import { showToast } from "../../../api/toast";
-import { formatDateTime } from "../../../api/config";
+import { formatDateMoment, formatDateTime, formatTime } from "../../../api/config";
 import { fetchAllMembers } from "../../../api/member";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -20,13 +20,13 @@ const formatDate = (dateString) => {
 };
 
 // Utility function to format time in AM/PM
-const formatTime = (time) => {
-    if (!time) return "N/A";
-    const [hours, minutes] = time.split(":").map(Number);
-    const period = hours >= 12 ? "PM" : "AM";
-    const adjustedHours = hours % 12 || 12;
-    return `${adjustedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
-};
+// const formatTime = (time) => {
+//     if (!time) return "N/A";
+//     const [hours, minutes] = time.split(":").map(Number);
+//     const period = hours >= 12 ? "PM" : "AM";
+//     const adjustedHours = hours % 12 || 12;
+//     return `${adjustedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+// };
 
 const Bookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -62,14 +62,14 @@ const Bookings = () => {
 
         {
             accessorKey: "bookingDates.checkIn",
-            header: "Check-In",
-            Cell: ({ cell }) => formatDate(cell.getValue()),
+            header: "Booking Date",
+            Cell: ({ cell }) => formatDateMoment(cell.getValue()),
         },
-        {
-            accessorKey: "bookingDates.checkOut",
-            header: "Check-Out",
-            Cell: ({ cell }) => formatDate(cell.getValue()),
-        },
+        // {
+        //     accessorKey: "bookingDates.checkOut",
+        //     header: "Check-Out",
+        //     Cell: ({ cell }) => formatDate(cell.getValue()),
+        // },
         {
             accessorKey: "bookingTime.from",
             header: "Booking Time",

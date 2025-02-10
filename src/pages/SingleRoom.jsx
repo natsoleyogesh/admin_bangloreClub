@@ -1,9 +1,7 @@
 import {
-    Avatar,
     Box,
     Button,
     Grid,
-    IconButton,
     Paper,
     Typography,
     Divider
@@ -13,7 +11,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchRoomDetails } from "../api/room";
 import { showToast } from "../api/toast";
 import { PUBLIC_API_URI } from "../api/config";
-import { FiEdit, FiTrash } from "react-icons/fi";
 import Breadcrumb from "../components/common/Breadcrumb";
 
 const SingleRoom = () => {

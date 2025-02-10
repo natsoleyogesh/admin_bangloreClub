@@ -27,7 +27,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { deleteMember, deleteProofs, fetchMemberDetails, updateMemberDetails, updateProfilePicture, uploadProofsImages } from "../api/member";
 import Table from "../components/Table";
-import { invoiceDataColumns } from "../data/invoiceList";
 import { formatDate, formatDateForInput, formatDateTime, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import ConfirmationDialog from "../api/ConfirmationDialog";
@@ -203,7 +202,7 @@ const SingleProduct = () => {
 
 
   console.log(member, memberList, "memberList")
-  const { _id, memberId, name, email, address, mobileNumber, familyMembers, profilePicture, status, address1,
+  const { _id, memberId, name, email, address, mobileNumber, profilePicture, status, address1,
     address2,
     city,
     state,
@@ -306,7 +305,7 @@ const SingleProduct = () => {
     try {
       await deleteMember(userId);
       getMemberById(id);
-      const updatedList = memberList.filter((item) => item.userId !== userId);
+      // const updatedList = memberList.filter((item) => item.userId !== userId);
       // setMemberList(updatedList);
       showToast("Member deleted successfully.", "success");
     } catch (error) {

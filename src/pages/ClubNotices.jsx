@@ -6,7 +6,6 @@ import Table from "../components/Table";
 import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
-import { deleteDownload, fetchAllDownloads } from "../api/download";
 import { deleteNotice, fetchAllNotices } from "../api/clubNotice";
 
 const ClubNotices = () => {

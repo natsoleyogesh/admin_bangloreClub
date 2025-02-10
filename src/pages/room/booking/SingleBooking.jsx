@@ -25,6 +25,7 @@ import {
     fetchAvailableRooms,
     updateRoomBooking,
 } from "../../../api/room";
+import { formatDateTime } from "../../../api/config";
 
 const SingleRoomBooking = () => {
     const { id } = useParams();
@@ -209,6 +210,9 @@ const SingleRoomBooking = () => {
                         </Typography>
                         <Typography variant="body1">
                             <strong>Payment Mode:</strong> {booking?.paymentMode || "N/A"}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
                         </Typography>
                     </Grid>
 

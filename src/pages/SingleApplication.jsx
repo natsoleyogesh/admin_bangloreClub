@@ -25,20 +25,19 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteMember, fetchMemberDetails, updateMemberDetails, updateProfilePicture } from "../api/member";
-import Table from "../components/Table";
-import { invoiceDataColumns } from "../data/invoiceList";
+// import Table from "../components/Table";
+// import { invoiceDataColumns } from "../data/invoiceList";
 import { formatDate, formatDateForInput, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import ConfirmationDialog from "../api/ConfirmationDialog";
-import { FiPlus } from "react-icons/fi";
+// import { FiPlus } from "react-icons/fi";
 import { deleteMemberApplication, fetchAllActiveMembers, fetchMemberApplicationDetails, updateMemberApplicationDetails, updateMemberApplicationStatus, updateMemberProfilePicture } from "../api/memberWaiting";
 import Breadcrumb from "../components/common/Breadcrumb";
 import LocationSelector from "../components/common/LocationSelector";
 
 
 const SingleApplication = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const { id } = useParams();
     const [application, setApplication] = useState({});

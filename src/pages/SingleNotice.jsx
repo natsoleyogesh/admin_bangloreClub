@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchDownloadDetails, updateDownloadDetails } from "../api/download";
 import { PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import { FiEdit } from "react-icons/fi";

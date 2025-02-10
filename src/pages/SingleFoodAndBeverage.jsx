@@ -5,7 +5,7 @@ import {
     Card,
     CardContent,
     CardMedia,
-    Divider,
+
     Typography,
 } from "@mui/material";
 import { useParams } from "react-router-dom";

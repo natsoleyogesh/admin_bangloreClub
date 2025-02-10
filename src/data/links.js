@@ -388,7 +388,6 @@ import {
   MdLocalOffer,
   MdRestaurantMenu,
   MdNotificationsActive,
-  MdGroup,
   MdGavel,
   MdSchool,
   MdDownload,

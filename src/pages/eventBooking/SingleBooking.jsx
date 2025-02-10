@@ -21,6 +21,7 @@ import { showToast } from "../../api/toast";
 import { FiEdit } from "react-icons/fi";
 import { fetchBookingDetails, updateBookingDetails } from "../../api/event";
 import Breadcrumb from "../../components/common/Breadcrumb";
+import { formatDateTime } from "../../api/config";
 
 // Function to format time to IST (Indian Standard Time) in AM/PM format
 const formatTimeInIST = (timeStr) => {
@@ -141,6 +142,9 @@ const SingleBooking = () => {
                                 size="small"
                             />
 
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>

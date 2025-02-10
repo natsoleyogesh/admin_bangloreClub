@@ -14,10 +14,10 @@ const FAQs = () => {
     const [selectedFaq, setSelectedFaq] = useState(null);
     const [loading, setLoading] = useState(null)
     // Utility function to format dates
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
+    // const formatDate = (dateString) => {
+    //     const options = { year: "numeric", month: "long", day: "numeric" };
+    //     return new Date(dateString).toLocaleDateString(undefined, options);
+    // };
 
     // Table columns definition
     const columns = [

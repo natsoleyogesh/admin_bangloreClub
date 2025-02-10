@@ -14,10 +14,10 @@ const FoodAndBeverages = () => {
     const [selectedFoodAndBeverage, setSelectedFoodAndBeverage] = useState(null);
     const [loading, setLoading] = useState(null)
     // Format date to "14 December 2024"
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
+    // const formatDate = (dateString) => {
+    //     const options = { year: "numeric", month: "long", day: "numeric" };
+    //     return new Date(dateString).toLocaleDateString(undefined, options);
+    // };
 
     // Define table columns
     const columns = [

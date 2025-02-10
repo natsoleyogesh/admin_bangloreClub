@@ -16,7 +16,7 @@ import {
 import { BiImageAdd } from "react-icons/bi";
 import { showToast } from "../api/toast";
 import { useNavigate } from "react-router-dom";
-import { Description, DateRange } from "@mui/icons-material";
+import { Description } from "@mui/icons-material";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { addRuleByeLaw } from "../api/ruleByelaws";
 

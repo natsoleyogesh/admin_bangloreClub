@@ -5,12 +5,9 @@ import {
     CircularProgress,
     FormControl,
     InputLabel,
-    MenuItem,
     Paper,
-    Select,
     TextField,
     Typography,
-    Grid,
     FormControlLabel,
     Checkbox,
 } from "@mui/material";
@@ -19,15 +16,15 @@ import { BiImageAdd } from "react-icons/bi";
 import { showToast } from "../api/toast";
 import { useNavigate } from "react-router-dom";
 import { addEvent } from "../api/event";
-import { AccessTime, AccessTimeFilled, AirplaneTicket, CurrencyRupee, CalendarToday, Category, Code, Description, Event, Info, LocationOn, People, ToggleOff, ToggleOn } from "@mui/icons-material";
+import { AccessTime, AccessTimeFilled, AirplaneTicket, CurrencyRupee, CalendarToday, Description, Event, LocationOn, People } from "@mui/icons-material";
 import ReactQuill from "react-quill";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveTaxTypes } from "../api/masterData/taxType";
 
 
-const rsvpOptions = ["Attending", "Not Attending", "Maybe", "Pending", "Cancelled", "N/A"];
-const currencyOptions = ["INR", "USD", "EUR", "GBP"];
-const statusOptions = ["Active", "Inactive", "Complete"];
+// const rsvpOptions = ["Attending", "Not Attending", "Maybe", "Pending", "Cancelled", "N/A"];
+// const currencyOptions = ["INR", "USD", "EUR", "GBP"];
+// const statusOptions = ["Active", "Inactive", "Complete"];
 
 const UploadBox = styled(Box)(({ theme }) => ({
     marginTop: 20,
@@ -155,44 +152,44 @@ const AddEvent = () => {
         }
     };
 
-    // Field validation function
-    const validateField = (name, value) => {
-        const newErrors = { ...errors };
+    // // Field validation function
+    // const validateField = (name, value) => {
+    //     const newErrors = { ...errors };
 
-        // Validate event title
-        if (name === "eventTitle" && !value) {
-            newErrors.eventTitle = "Event title is required.";
-        } else if (name === "eventTitle") {
-            delete newErrors.eventTitle;
-        }
+    //     // Validate event title
+    //     if (name === "eventTitle" && !value) {
+    //         newErrors.eventTitle = "Event title is required.";
+    //     } else if (name === "eventTitle") {
+    //         delete newErrors.eventTitle;
+    //     }
 
-        // Validate event date
-        if (name === "eventStartDate" && value) {
-            const selectedDate = new Date(value);
-            const currentDate = new Date();
-            if (selectedDate < currentDate.setHours(0, 0, 0, 0)) {
-                newErrors.eventStartDate = "Event start date cannot be in the past.";
-            } else {
-                delete newErrors.eventStartDate;
-            }
-        }
+    //     // Validate event date
+    //     if (name === "eventStartDate" && value) {
+    //         const selectedDate = new Date(value);
+    //         const currentDate = new Date();
+    //         if (selectedDate < currentDate.setHours(0, 0, 0, 0)) {
+    //             newErrors.eventStartDate = "Event start date cannot be in the past.";
+    //         } else {
+    //             delete newErrors.eventStartDate;
+    //         }
+    //     }
 
-        // Validate end time
-        if (name === "endTime" && value && eventData.startTime) {
-            const start = new Date(`1970-01-01T${eventData.startTime}:00`);
-            const end = new Date(`1970-01-01T${value}:00`);
-            const oneHourLater = new Date(start.getTime() + 60 * 60 * 1000);
+    //     // Validate end time
+    //     if (name === "endTime" && value && eventData.startTime) {
+    //         const start = new Date(`1970-01-01T${eventData.startTime}:00`);
+    //         const end = new Date(`1970-01-01T${value}:00`);
+    //         const oneHourLater = new Date(start.getTime() + 60 * 60 * 1000);
 
-            if (end <= oneHourLater) {
-                newErrors.endTime = "End time must be at least 1 hour after start time.";
-            } else {
-                delete newErrors.endTime;
-            }
-        }
+    //         if (end <= oneHourLater) {
+    //             newErrors.endTime = "End time must be at least 1 hour after start time.";
+    //         } else {
+    //             delete newErrors.endTime;
+    //         }
+    //     }
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // };
 
     const validateForm = () => {
         const validationErrors = [];

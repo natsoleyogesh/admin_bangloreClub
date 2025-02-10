@@ -9,7 +9,6 @@ import {
     Grid,
     IconButton,
     InputLabel,
-    ListItemText,
     MenuItem,
     Paper,
     Select,
@@ -19,13 +18,11 @@ import {
 import { FiPlus, FiTrash } from "react-icons/fi";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-    fetchBanquetDetails,
     updateBanquetDetails,
     uploadBanquetImage,
     deleteBanquetImage,
     fetchEditBanquetDetails,
 } from "../../../api/banquet";
-import { fetchActiveAllBanquetCategories } from "../../../api/category";
 import { fetchAllActiveTaxTypes } from "../../../api/masterData/taxType";
 import { fetchAllActiveAmenities } from "../../../api/masterData/amenities";
 import { showToast } from "../../../api/toast";
@@ -49,7 +46,7 @@ const BillableOptions = [true, false];
 
 
 
-const EditBanquet = ({ editdata }) => {
+const EditBanquet = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const imageInput = useRef(null);
@@ -84,7 +81,7 @@ const EditBanquet = ({ editdata }) => {
     const [amenitiesOptions, setAmenitiesOptions] = useState([]);
     const [taxTypes, setTaxTypes] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [errors] = useState({});
 
     // const [loading, setLoading] = useState(false);
 
@@ -310,17 +307,6 @@ const EditBanquet = ({ editdata }) => {
         }));
     };
 
-    const handleFeatureChange = (e) => {
-        const { name, checked } = e.target;
-        console.log(banquetData.features, name, checked, "handleInputChange");
-        setBanquetData({
-            ...banquetData,
-            features: {
-                ...banquetData.features,
-                [name]: checked,
-            },
-        });
-    };
 
     const handleCancalletionChange = (e) => {
         const { name, value } = e.target;

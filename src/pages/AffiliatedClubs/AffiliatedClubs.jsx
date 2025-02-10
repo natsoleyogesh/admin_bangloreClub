@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import Table from "../../components/Table";
 import { formatDateTime } from "../../api/config";
 
 const AffiliatedClubs = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [clubList, setClubList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);

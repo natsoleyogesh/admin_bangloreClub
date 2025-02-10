@@ -16,24 +16,18 @@ import {
     Grid,
 } from "@mui/material";
 import { BiImageAdd } from "react-icons/bi";
-import { FiPlus, FiTrash } from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
 import { showToast } from "../api/toast";
 import { useNavigate, useParams } from "react-router-dom";
-import { addRoom, deleteRoomImage, fetchEditRoomDetails, fetchRoomDetails, updateRoomDetails, uploadRoomImage } from "../api/room";
+import { deleteRoomImage, fetchEditRoomDetails, updateRoomDetails, uploadRoomImage } from "../api/room";
 import { fetchAllCategories } from "../api/category";
 
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import NumbersIcon from "@mui/icons-material/Numbers";
-import ApartmentIcon from "@mui/icons-material/Apartment";
-import InputAdornment from "@mui/material/InputAdornment";
-import { AccessTime, AccessTimeFilled, CurrencyRupee, Description, ToggleOff } from "@mui/icons-material";
-import GroupsIcon from "@mui/icons-material/Groups";
+import { AccessTime, AccessTimeFilled, CurrencyRupee } from "@mui/icons-material";
 import SquareFootIcon from "@mui/icons-material/SquareFoot";
 import CategoryIcon from "@mui/icons-material/Category";
 import KingBedIcon from "@mui/icons-material/KingBed";
 import HotelIcon from "@mui/icons-material/Hotel";
-import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
-import PersonIcon from "@mui/icons-material/Person";
 import { fetchAllActiveTaxTypes } from "../api/masterData/taxType";
 import { fetchAllActiveAmenities } from "../api/masterData/amenities";
 import ReactQuill from "react-quill";
@@ -196,38 +190,38 @@ const EditRoom = () => {
     };
     // Handle input changes for both check-in and check-out times
 
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        console.log(files)
-        setImages((prevImages) => [...prevImages, ...files]);
-    };
+    // const handleImageChange = (e) => {
+    //     const files = Array.from(e.target.files);
+    //     console.log(files)
+    //     setImages((prevImages) => [...prevImages, ...files]);
+    // };
 
-    const handleRemoveImage = (index) => {
-        const updatedImages = images.filter((_, i) => i !== index);
-        setImages(updatedImages);
-    };
+    // const handleRemoveImage = (index) => {
+    //     const updatedImages = images.filter((_, i) => i !== index);
+    //     setImages(updatedImages);
+    // };
 
-    // Add new pricing detail
-    const handleAddPricingDetail = () => {
-        setRoomData((prevData) => ({
-            ...prevData,
-            pricingDetails: [...prevData.pricingDetails, { guestType: "", price: "", description: "" }],
-        }));
-    };
+    // // Add new pricing detail
+    // const handleAddPricingDetail = () => {
+    //     setRoomData((prevData) => ({
+    //         ...prevData,
+    //         pricingDetails: [...prevData.pricingDetails, { guestType: "", price: "", description: "" }],
+    //     }));
+    // };
 
-    const handlePricingDetailChange = (index, field, value) => {
-        const updatedPricingDetails = [...roomData.pricingDetails];
-        updatedPricingDetails[index] = {
-            ...updatedPricingDetails[index],
-            [field]: value,
-        };
-        setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
-    };
+    // const handlePricingDetailChange = (index, field, value) => {
+    //     const updatedPricingDetails = [...roomData.pricingDetails];
+    //     updatedPricingDetails[index] = {
+    //         ...updatedPricingDetails[index],
+    //         [field]: value,
+    //     };
+    //     setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
+    // };
 
-    const handleRemovePricingDetail = (index) => {
-        const updatedPricingDetails = roomData.pricingDetails.filter((_, i) => i !== index);
-        setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
-    };
+    // const handleRemovePricingDetail = (index) => {
+    //     const updatedPricingDetails = roomData.pricingDetails.filter((_, i) => i !== index);
+    //     setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
+    // };
 
     const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
@@ -511,79 +505,79 @@ const EditRoom = () => {
         }
     };
 
-    // Function to add basic room data to formData
-    const addBasicRoomDataToFormData = (formData) => {
-        console.log(formData, "formdat")
-        Object.entries(roomData).forEach(([key, value]) => {
-            console.log(roomData, "formdat")
+    // // Function to add basic room data to formData
+    // const addBasicRoomDataToFormData = (formData) => {
+    //     console.log(formData, "formdat")
+    //     Object.entries(roomData).forEach(([key, value]) => {
+    //         console.log(roomData, "formdat")
 
-            if (key === 'cancellationPolicy' || key === 'priceRange' || key === 'pricingDetails' || key === 'amenities' || key === 'features' || key === 'specialDayTariff' || key === 'roomDetails' || key === 'taxTypes') {
-                // Handle complex fields separately (already covered in other functions)
-                return;
-            }
-            formData.append(key, value);
-        });
-    };
+    //         if (key === 'cancellationPolicy' || key === 'priceRange' || key === 'pricingDetails' || key === 'amenities' || key === 'features' || key === 'specialDayTariff' || key === 'roomDetails' || key === 'taxTypes') {
+    //             // Handle complex fields separately (already covered in other functions)
+    //             return;
+    //         }
+    //         formData.append(key, value);
+    //     });
+    // };
 
-    // Function to add pricing details to formData
-    const addPricingDetailsToFormData = (formData) => {
-        roomData.pricingDetails.forEach((detail, index) => {
-            formData.append(`pricingDetails[${index}][guestType]`, detail.guestType);
-            formData.append(`pricingDetails[${index}][price]`, detail.price);
-            formData.append(`pricingDetails[${index}][description]`, detail.description || '');
-        });
-    };
+    // // Function to add pricing details to formData
+    // const addPricingDetailsToFormData = (formData) => {
+    //     roomData.pricingDetails.forEach((detail, index) => {
+    //         formData.append(`pricingDetails[${index}][guestType]`, detail.guestType);
+    //         formData.append(`pricingDetails[${index}][price]`, detail.price);
+    //         formData.append(`pricingDetails[${index}][description]`, detail.description || '');
+    //     });
+    // };
 
-    // Function to add amenities to formData
-    const addAmenitiesToFormData = (formData) => {
-        roomData.amenities.forEach((amenity) => formData.append('amenities', amenity));
-    };
+    // // Function to add amenities to formData
+    // const addAmenitiesToFormData = (formData) => {
+    //     roomData.amenities.forEach((amenity) => formData.append('amenities', amenity));
+    // };
 
-    // Function to add features as JSON to formData
-    const addFeaturesToFormData = (formData) => {
-        formData.append('features', JSON.stringify(roomData.features));
-    };
+    // // Function to add features as JSON to formData
+    // const addFeaturesToFormData = (formData) => {
+    //     formData.append('features', JSON.stringify(roomData.features));
+    // };
 
-    // Function to add features as JSON to formData
-    const addPriceRangeToFormData = (formData) => {
-        formData.append('priceRange', JSON.stringify(roomData.priceRange));
-    };
+    // // Function to add features as JSON to formData
+    // const addPriceRangeToFormData = (formData) => {
+    //     formData.append('priceRange', JSON.stringify(roomData.priceRange));
+    // };
 
-    // Function to add images to formData
-    const addImagesToFormData = (formData) => {
-        images.forEach((image) => formData.append('images', image));
-    };
+    // // Function to add images to formData
+    // const addImagesToFormData = (formData) => {
+    //     images.forEach((image) => formData.append('images', image));
+    // };
 
-    // Function to add special day tariff to formData
-    const addSpecialDayTariffToFormData = (formData) => {
-        roomData.specialDayTariff.forEach((tariff, index) => {
-            formData.append(`specialDayTariff[${index}][special_day_name]`, tariff.special_day_name);
-            formData.append(`specialDayTariff[${index}][startDate]`, tariff.startDate);
-            formData.append(`specialDayTariff[${index}][endDate]`, tariff.endDate);
-            formData.append(`specialDayTariff[${index}][extraCharge]`, tariff.extraCharge);
-        });
-    };
+    // // Function to add special day tariff to formData
+    // const addSpecialDayTariffToFormData = (formData) => {
+    //     roomData.specialDayTariff.forEach((tariff, index) => {
+    //         formData.append(`specialDayTariff[${index}][special_day_name]`, tariff.special_day_name);
+    //         formData.append(`specialDayTariff[${index}][startDate]`, tariff.startDate);
+    //         formData.append(`specialDayTariff[${index}][endDate]`, tariff.endDate);
+    //         formData.append(`specialDayTariff[${index}][extraCharge]`, tariff.extraCharge);
+    //     });
+    // };
 
-    // Function to add cancellation policy to formData
-    const addCancellationPolicyToFormData = (formData) => {
-        // Object.entries(roomData.cancellationPolicy).forEach(([key, value]) => {
-        //     formData.append(`cancellationPolicy[${key}]`, value);
-        // });
-        formData.append('cancellationPolicy', JSON.stringify(roomData.cancellationPolicy));
-    };
+    // // Function to add cancellation policy to formData
+    // const addCancellationPolicyToFormData = (formData) => {
+    //     // Object.entries(roomData.cancellationPolicy).forEach(([key, value]) => {
+    //     //     formData.append(`cancellationPolicy[${key}]`, value);
+    //     // });
+    //     formData.append('cancellationPolicy', JSON.stringify(roomData.cancellationPolicy));
+    // };
 
-    // Function to add room details to formData
-    const addRoomDetailsToFormData = (formData) => {
-        roomData.roomDetails.forEach((room, index) => {
-            formData.append(`roomDetails[${index}][roomNumber]`, room.roomNumber);
-            formData.append(`roomDetails[${index}][status]`, room.status);
-        });
-    };
+    // // Function to add room details to formData
+    // const addRoomDetailsToFormData = (formData) => {
+    //     roomData.roomDetails.forEach((room, index) => {
+    //         formData.append(`roomDetails[${index}][roomNumber]`, room.roomNumber);
+    //         formData.append(`roomDetails[${index}][status]`, room.status);
+    //     });
+    // };
 
-    // Function to add tax types to formData
-    const addTaxTypesToFormData = (formData) => {
-        roomData.taxTypes.forEach((taxType) => formData.append('taxTypes', taxType));
-    };
+    // // Function to add tax types to formData
+    // const addTaxTypesToFormData = (formData) => {
+    //     roomData.taxTypes.forEach((taxType) => formData.append('taxTypes', taxType));
+    // };
 
 
 
@@ -739,9 +733,9 @@ const EditRoom = () => {
         setRoomData({ ...roomData, description: value });
     };
 
-    const handlePricingDiscriptionChange = (value) => {
-        setRoomData({ ...roomData, pricingDetailDescription: value });
-    };
+    // const handlePricingDiscriptionChange = (value) => {
+    //     setRoomData({ ...roomData, pricingDetailDescription: value });
+    // };
 
 
     const handleGuestCheckboxChange = (guestType, isChecked) => {
@@ -786,27 +780,27 @@ const EditRoom = () => {
     };
 
 
-    const UploadBox = ({ onClick }) => (
-        <Box
-            onClick={onClick}
-            sx={{
-                marginTop: 3,
-                height: 200,
-                borderRadius: "10px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                borderStyle: "dashed",
-                borderWidth: "2px",
-                borderColor: "divider",
-                cursor: "pointer",
-            }}
-        >
-            <BiImageAdd style={{ fontSize: "50px", color: "#027edd" }} />
-            <Typography>Click to upload images</Typography>
-        </Box>
-    );
+    // const UploadBox = ({ onClick }) => (
+    //     <Box
+    //         onClick={onClick}
+    //         sx={{
+    //             marginTop: 3,
+    //             height: 200,
+    //             borderRadius: "10px",
+    //             display: "flex",
+    //             alignItems: "center",
+    //             justifyContent: "center",
+    //             flexDirection: "column",
+    //             borderStyle: "dashed",
+    //             borderWidth: "2px",
+    //             borderColor: "divider",
+    //             cursor: "pointer",
+    //         }}
+    //     >
+    //         <BiImageAdd style={{ fontSize: "50px", color: "#027edd" }} />
+    //         <Typography>Click to upload images</Typography>
+    //     </Box>
+    // );
 
 
     // // Handle image upload
@@ -933,7 +927,7 @@ const EditRoom = () => {
     const handleDeleteImage = async (index) => {
         try {
             const updatedImages = images.filter((_, i) => i !== index);
-            const updatedData = { ...roomData, images: updatedImages };
+            // const updatedData = { ...roomData, images: updatedImages };
             await deleteRoomImage(id, index);
             getRoomById()
             showToast("Image deleted successfully.", "success");

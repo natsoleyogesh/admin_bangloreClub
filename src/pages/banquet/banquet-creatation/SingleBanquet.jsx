@@ -8,7 +8,6 @@ import {
     List,
     ListItem,
     ListItemText,
-    Divider,
     Chip,
 } from "@mui/material";
 import { FiEdit } from "react-icons/fi";
@@ -46,21 +45,21 @@ const SingleBanquet = () => {
         }
     };
 
-    const getEditBanquetById = async (id) => {
-        if (!id) return; // Guard condition to prevent unnecessary calls
-        // setLoading(true);
-        try {
-            const response = await fetchEditBanquetDetails(id);
-            const banquet = response?.data?.data || {};
+    // const getEditBanquetById = async (id) => {
+    //     if (!id) return; // Guard condition to prevent unnecessary calls
+    //     // setLoading(true);
+    //     try {
+    //         const response = await fetchEditBanquetDetails(id);
+    //         const banquet = response?.data?.data || {};
 
-            setEditdata(banquet)
-        } catch (error) {
-            console.error("Failed to fetch banquet details:", error);
-            showToast("Failed to fetch banquet details.", "error");
-        } finally {
-            // setLoading(false);
-        }
-    };
+    //         setEditdata(banquet)
+    //     } catch (error) {
+    //         console.error("Failed to fetch banquet details:", error);
+    //         showToast("Failed to fetch banquet details.", "error");
+    //     } finally {
+    //         // setLoading(false);
+    //     }
+    // };
 
 
     useEffect(() => {

@@ -9,25 +9,25 @@ import { showToast } from "../api/toast";
 import { deleteGCM, fetchAllGCMs } from "../api/gcm";
 
 const GCMs = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [gcmList, setGcmList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedGCM, setSelectedGCM] = useState(null);
     const [loading, setLoading] = useState(null)
 
-    // Format date to "Wed, Apr 28 • 5:30 PM"
-    const formatDate = (dateString) => {
-        const options = {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            weekday: "short",
-            hour: "numeric",
-            minute: "numeric",
-        };
-        const date = new Date(dateString);
-        return date.toLocaleDateString("en-US", options);
-    };
+    // // Format date to "Wed, Apr 28 • 5:30 PM"
+    // const formatDate = (dateString) => {
+    //     const options = {
+    //         year: "numeric",
+    //         month: "short",
+    //         day: "numeric",
+    //         weekday: "short",
+    //         hour: "numeric",
+    //         minute: "numeric",
+    //     };
+    //     const date = new Date(dateString);
+    //     return date.toLocaleDateString("en-US", options);
+    // };
 
     // Define columns for the GCM table
     const GCMColumns = [
@@ -163,6 +163,7 @@ const GCMs = () => {
                 showPreview={true}
                 routeLink="gcm"
                 handleDelete={handleDeleteClick}
+                isLoading={loading}
             />
             <ConfirmationDialog
                 open={openDialog}

@@ -3,28 +3,26 @@ import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
-import { deleteEvent, fetchAllEvents } from "../api/event";
 import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
-import { deleteOffer, fetchAllOffers } from "../api/offer";
 import { deleteHod, fetchAllHods } from "../api/clubhods";
 
 const ClubHods = () => {
 
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [hodList, setHodList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedHod, setSelectedHod] = useState(null);
     const [loading, setLoading] = useState(null)
-    // Format date to "14 December 2024"
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, options);
-    };
+    // // Format date to "14 December 2024"
+    // const formatDate = (dateString) => {
+    //     const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    //     const date = new Date(dateString);
+    //     return date.toLocaleDateString(undefined, options);
+    // };
 
     // Format time to "01:00 PM"
     // const formatTime = (timeString) => {

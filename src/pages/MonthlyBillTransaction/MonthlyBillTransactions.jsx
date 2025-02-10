@@ -13,7 +13,6 @@ import {
     Typography,
 } from "@mui/material";
 import Table from "../../components/Table";
-import { fetchAllTransactions } from "../../api/billing";
 import { showToast } from "../../api/toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";

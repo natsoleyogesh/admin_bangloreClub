@@ -1,8 +1,6 @@
 
 import React, { useContext, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
-import { FiPlus } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Box, Typography } from "@mui/material";
 
 import { WebSocketContext } from "../../contexts/WebSocketContext";
 import { deleteRequest } from "../../api/request";
@@ -10,19 +8,18 @@ import Table from "../../components/Table";
 
 import { showToast } from "../../api/toast";
 import ConfirmationDialog from "../../api/ConfirmationDialog";
-import Breadcrumb from "../../components/common/Breadcrumb";
 import { formatDateTime } from "../../api/config";
 
 const AllRequests = () => {
     const { requests, removeRequest } = useContext(WebSocketContext); // Consume WebSocketContext
     const [openDialog, setOpenDialog] = useState(false); // Manage dialog state
     const [selectedRequest, setSelectedRequest] = useState(null); // Track selected request for deletion
-    const [loading, setLoading] = useState(null)
-    // Utility function to format dates
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
+    // const [loading, setLoading] = useState(null)
+    // // Utility function to format dates
+    // const formatDate = (dateString) => {
+    //     const options = { year: "numeric", month: "long", day: "numeric" };
+    //     return new Date(dateString).toLocaleDateString(undefined, options);
+    // };
 
     // Table columns definition
     const columns = [

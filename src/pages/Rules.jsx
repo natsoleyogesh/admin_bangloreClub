@@ -10,7 +10,7 @@ import { deleteRuleByeLaw, fetchAllRuleByeLaws } from "../api/ruleByelaws";
 
 
 const Rules = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [rulesList, setRulesList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);

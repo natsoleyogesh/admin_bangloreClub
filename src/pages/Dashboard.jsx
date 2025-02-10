@@ -77,7 +77,7 @@
 
 
 import styled from "@emotion/styled";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Stats from "../components/home/stats/Stats";
 

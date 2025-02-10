@@ -15,24 +15,18 @@ import {
     IconButton,
 } from "@mui/material";
 import { BiImageAdd } from "react-icons/bi";
-import { FiPlus, FiTrash } from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
 import { showToast } from "../api/toast";
 import { useNavigate } from "react-router-dom";
 import { addRoom } from "../api/room";
 import { fetchAllCategories } from "../api/category";
 
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import NumbersIcon from "@mui/icons-material/Numbers";
-import ApartmentIcon from "@mui/icons-material/Apartment";
-import InputAdornment from "@mui/material/InputAdornment";
 import { AccessTime, AccessTimeFilled, CurrencyRupee, Description, ToggleOff } from "@mui/icons-material";
-import GroupsIcon from "@mui/icons-material/Groups";
 import SquareFootIcon from "@mui/icons-material/SquareFoot";
 import CategoryIcon from "@mui/icons-material/Category";
 import KingBedIcon from "@mui/icons-material/KingBed";
 import HotelIcon from "@mui/icons-material/Hotel";
-import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
-import PersonIcon from "@mui/icons-material/Person";
 import { fetchAllActiveTaxTypes } from "../api/masterData/taxType";
 import { fetchAllActiveAmenities } from "../api/masterData/amenities";
 import ReactQuill from "react-quill";
@@ -180,27 +174,27 @@ const AddRoom = () => {
         setImages(updatedImages);
     };
 
-    // Add new pricing detail
-    const handleAddPricingDetail = () => {
-        setRoomData((prevData) => ({
-            ...prevData,
-            pricingDetails: [...prevData.pricingDetails, { guestType: "", price: "", description: "" }],
-        }));
-    };
+    // // Add new pricing detail
+    // const handleAddPricingDetail = () => {
+    //     setRoomData((prevData) => ({
+    //         ...prevData,
+    //         pricingDetails: [...prevData.pricingDetails, { guestType: "", price: "", description: "" }],
+    //     }));
+    // };
 
-    const handlePricingDetailChange = (index, field, value) => {
-        const updatedPricingDetails = [...roomData.pricingDetails];
-        updatedPricingDetails[index] = {
-            ...updatedPricingDetails[index],
-            [field]: value,
-        };
-        setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
-    };
+    // const handlePricingDetailChange = (index, field, value) => {
+    //     const updatedPricingDetails = [...roomData.pricingDetails];
+    //     updatedPricingDetails[index] = {
+    //         ...updatedPricingDetails[index],
+    //         [field]: value,
+    //     };
+    //     setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
+    // };
 
-    const handleRemovePricingDetail = (index) => {
-        const updatedPricingDetails = roomData.pricingDetails.filter((_, i) => i !== index);
-        setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
-    };
+    // const handleRemovePricingDetail = (index) => {
+    //     const updatedPricingDetails = roomData.pricingDetails.filter((_, i) => i !== index);
+    //     setRoomData({ ...roomData, pricingDetails: updatedPricingDetails });
+    // };
 
     const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;

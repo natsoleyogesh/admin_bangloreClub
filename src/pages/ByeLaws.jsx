@@ -14,11 +14,11 @@ const ByeLaws = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedByeLaw, setSelectedByeLaw] = useState(null);
 
-    // Format date utility
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
+    // // Format date utility
+    // const formatDate = (dateString) => {
+    //     const options = { year: "numeric", month: "long", day: "numeric" };
+    //     return new Date(dateString).toLocaleDateString(undefined, options);
+    // };
 
     // Columns for the table
     const columns = [

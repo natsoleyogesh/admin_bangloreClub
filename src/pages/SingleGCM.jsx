@@ -369,12 +369,12 @@ import { showToast } from "../api/toast";
 import { FiEdit } from "react-icons/fi";
 import Breadcrumb from "../components/common/Breadcrumb";
 import styled from "@emotion/styled";
-import { BiImageAdd } from "react-icons/bi";
+// import { BiImageAdd } from "react-icons/bi";
 import { getRequest } from "../api/commonAPI";
 import { fetchAllActiveDepartments } from "../api/masterData/department";
 
-const categoryOptions = ["Chairperson", "Co-Chairperson", "Member"];
-const subCategoryOptions = ["Go Green", "Rooms", "Catering", "Sports"];
+// const categoryOptions = ["Chairperson", "Co-Chairperson", "Member"];
+// const subCategoryOptions = ["Go Green", "Rooms", "Catering", "Sports"];
 
 
 const UploadBox = styled(Box)(({ theme }) => ({

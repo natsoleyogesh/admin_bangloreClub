@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,13 +6,13 @@ import Table from "../components/Table";
 import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
-import { deleteDownload, fetchAllDownloads } from "../api/download";
+// import { deleteDownload, fetchAllDownloads } from "../api/download";
 import { deleteCOM, fetchAllCOMs } from "../api/com";
 
 const COMs = () => {
 
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [comList, setComList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);

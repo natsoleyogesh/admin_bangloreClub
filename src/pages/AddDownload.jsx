@@ -17,7 +17,7 @@ import { BiImageAdd } from "react-icons/bi";
 import { showToast } from "../api/toast";
 import { useNavigate } from "react-router-dom";
 import { addDownload } from "../api/download";
-import { Description, DateRange, CloudUpload } from "@mui/icons-material";
+import { Description, DateRange } from "@mui/icons-material";
 import ReactQuill from "react-quill";
 import Breadcrumb from "../components/common/Breadcrumb";
 

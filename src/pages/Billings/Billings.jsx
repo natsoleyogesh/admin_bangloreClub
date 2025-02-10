@@ -20,7 +20,7 @@ import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { fetchAllMembers } from "../../api/member"
 import { useParams } from "react-router-dom";
-import Breadcrumb from "../../components/common/Breadcrumb";
+// import Breadcrumb from "../../components/common/Breadcrumb";
 import { formatDateTime } from "../../api/config";
 
 const Billings = () => {
@@ -441,6 +441,7 @@ const Billings = () => {
                 enableColumnFilters
                 enableEditing
                 enableColumnDragging
+                isLoading={loading}
             />
         </Box>
     );

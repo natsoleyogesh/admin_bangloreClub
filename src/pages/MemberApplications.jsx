@@ -537,7 +537,6 @@
 
 
 import {
-    Avatar,
     Box,
     Button,
     Dialog,
@@ -552,7 +551,7 @@ import MaterialReactTable from "material-react-table";
 import { FiPlus } from "react-icons/fi";
 import { formatDateTime } from "../api/config";
 import { showToast } from "../api/toast";
-import { addMemberApplication, fetchAllMembersApplications } from "../api/memberWaiting";
+import { addMemberApplication } from "../api/memberWaiting";
 import { getRequest } from "../api/commonAPI";
 
 const MemberApplications = () => {
@@ -586,11 +585,11 @@ const MemberApplications = () => {
         fetchApplications();
     }, [searchTerm]);
 
-    const handleSearch = async (event) => {
-        const value = event.target.value;
-        setSearchTerm(value);
-        await fetchApplications(value);
-    };
+    // const handleSearch = async (event) => {
+    //     const value = event.target.value;
+    //     setSearchTerm(value);
+    //     await fetchApplications(value);
+    // };
 
     const handleFileUpload = async () => {
         if (!file) {

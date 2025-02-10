@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchEditOfferDetails, fetchOfferDetails, updateEventDetails, updateOfferDetails } from "../api/offer";
+import { fetchEditOfferDetails, fetchOfferDetails, updateOfferDetails } from "../api/offer";
 import { formatDate, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import { FiEdit } from "react-icons/fi";
@@ -28,7 +28,7 @@ import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveDepartments } from "../api/masterData/department";
 
 
-const departmentOptions = ["Recharge", "Purchase", "Subscription", "Entertainment", "Other"];
+// const departmentOptions = ["Recharge", "Purchase", "Subscription", "Entertainment", "Other"];
 
 const SingleOffer = () => {
     const { id } = useParams();
@@ -80,18 +80,18 @@ const SingleOffer = () => {
             showToast("Failed to fetch Members. Please try again.", "error");
         }
     };
-    // Format time (e.g., "01:25 PM")
-    const formatTime = (timeString) => {
-        if (!timeString) return "N/A";
-        const [hour, minute] = timeString.split(":").map(Number);
-        const date = new Date();
-        date.setHours(hour, minute);
-        return date.toLocaleTimeString(undefined, {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-        });
-    };
+    // // Format time (e.g., "01:25 PM")
+    // const formatTime = (timeString) => {
+    //     if (!timeString) return "N/A";
+    //     const [hour, minute] = timeString.split(":").map(Number);
+    //     const date = new Date();
+    //     date.setHours(hour, minute);
+    //     return date.toLocaleTimeString(undefined, {
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //         hour12: true,
+    //     });
+    // };
 
     // Handle input changes
     // const handleInputChange = (e) => {

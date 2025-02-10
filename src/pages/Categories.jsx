@@ -1,25 +1,25 @@
-import { Avatar, Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
 import { deleteCategory, fetchAllCategories } from "../api/category";
-import { formatDateTime, PUBLIC_API_URI } from "../api/config";
+import { formatDateTime } from "../api/config";
 import { showToast } from "../api/toast";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 
 const Categories = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [categoryList, setCategoryList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [loading, setLoading] = useState(null)
-    // Format date to "14 December 2024"
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, options);
-    };
+    // // Format date to "14 December 2024"
+    // const formatDate = (dateString) => {
+    //     const options = { year: "numeric", month: "long", day: "numeric" };
+    //     const date = new Date(dateString);
+    //     return date.toLocaleDateString(undefined, options);
+    // };
 
     // Define columns for the categories table
     const categoryColumns = [

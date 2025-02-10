@@ -89,9 +89,3 @@ export const formatDateCommon = (dateString) => {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
-
-
-
-{/* <span style="font-size:8px;">Ver. 2.0 Build: 31012025.122810</span>
-
-Format: Build: <DDMMYYYY.HHMMSS></DDMMYYYY.HHMMSS> */}

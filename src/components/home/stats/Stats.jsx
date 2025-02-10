@@ -62,7 +62,7 @@
 import styled from "@emotion/styled";
 import { Box, Grid, IconButton, Paper, Typography } from "@mui/material";
 import React from "react";
-import LineChart from "../charts/LineChart";
+// import LineChart from "../charts/LineChart";
 
 const Stats = ({ totalSales }) => {
   const Item = styled(Paper)({

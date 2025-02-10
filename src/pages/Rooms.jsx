@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { showToast } from "../api/toast";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 
 const Rooms = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [roomList, setRoomList] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -48,10 +48,10 @@ const Rooms = () => {
         getRooms();
     }, []);
 
-    const handleDeleteClick = (room) => {
-        setSelectedRoom(room);
-        setOpenDialog(true);
-    };
+    // const handleDeleteClick = (room) => {
+    //     setSelectedRoom(room);
+    //     setOpenDialog(true);
+    // };
 
     const handleConfirmDelete = async () => {
         const roomId = selectedRoom._id;

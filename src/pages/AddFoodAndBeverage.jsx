@@ -22,7 +22,7 @@ import { showToast } from "../api/toast";
 import ReactQuill from "react-quill";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveRestaurants } from "../api/masterData/restaurant";
-import { formatTo12Hour, formatTo24Hour } from "../api/config";
+import { formatTo24Hour } from "../api/config";
 
 const UploadBox = styled(Box)(({ theme }) => ({
     marginTop: 20,
@@ -41,7 +41,7 @@ const UploadBox = styled(Box)(({ theme }) => ({
     },
 }));
 
-const statusOptions = ["Active", "Inactive"];
+// const statusOptions = ["Active", "Inactive"];
 const dayOptions = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const menuOption = ["Buffet Menu", "A la carte Menu", "Both Menu"];
 const menuTypeOption = ["Breakfast", "Lunch", "Dinner", "Brunch", "Snacks", "Beverages", "Fine Dining", "Cafe Bistro", "Bar Lounge"]
@@ -58,7 +58,7 @@ const AddFoodAndBeverage = () => {
     const [bannerImages, setBannerImages] = useState([]);
     const [mainmenu, setMainmenu] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [errors] = useState({});
     const navigate = useNavigate();
     const [restaurants, setRestaurants] = useState([]);
 

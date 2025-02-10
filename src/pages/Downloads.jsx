@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { deleteDownload, fetchAllDownloads } from "../api/download";
 const Downloads = () => {
 
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [downloadList, setDownloadList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);

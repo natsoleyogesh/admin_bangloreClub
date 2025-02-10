@@ -1,7 +1,6 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Table from "../components/Table";
-import { customers, customersColumns } from "../data/customers";
 import { deleteMember, fetchAllMembers } from "../api/member";
 import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import { Link, useNavigate } from "react-router-dom";
@@ -116,7 +115,6 @@ const Customers = ({ uploadData }) => {
     try {
       await deleteMember(userId);
       getMembers()
-      const updatedList = memberList.filter((item) => item.userId !== userId);
       // setMemberList(updatedList);
       showToast("Member deleted successfully.", "success");
     } catch (error) {
@@ -133,10 +131,10 @@ const Customers = ({ uploadData }) => {
     setSelectedMember(null);
   };
 
-  // Handle navigation to "Add Member" page
-  const handleAddMember = () => {
-    navigate("/member/add");
-  };
+  // // Handle navigation to "Add Member" page
+  // const handleAddMember = () => {
+  //   navigate("/member/add");
+  // };
 
 
 

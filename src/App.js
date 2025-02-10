@@ -11,7 +11,6 @@ import {
   AddProduct,
   Customers,
   Products,
-  Settings,
   SingleCustomer,
   SingleProduct,
 } from "./pages";
@@ -48,7 +47,6 @@ import AddGCM from "./pages/AddGCM";
 import SingleGCM from "./pages/SingleGCM";
 import GCMs from "./pages/GCMs";
 import Rules from "./pages/Rules";
-import ByeLaws from "./pages/ByeLaws";
 import SingleRuleByeLaw from "./pages/SingleRuleByeLaw";
 import AddRuleByeLaw from "./pages/AddRuleByeLaw";
 import FAQs from "./pages/FAQs";

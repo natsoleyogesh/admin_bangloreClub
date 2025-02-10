@@ -19,8 +19,8 @@
 // export default ProtectedRoute;
 
 
-import React, { useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ProtectedRoute = ({ children }) => {

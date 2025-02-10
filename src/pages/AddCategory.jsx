@@ -14,7 +14,7 @@ import React, { useState } from "react";
 import { showToast } from "../api/toast";
 import { useNavigate } from "react-router-dom";
 import { addCategory } from "../api/category";
-import { Category, Code, Description, ToggleOn } from "@mui/icons-material";
+import { Category, Description, ToggleOn } from "@mui/icons-material";
 import Breadcrumb from "../components/common/Breadcrumb";
 
 const statusOptions = ["Active", "Inactive"];
@@ -27,7 +27,7 @@ const AddCategory = () => {
         isActive: true,
     });
     const [loading, setLoading] = useState(false);
-    const [validationErrors, setValidationErrors] = useState({});
+    const [validationErrors] = useState({});
     const navigate = useNavigate();
 
     // // Validation functions

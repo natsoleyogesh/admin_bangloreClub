@@ -3,7 +3,6 @@ import {
     Box,
     Button,
     Checkbox,
-    Chip,
     Dialog,
     DialogActions,
     DialogContent,
@@ -227,25 +226,25 @@ const SingleEvent = () => {
         }
     };
 
-    // Get color for RSVP status
-    const getRsvpColor = (rsvpStatus) => {
-        switch (rsvpStatus) {
-            case "Attending":
-                return "success";
-            case "Not Attending":
-                return "error";
-            case "Maybe":
-                return "warning";
-            case "Pending":
-                return "info";
-            case "Cancelled":
-                return "default";
-            case "N/A":
-                return "error";
-            default:
-                return "default";
-        }
-    };
+    // // Get color for RSVP status
+    // const getRsvpColor = (rsvpStatus) => {
+    //     switch (rsvpStatus) {
+    //         case "Attending":
+    //             return "success";
+    //         case "Not Attending":
+    //             return "error";
+    //         case "Maybe":
+    //             return "warning";
+    //         case "Pending":
+    //             return "info";
+    //         case "Cancelled":
+    //             return "default";
+    //         case "N/A":
+    //             return "error";
+    //         default:
+    //             return "default";
+    //     }
+    // };
 
     // Handle checkbox changes for Amenities
     // const handleChangeTaxTypes = (event) => {

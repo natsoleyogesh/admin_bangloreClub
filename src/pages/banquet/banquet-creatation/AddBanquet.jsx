@@ -18,7 +18,7 @@ import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { addBanquet, fetchActiveAllBanquetCategories } from "../../../api/banquet";
 import { showToast } from "../../../api/toast";
-import { AccessTime, AccessTimeFilled, CurrencyRupee } from "@mui/icons-material";
+import { CurrencyRupee } from "@mui/icons-material";
 import { fetchAllActiveTaxTypes } from "../../../api/masterData/taxType";
 import { fetchAllActiveAmenities } from "../../../api/masterData/amenities";
 import { FiTrash, FiPlus } from "react-icons/fi";
@@ -27,7 +27,6 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import CategoryIcon from "@mui/icons-material/Category";
 import SquareFootIcon from "@mui/icons-material/SquareFoot";
 import HotelIcon from "@mui/icons-material/Hotel";
-import dayjs from "dayjs";
 import Breadcrumb from "../../../components/common/Breadcrumb";
 
 const statusOptions = ["Active", "Inactive"];
@@ -207,17 +206,17 @@ const AddBanquet = () => {
     };
 
 
-    const handleFeatureChange = (e) => {
-        const { name, checked } = e.target;
-        console.log(name, checked, "handleInputChange");
-        setBanquetData({
-            ...banquetData,
-            features: {
-                ...banquetData.features,
-                [name]: checked,
-            },
-        });
-    };
+    // const handleFeatureChange = (e) => {
+    //     const { name, checked } = e.target;
+    //     console.log(name, checked, "handleInputChange");
+    //     setBanquetData({
+    //         ...banquetData,
+    //         features: {
+    //             ...banquetData.features,
+    //             [name]: checked,
+    //         },
+    //     });
+    // };
 
     const handleCancalletionChange = (e) => {
         const { name, value } = e.target;
@@ -601,14 +600,14 @@ const AddBanquet = () => {
         }));
     };
 
-    const handleAddTimeSlot = (index) => {
-        const updatedPricingDetails = [...banquetData.pricingDetails];
-        updatedPricingDetails[index].timeSlots.push({ start: null, end: null });
-        setBanquetData((prevData) => ({
-            ...prevData,
-            pricingDetails: updatedPricingDetails,
-        }));
-    };
+    // const handleAddTimeSlot = (index) => {
+    //     const updatedPricingDetails = [...banquetData.pricingDetails];
+    //     updatedPricingDetails[index].timeSlots.push({ start: null, end: null });
+    //     setBanquetData((prevData) => ({
+    //         ...prevData,
+    //         pricingDetails: updatedPricingDetails,
+    //     }));
+    // };
 
     // Function to remove a specific time slot
     const handleRemoveTimeSlot = (pricingIndex, slotIndex) => {

@@ -25,6 +25,7 @@ import { useParams } from "react-router-dom";
 import { fetchBanquetBookingDetails, updateBanquetBooking } from "../../../api/banquet";
 import { showToast } from "../../../api/toast";
 import Breadcrumb from "../../../components/common/Breadcrumb";
+import { formatDateTime } from "../../../api/config";
 
 // Format Time in AM/PM
 const formatTimeInIST = (timeStr) => {
@@ -194,6 +195,9 @@ const SingleBooking = () => {
                         </Typography>
                         <Typography variant="body1">
                             <strong>Payment Mode:</strong> {booking?.paymentMode || "N/A"}
+                        </Typography>
+                        <Typography variant="body1">
+                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
                         </Typography>
                     </Grid>
 

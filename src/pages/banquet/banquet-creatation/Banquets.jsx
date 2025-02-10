@@ -18,10 +18,10 @@ const Banquets = () => {
      * @param {string} dateString
      * @returns {string} Formatted date.
      */
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
+    // const formatDate = (dateString) => {
+    //     const options = { year: "numeric", month: "long", day: "numeric" };
+    //     return new Date(dateString).toLocaleDateString(undefined, options);
+    // };
 
     // Define columns for the table
     const columns = [
@@ -141,10 +141,10 @@ const Banquets = () => {
      * Handles the deletion of a banquet.
      * @param {Object} banquet The banquet to delete.
      */
-    const handleDeleteClick = (banquet) => {
-        setSelectedBanquet(banquet);
-        setOpenDialog(true);
-    };
+    // const handleDeleteClick = (banquet) => {
+    //     setSelectedBanquet(banquet);
+    //     setOpenDialog(true);
+    // };
 
     /**
      * Confirms the deletion of a banquet.

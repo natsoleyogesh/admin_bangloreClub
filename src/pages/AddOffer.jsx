@@ -18,7 +18,7 @@ import { BiImageAdd } from "react-icons/bi";
 import { showToast } from "../api/toast";
 import { useNavigate } from "react-router-dom";
 import { addOffer } from "../api/offer";
-import { CalendarToday, Description, Category, Code, CurrencyRupee, Event, Info, Percent } from "@mui/icons-material";
+import { Code, CurrencyRupee, Event, Percent } from "@mui/icons-material";
 import ReactQuill from "react-quill";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveDepartments } from "../api/masterData/department";
@@ -42,7 +42,7 @@ const UploadBox = styled(Box)(({ theme }) => ({
 
 const statusOptions = ["Active", "Expired", "Upcoming", "Inactive"];
 const typeOptions = ["New", "Current"];
-const departmentOptions = ["Recharge", "Purchase", "Subscription", "Entertainment", "Other"];
+// const departmentOptions = ["Recharge", "Purchase", "Subscription", "Entertainment", "Other"];
 
 const AddOffer = () => {
     const [offerData, setOfferData] = useState({

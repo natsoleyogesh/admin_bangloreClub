@@ -4,27 +4,24 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
     FormControl,
     Grid,
     InputLabel,
     MenuItem,
-    Paper,
     Select,
     TextField,
     Typography,
     CircularProgress,
-    Alert,
     Avatar,
     Checkbox,
     Autocomplete,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { BiImageAdd } from "react-icons/bi";
-import { addMember } from "../api/member";
+// import { addMember } from "../api/member";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../api/toast";
-import { CrisisAlert, Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
+import { Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
 import { addMemberApplication, fetchAllActiveMembers } from "../api/memberWaiting";
 import LocationSelector from "../components/common/LocationSelector";
 import Breadcrumb from "../components/common/Breadcrumb";
@@ -74,9 +71,9 @@ const AddMemberApplication = () => {
     // const [age, setAge] = useState("");
     const [sponsoredBy, setSponsoredBy] = useState([]);
     const [memberList, setMemberList] = useState([]);
-    const [parentUserId, setParentUserId] = useState("");
+    const [parentUserId] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     const [validationErrors, setValidationErrors] = useState({});
     const imageInput = useRef(null);
     const navigate = useNavigate();
@@ -149,14 +146,14 @@ const AddMemberApplication = () => {
         }));
     };
 
-    const handleRelationChange = (e) => {
-        const value = e.target.value;
-        setRelation(value);
-        setValidationErrors((prev) => ({
-            ...prev,
-            relation: validateRelation(value) ? "" : "Relation is required.",
-        }));
-    };
+    // const handleRelationChange = (e) => {
+    //     const value = e.target.value;
+    //     setRelation(value);
+    //     setValidationErrors((prev) => ({
+    //         ...prev,
+    //         relation: validateRelation(value) ? "" : "Relation is required.",
+    //     }));
+    // };
 
     // Form-level validation
     const validateForm = () => {
@@ -203,7 +200,7 @@ const AddMemberApplication = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
-        setError("");
+        // setError("");
 
         // Validate form before submission
         console.log(sponsoredBy, "spo")

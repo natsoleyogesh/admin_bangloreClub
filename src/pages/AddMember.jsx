@@ -4,21 +4,17 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
     FormControl,
     Grid,
     InputLabel,
     MenuItem,
-    Paper,
     Select,
     TextField,
     Typography,
     CircularProgress,
-    Alert,
     Avatar,
     IconButton,
     FormControlLabel,
-    Checkbox,
     Switch,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
@@ -26,7 +22,7 @@ import { BiImageAdd } from "react-icons/bi";
 import { addMember } from "../api/member";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../api/toast";
-import { CrisisAlert, Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
+import { Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
 import LocationSelector from "../components/common/LocationSelector";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { FiTrash } from "react-icons/fi";
@@ -83,9 +79,9 @@ const AddMember = () => {
     const [creditLimit, setCreditLimit] = useState(0)
 
     // const [age, setAge] = useState("");
-    const [parentUserId, setParentUserId] = useState("");
+    const [parentUserId] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     const [validationErrors, setValidationErrors] = useState({});
     const imageInput = useRef(null);
     const navigate = useNavigate();
@@ -172,14 +168,14 @@ const AddMember = () => {
         }));
     };
 
-    const handleRelationChange = (e) => {
-        const value = e.target.value;
-        setRelation(value);
-        setValidationErrors((prev) => ({
-            ...prev,
-            relation: validateRelation(value) ? "" : "Relation is required.",
-        }));
-    };
+    // const handleRelationChange = (e) => {
+    //     const value = e.target.value;
+    //     setRelation(value);
+    //     setValidationErrors((prev) => ({
+    //         ...prev,
+    //         relation: validateRelation(value) ? "" : "Relation is required.",
+    //     }));
+    // };
 
     // // Form-level validation
     // const validateForm = () => {
@@ -252,7 +248,7 @@ const AddMember = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
-        setError("");
+        // setError("");
 
         // Validate form before submission
         if (!validateForm()) {

@@ -4,7 +4,6 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
     FormControl,
     Grid,
     InputLabel,
@@ -22,7 +21,7 @@ import { BiImageAdd } from "react-icons/bi";
 import { addMember } from "../api/member";
 import { useNavigate, useParams } from "react-router-dom";
 import { showToast } from "../api/toast";
-import { CrisisAlert, Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
+import { Email, FamilyRestroom, LocationCity, People, Phone } from "@mui/icons-material";
 import LocationSelector from "../components/common/LocationSelector";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { FiTrash } from "react-icons/fi";
@@ -72,13 +71,13 @@ const AddFamilyMember = () => {
     const [cardId, setCardId] = useState("");
     const [title, setTitle] = useState("Mr.");
 
-    const [creditStop, setCreditStop] = useState(false);
-    const [creditLimit, setCreditLimit] = useState(0)
+    const [creditStop] = useState(false);
+    const [creditLimit] = useState(0)
     // const [age, setAge] = useState("");
     const [image, setImage] = useState(null);
     const [proofs, setProofs] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error] = useState("");
     const [validationErrors, setValidationErrors] = useState({});
     const imageInput = useRef(null);
     const navigate = useNavigate();

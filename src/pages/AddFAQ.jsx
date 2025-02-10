@@ -15,7 +15,7 @@ import {
 import { showToast } from "../api/toast";
 import { useNavigate } from "react-router-dom";
 import { addFAQ } from "../api/faq";
-import { Description, Category, QuestionAnswer } from "@mui/icons-material";
+import { QuestionAnswer } from "@mui/icons-material";
 import Breadcrumb from "../components/common/Breadcrumb";
 
 const statusOptions = ["Active", "Inactive"]; // FAQ status options

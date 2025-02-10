@@ -11,7 +11,7 @@ import { showToast } from "../api/toast";
 const Events = () => {
 
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [eventList, setEventList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
@@ -159,10 +159,10 @@ const Events = () => {
 
     console.log(eventList, "member")
 
-    const handleDeleteClick = (event) => {
-        setSelectedEvent(event);
-        setOpenDialog(true);
-    };
+    // const handleDeleteClick = (event) => {
+    //     setSelectedEvent(event);
+    //     setOpenDialog(true);
+    // };
 
     const handleConfirmDelete = async () => {
         const eventId = selectedEvent._id;
@@ -170,7 +170,7 @@ const Events = () => {
         try {
             await deleteEvent(eventId);
             getEvents()
-            const updatedList = eventList.filter((item) => item.eventId !== eventId);
+            // const updatedList = eventList.filter((item) => item.eventId !== eventId);
             // setMemberList(updatedList);
             showToast("event deleted successfully.", "success");
         } catch (error) {

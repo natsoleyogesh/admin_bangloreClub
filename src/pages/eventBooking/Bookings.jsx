@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Autocomplete, Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { FiPlus } from "react-icons/fi";
-import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import { showToast } from "../../api/toast";
 import { deleteBooking, fetchAllBookings, fetchAllEvents } from "../../api/event";
@@ -12,6 +10,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { fetchAllMembers } from "../../api/member";
+import BookingsExport from "./bookingExports";
 
 const Bookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -20,7 +19,7 @@ const Bookings = () => {
     const [loading, setLoading] = useState(null);
     const [fetching, setFetching] = useState(false); // To show loading while fetching users
 
-    const [filterType, setFilterType] = useState("all");
+    const [filterType, setFilterType] = useState("currentMonth");
     const [bookingStatus, setBookingStatus] = useState("all");
     const [customStartDate, setCustomStartDate] = useState("");
     const [customEndDate, setCustomEndDate] = useState("");
@@ -124,17 +123,6 @@ const Bookings = () => {
         setOpenDialog(false);
         setSelectedBooking(null);
     };
-
-    // // Utility function to format data for export
-    // const formatBookingData = (row) => ({
-    //     eventTitle: row.eventId?.eventTitle || "N/A",
-    //     membershipId: row.primaryMemberId?.memberId || "N/A",
-    //     primaryMember: row.primaryMemberId?.name || "N/A",
-    //     eventStartDate: formatDateCommon(row.eventId?.eventStartDate),
-    //     eventEndDate: formatDateCommon(row.eventId?.eventEndDate),
-    //     bookingStatus: row.bookingStatus,
-    //     totalAmount: `₹${row.ticketDetails?.totalAmount || 0}`,
-    // });
 
     const getActiveMembers = async () => {
         setFetching(true);
@@ -342,9 +330,10 @@ const Bookings = () => {
                             >
                                 <MenuItem value="today">Today</MenuItem>
                                 <MenuItem value="last7days">Last 7 Days</MenuItem>
-                                <MenuItem value="lastMonth">Last Month</MenuItem>
-                                <MenuItem value="lastThreeMonths">Last 3 Months</MenuItem>
-                                <MenuItem value="lastSixMonths">Last 6 Months</MenuItem>
+                                <MenuItem value="currentMonth">Current Month</MenuItem>
+                                <MenuItem value="last30days">Last 30 Days</MenuItem>
+                                <MenuItem value="last3months">Last 3 Months</MenuItem>
+                                <MenuItem value="last6months">Last 6 Months</MenuItem>
                                 <MenuItem value="last1year">Last 1 Year</MenuItem>
                                 <MenuItem value="custom">Custom</MenuItem>
                                 <MenuItem value="all">All</MenuItem>
@@ -397,7 +386,7 @@ const Bookings = () => {
                     )}
                 </Grid>
                 <Box sx={{ mt: 3 }}>
-                    <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
+                    {/* <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
                         Export to PDF
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToCSV} sx={{ mr: 1 }}>
@@ -405,7 +394,8 @@ const Bookings = () => {
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToXLS}>
                         Export to XLS
-                    </Button>
+                    </Button> */}
+                    <BookingsExport bookings={bookings} />
                 </Box>
             </Box>
 

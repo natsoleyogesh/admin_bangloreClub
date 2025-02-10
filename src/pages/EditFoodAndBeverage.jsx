@@ -15,7 +15,7 @@ import {
     IconButton,
 } from "@mui/material";
 import { Delete, Save } from "@mui/icons-material";
-import { deleteFoodAndBeverage, deleteFoodAndbeverageImage, fetchEditFoodAndBeverageDetails, updateFoodAndBeverageDetails, uploadFoodAndbeveragesImage } from "../api/foodAndBeverage";
+import { deleteFoodAndbeverageImage, fetchEditFoodAndBeverageDetails, updateFoodAndBeverageDetails, uploadFoodAndbeveragesImage } from "../api/foodAndBeverage";
 import { formatTo24Hour, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import ReactQuill from "react-quill";
@@ -50,10 +50,10 @@ const EditFoodAndBeverage = ({ categoryId, isOpen, onClose, onSave }) => {
         }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditData((prev) => ({ ...prev, [name]: value }));
-    };
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setEditData((prev) => ({ ...prev, [name]: value }));
+    // };
 
     const handleFileChange = (e, field) => {
         const files = Array.from(e.target.files);

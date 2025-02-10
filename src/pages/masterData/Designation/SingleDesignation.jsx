@@ -206,6 +206,7 @@ import { FiEdit } from "react-icons/fi";
 import { showToast } from "../../../api/toast";
 import Breadcrumb from "../../../components/common/Breadcrumb";
 import { getRequest, putRequest } from "../../../api/commonAPI";
+import { formatDateMoment } from "../../../api/config";
 
 const SingleDesignation = () => {
     const { id } = useParams();
@@ -297,7 +298,7 @@ const SingleDesignation = () => {
                         </Typography>
                         <Typography variant="body1">
                             <strong>Created At:</strong> {designation.createdAt
-                                ? new Date(designation.createdAt).toLocaleDateString()
+                                ? formatDateMoment(designation.createdAt)
                                 : "N/A"}
                         </Typography>
                         <Button

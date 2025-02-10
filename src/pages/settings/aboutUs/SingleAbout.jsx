@@ -212,6 +212,7 @@ import { showToast } from "../../../api/toast";
 import Breadcrumb from "../../../components/common/Breadcrumb";
 import { getRequest, putRequest } from "../../../api/commonAPI";
 import ReactQuill from "react-quill";
+import { formatDateMoment } from "../../../api/config";
 
 const SingleAboutUs = () => {
     const { id } = useParams();
@@ -311,7 +312,7 @@ const SingleAboutUs = () => {
                         <Typography variant="body1" sx={{ mt: 1 }}>
                             <strong>Created At:</strong>{" "}
                             {aboutDetails.createdAt
-                                ? new Date(aboutDetails.createdAt).toLocaleDateString()
+                                ? formatDateMoment(aboutDetails.createdAt)
                                 : "N/A"}
                         </Typography>
                         <Button

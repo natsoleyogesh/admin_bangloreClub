@@ -20,6 +20,7 @@ import { FiEdit } from "react-icons/fi";
 import { showToast } from "../../../api/toast";
 import { fetchDepartmentDetails, updateDepartmentDetails } from "../../../api/masterData/department";
 import Breadcrumb from "../../../components/common/Breadcrumb";
+import { formatDateMoment } from "../../../api/config";
 
 const SingleDepartment = () => {
     const { id } = useParams();
@@ -131,7 +132,7 @@ const SingleDepartment = () => {
                             <strong>Status:</strong> {department.status || "N/A"}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Created At:</strong> {new Date(department.createdAt).toLocaleDateString() || "N/A"}
+                            <strong>Created At:</strong> {formatDateMoment(department.createdAt) || "N/A"}
                         </Typography>
                         <Button
                             variant="contained"

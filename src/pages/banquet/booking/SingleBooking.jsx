@@ -153,7 +153,7 @@ const SingleBooking = () => {
                             {formatDateMoment(booking.bookingDates?.checkOut) || "N/A"} */}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Booking Time:</strong>{" "}
+                            <strong>Booking Time Slot:</strong>{" "}
                             {booking.bookingTime
                                 ? `${formatTime(booking.bookingTime.from)} - ${formatTime(
                                     booking.bookingTime.to
@@ -196,9 +196,6 @@ const SingleBooking = () => {
                         </Typography>
                         <Typography variant="body1">
                             <strong>Payment Mode:</strong> {booking?.paymentMode || "N/A"}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
                         </Typography>
                     </Grid>
 
@@ -270,6 +267,12 @@ const SingleBooking = () => {
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Occasion:</strong> {booking.occasion || "N/A"}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider sx={{ mb: 2 }} />
+                        <Typography variant="body1">
+                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
                         </Typography>
                     </Grid>
                 </Grid>

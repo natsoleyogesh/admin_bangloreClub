@@ -211,9 +211,9 @@ const SingleRoomBooking = () => {
                         <Typography variant="body1">
                             <strong>Payment Mode:</strong> {booking?.paymentMode || "N/A"}
                         </Typography>
-                        <Typography variant="body1">
+                        {/* <Typography variant="body1">
                             <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
-                        </Typography>
+                        </Typography> */}
                     </Grid>
 
                     {/* Pricing Details */}
@@ -237,7 +237,7 @@ const SingleRoomBooking = () => {
                         </Typography>
 
                         {/* Room Category Details */}
-                        <Box sx={{ mb: 4, mt: 4 }}>
+                        <Box sx={{ mb: 1, mt: 4 }}>
                             <Divider sx={{ mb: 2 }} />
                             <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>
                                 <strong>Room Categories</strong>
@@ -283,6 +283,12 @@ const SingleRoomBooking = () => {
                                 <Typography variant="body2">No room category details available.</Typography>
                             )}
                         </Box>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {/* <Divider sx={{ mb: 2 }} /> */}
+                        <Typography variant="body1">
+                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
+                        </Typography>
                     </Grid>
 
 

@@ -22,6 +22,7 @@ import { showToast } from "../../../api/toast";
 import { getRequest, putRequest } from "../../../api/commonAPI";
 import Breadcrumb from "../../../components/common/Breadcrumb";
 import LocationSelector from "../../../components/common/LocationSelector";
+import { formatDateMoment } from "../../../api/config";
 
 const SingleContact = () => {
     const { id } = useParams(); // Get contact ID from route params
@@ -169,7 +170,7 @@ const SingleContact = () => {
                         <Typography variant="body1" sx={{ mt: 1 }}>
                             <strong>Created At:</strong>{" "}
                             {contact.createdAt
-                                ? new Date(contact.createdAt).toLocaleDateString()
+                                ? formatDateMoment(contact.createdAt)
                                 : "N/A"}
                         </Typography>
                         <Button

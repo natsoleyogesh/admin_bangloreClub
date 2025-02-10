@@ -22,6 +22,7 @@ import { FiEdit } from "react-icons/fi";
 import { showToast } from "../../../api/toast";
 import { fetchTaxTypeDetails, updateTaxTypeDetails } from "../../../api/masterData/taxType";
 import Breadcrumb from "../../../components/common/Breadcrumb";
+import { formatDateMoment } from "../../../api/config";
 
 const SingleTaxType = () => {
     const { id } = useParams();
@@ -112,7 +113,7 @@ const SingleTaxType = () => {
                             <strong>Tax Is Applicable With Kids:</strong> {taxType.applyKids === true ? "Yes" : "No"}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Created At:</strong> {new Date(taxType.createdAt).toLocaleDateString() || "N/A"}
+                            <strong>Created At:</strong> {formatDateMoment(taxType.createdAt) || "N/A"}
                         </Typography>
                         <Button
                             variant="contained"

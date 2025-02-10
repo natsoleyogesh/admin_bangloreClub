@@ -20,7 +20,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchEditOfferDetails, fetchOfferDetails, updateOfferDetails } from "../api/offer";
-import { formatDate, PUBLIC_API_URI } from "../api/config";
+import { formatDate, formatDateMoment, PUBLIC_API_URI } from "../api/config";
 import { showToast } from "../api/toast";
 import { FiEdit } from "react-icons/fi";
 import ReactQuill from "react-quill";
@@ -194,10 +194,10 @@ const SingleOffer = () => {
                     <Grid item xs={12} md={7}>
                         <Typography variant="h4">{offer.title || "N/A"}</Typography>
                         <Typography variant="body1">
-                            <strong>Start Date:</strong> {formatDate(offer.startDate)}
+                            <strong>Start Date:</strong> {formatDateMoment(offer.startDate)}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>End Date:</strong> {formatDate(offer.endDate)}
+                            <strong>End Date:</strong> {formatDateMoment(offer.endDate)}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Description:</strong>

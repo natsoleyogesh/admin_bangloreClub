@@ -15,6 +15,7 @@ import {
     InputLabel,
     FormControl,
     Chip,
+    Divider,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { showToast } from "../../api/toast";
@@ -134,9 +135,9 @@ const SingleBooking = () => {
                             />
 
                         </Typography>
-                        <Typography variant="body1">
+                        {/* <Typography variant="body1">
                             <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
-                        </Typography>
+                        </Typography> */}
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="h6">Ticket Details</Typography>
@@ -193,6 +194,15 @@ const SingleBooking = () => {
                         <Typography variant="body1">
                             <strong>Member Count:</strong> Primary: {booking.counts?.primaryMemberCount || 0}, Dependent: {booking.counts?.dependentMemberCount || 0}, Spouse: {booking.counts?.spouseMemberCount || 0}, Kids: {booking.counts?.kidsMemberCount || 0}, Senior Dependent: {booking.counts?.seniorDependentMemberCount || 0}, Guest: {booking.counts?.guestMemberCount || 0}
                         </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider sx={{ mb: 2 }} />
+                        <Typography variant="body1">
+                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={12}>
                         {booking.bookingStatus !== "Cancelled" &&
                             <Button
                                 variant="contained"

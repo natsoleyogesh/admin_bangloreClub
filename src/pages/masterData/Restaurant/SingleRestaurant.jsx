@@ -20,6 +20,7 @@ import { FiEdit } from "react-icons/fi";
 import { showToast } from "../../../api/toast";
 import { fetchRestaurantDetails, updateRestaurantDetails } from "../../../api/masterData/restaurant";
 import Breadcrumb from "../../../components/common/Breadcrumb";
+import { formatDateMoment } from "../../../api/config";
 
 const SingleRestaurant = () => {
     const { id } = useParams();
@@ -98,7 +99,7 @@ const SingleRestaurant = () => {
                             <strong>Status:</strong> {restaurant.status || "N/A"}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Created At:</strong> {new Date(restaurant.createdAt).toLocaleDateString() || "N/A"}
+                            <strong>Created At:</strong> {formatDateMoment(restaurant.createdAt) || "N/A"}
                         </Typography>
                         <Button
                             variant="contained"

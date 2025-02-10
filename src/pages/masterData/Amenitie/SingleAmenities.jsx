@@ -20,7 +20,7 @@ import { useParams } from "react-router-dom";
 import { FiEdit, FiUpload } from "react-icons/fi";
 import { showToast } from "../../../api/toast";
 import { fetchAmenitieDetails, updateAmenitieDetails } from "../../../api/masterData/amenities";
-import { PUBLIC_API_URI } from "../../../api/config";
+import { formatDateMoment, PUBLIC_API_URI } from "../../../api/config";
 import Breadcrumb from "../../../components/common/Breadcrumb";
 
 const SingleAmenitie = () => {
@@ -113,7 +113,7 @@ const SingleAmenitie = () => {
                             <strong>Status:</strong> {amenity.status || "N/A"}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Created At:</strong> {new Date(amenity.createdAt).toLocaleDateString() || "N/A"}
+                            <strong>Created At:</strong> {formatDateMoment(amenity.createdAt) || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ marginTop: "10px" }}>
                             <strong>Icon:</strong> <br />

@@ -21,7 +21,7 @@ import { showToast } from "../../api/toast";
 import { FiEdit } from "react-icons/fi";
 import { fetchBookingDetails, updateBookingDetails } from "../../api/event";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import { formatDateTime } from "../../api/config";
+import { formatDateTime, formatTime } from "../../api/config";
 
 // Function to format time to IST (Indian Standard Time) in AM/PM format
 const formatTimeInIST = (timeStr) => {
@@ -127,7 +127,7 @@ const SingleBooking = () => {
                             <strong>Event End Date:</strong> {new Date(booking.eventId?.eventEndDate).toLocaleDateString() || "N/A"}
                         </Typography>
                         <Typography variant="body1">
-                            <strong>Event Time:</strong>  {booking.eventId?.startTime ? formatTimeInIST(booking.eventId.startTime) : "N/A"} -  {booking.eventId?.endTime ? formatTimeInIST(booking.eventId.endTime) : "N/A"}
+                            <strong>Event Time:</strong>  {booking.eventId?.startTime ? formatTime(booking.eventId.startTime) : "N/A"} -  {booking.eventId?.endTime ? formatTime(booking.eventId.endTime) : "N/A"}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Location:</strong> {booking.eventId?.location || "N/A"}

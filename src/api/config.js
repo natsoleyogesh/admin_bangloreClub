@@ -89,3 +89,16 @@ export const formatDateCommon = (dateString) => {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
+
+
+export const formatTime = (timeString) => {
+    if (!timeString) return "N/A";
+    const [hour, minute] = timeString.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hour, minute);
+    return date.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+    });
+};

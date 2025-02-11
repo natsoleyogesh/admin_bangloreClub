@@ -147,13 +147,13 @@ const SingleBooking = () => {
                             <strong>Banquet:</strong> {booking?.banquetType?.banquetName?.name || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Booking Date:</strong>{" "}
+                            <strong>Party Date:</strong>{" "}
                             {formatDateMoment(booking.bookingDates?.checkIn) || "N/A"}
                             {/* -{" "}
                             {formatDateMoment(booking.bookingDates?.checkOut) || "N/A"} */}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Booking Time Slot:</strong>{" "}
+                            <strong>Party Time Slot:</strong>{" "}
                             {booking.bookingTime
                                 ? `${formatTime(booking.bookingTime.from)} - ${formatTime(
                                     booking.bookingTime.to
@@ -248,7 +248,7 @@ const SingleBooking = () => {
                             <strong>Primary Member:</strong> {booking.primaryMemberId?.name || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Guest Of:</strong> {booking.invitationOfmember || "N/A"}
+                            <strong>Admin:</strong> {booking.invitationOfmember || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Guests:</strong> {booking.attendingGuests || "N/A"}

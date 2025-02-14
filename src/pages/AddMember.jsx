@@ -57,6 +57,8 @@ const AddMember = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [mobileNumber, setMobileNumber] = useState("");
+    const [email2, setEmail2] = useState("");
+    const [mobileNumber2, setMobileNumber2] = useState("");
     const [relation, setRelation] = useState("Primary");
     const [address, setAddress] = useState("");
     const [address1, setAddress1] = useState("");
@@ -138,7 +140,7 @@ const AddMember = () => {
             ...prev,
             mobileNumber: validateMobileNumber(value)
                 ? ""
-                : "Mobile number must be 10 digits.",
+                : "Primary Mobile number must be 10 digits.",
         }));
     };
 
@@ -262,6 +264,8 @@ const AddMember = () => {
         formData.append("name", name);
         formData.append("email", email);
         formData.append("mobileNumber", mobileNumber);
+        formData.append("email2", email2);
+        formData.append("mobileNumber2", mobileNumber2);
         formData.append("address", address);
         formData.append("address1", address1);
         formData.append("address2", address2);
@@ -419,9 +423,9 @@ const AddMember = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <InputLabel sx={{ fontWeight: "bold" }}>Email Address</InputLabel>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Primary Email Address</InputLabel>
                                     <TextField
-                                        placeholder="Enter email address"
+                                        placeholder="Enter primary email address"
                                         variant="outlined"
                                         fullWidth
                                         size="small"
@@ -435,9 +439,9 @@ const AddMember = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <InputLabel sx={{ fontWeight: "bold" }}>Phone Number</InputLabel>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Primary Phone Number</InputLabel>
                                     <TextField
-                                        placeholder="Enter phone number"
+                                        placeholder="Enter primary phone number"
                                         variant="outlined"
                                         fullWidth
                                         size="small"
@@ -446,6 +450,33 @@ const AddMember = () => {
                                         error={!!validationErrors.mobileNumber}
                                         helperText={validationErrors.mobileNumber}
                                         // required
+                                        sx={{ marginTop: "4px" }}
+                                        InputProps={{ startAdornment: <Phone sx={{ color: "gray", mr: 1 }} /> }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Secondary Email Address</InputLabel>
+                                    <TextField
+                                        placeholder="Enter secondary email address"
+                                        variant="outlined"
+                                        fullWidth
+                                        size="small"
+                                        value={email2}
+                                        onChange={(e) => setEmail2(e.target.value)}
+
+                                        sx={{ marginTop: "4px" }}
+                                        InputProps={{ startAdornment: <Email sx={{ color: "gray", mr: 1 }} /> }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <InputLabel sx={{ fontWeight: "bold" }}>Secondary Phone Number</InputLabel>
+                                    <TextField
+                                        placeholder="Enter secondary phone number"
+                                        variant="outlined"
+                                        fullWidth
+                                        size="small"
+                                        value={mobileNumber2}
+                                        onChange={(e) => setMobileNumber2(e.target.value)}
                                         sx={{ marginTop: "4px" }}
                                         InputProps={{ startAdornment: <Phone sx={{ color: "gray", mr: 1 }} /> }}
                                     />

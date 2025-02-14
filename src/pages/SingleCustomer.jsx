@@ -69,6 +69,16 @@ const memberDataColumns = [
     Cell: ({ cell }) => cell.getValue() || "N/A",
   },
   {
+    accessorKey: "email2",
+    header: "Secondary Email",
+    Cell: ({ cell }) => cell.getValue() || "N/A",
+  },
+  {
+    accessorKey: "mobileNumber2",
+    header: "Secondary Phone Number",
+    Cell: ({ cell }) => cell.getValue() || "N/A",
+  },
+  {
     accessorKey: "relation",
     header: "Relation ship",
     Cell: ({ cell }) => cell.getValue() || "N/A",
@@ -221,6 +231,8 @@ const SingleProduct = () => {
     qrCodeId,
     cardId,
     qrCode,
+    email2,
+    mobileNumber2,
     title, activatedDate } = member;
   console.log(member, "dfkk")
 
@@ -420,8 +432,8 @@ const SingleProduct = () => {
         </Button>)}
       </Box>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6} lg={4}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6} lg={5}>
           <Paper sx={{ boxShadow: 3, borderRadius: "12px", p: "20px", textAlign: "center" }}>
             {/* <Avatar sx={{ width: "80px", height: "80px", mx: "auto", mb: 2 }} /> */}
             {/* <Avatar
@@ -465,12 +477,20 @@ const SingleProduct = () => {
                     <TableCell><Typography variant="body2">{relation || "N/A"}</Typography></TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><Typography variant="subtitle2">Email:</Typography></TableCell>
+                    <TableCell><Typography variant="subtitle2">Primary Email:</Typography></TableCell>
                     <TableCell><Typography variant="body2">{email || "N/A"}</Typography></TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><Typography variant="subtitle2">Phone:</Typography></TableCell>
+                    <TableCell><Typography variant="subtitle2">Primary Phone:</Typography></TableCell>
                     <TableCell><Typography variant="body2">{mobileNumber || "N/A"}</Typography></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Secondary Email:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{email2 || "N/A"}</Typography></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Secondary Phone:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{mobileNumber2 || "N/A"}</Typography></TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell><Typography variant="subtitle2">Address:</Typography></TableCell>
@@ -633,7 +653,7 @@ const SingleProduct = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6} lg={8}>
+        <Grid item xs={12} md={6} lg={7}>
           {relation === "Primary" && (
             <><Typography variant="h6">Dependent List</Typography>
               <Table
@@ -744,7 +764,7 @@ const SingleProduct = () => {
           />
           <TextField
             margin="dense"
-            label="Email"
+            label="Primary Email"
             type="email"
             fullWidth
             name="email"
@@ -753,11 +773,29 @@ const SingleProduct = () => {
           />
           <TextField
             margin="dense"
-            label="Phone Number"
+            label="Primary Phone Number"
             type="text"
             fullWidth
             name="mobileNumber"
             value={editMember.mobileNumber || ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            label="Secondary Email"
+            type="email"
+            fullWidth
+            name="email2"
+            value={editMember.email2 || ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            label="Secondary Phone Number"
+            type="text"
+            fullWidth
+            name="mobileNumber2"
+            value={editMember.mobileNumber2 || ""}
             onChange={handleInputChange}
           />
 

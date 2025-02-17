@@ -8,7 +8,7 @@ export const REACT_APP_BUILD_DATE = "17022025.113810"
 
 // export const PUBLIC_API_URI = "http://localhost:3005/api"
 // export const PUBLIC_API_URI = "https://13.60.85.75/api"
-export const PUBLIC_API_URI = "https://13.201.137.130/api"
+export const PUBLIC_API_URI = "https://app.bangaloreclub.com/api"
 
 // new 
 

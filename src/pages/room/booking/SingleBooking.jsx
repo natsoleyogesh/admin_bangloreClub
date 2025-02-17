@@ -277,6 +277,26 @@ const SingleRoomBooking = () => {
                                             <strong>Final Amount:</strong> ₹{category.final_amount || 0}
                                         </Typography>
                                         <Divider sx={{ mb: 2 }} />
+                                        <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>
+                                            <strong>Allocated Room Numbers</strong>
+                                        </Typography>
+                                        {category.roomNumbers.length > 0 ? (
+                                            <List dense>
+                                                {category.roomNumbers.map((room, index) => (
+                                                    // <ListItem key={index}>
+                                                    //     <ListItemText
+                                                    //         primary={`Room Number: ${room.roomNumber}`}
+                                                    //     />
+                                                    // </ListItem>
+                                                    <Typography variant="body2" sx={{ fontWeight: "bold", mb: 1 }}>
+                                                        <strong>Room Number:</strong>   {room.roomNumber}
+                                                    </Typography>
+                                                ))}
+                                            </List>
+                                        ) : (
+                                            <Typography variant="body2">No Room details available for this Booking.</Typography>
+                                        )}
+
                                     </Box>
                                 ))
                             ) : (
@@ -284,26 +304,21 @@ const SingleRoomBooking = () => {
                             )}
                         </Box>
                     </Grid>
-                    <Grid item xs={12}>
-                        {/* <Divider sx={{ mb: 2 }} /> */}
-                        <Typography variant="body1">
-                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
-                        </Typography>
-                    </Grid>
+
 
 
                     {/* Member Details */}
-                    {/* <Grid item xs={12}>
+                    <Grid item xs={12}>
+                        <Divider sx={{ mb: 2 }} />
                         <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>
                             Member Details
                         </Typography>
-                        <Divider sx={{ mb: 2 }} />
                         {booking.memberDetails?.map((member, index) => (
                             <Typography key={index} variant="body1" sx={{ mb: 1 }}>
-                                <strong>{member.memberType}:</strong> {member.memberName || "N/A"}
+                                <strong>Member {index + 1}.</strong> {member.memberName || "N/A"}
                             </Typography>
                         ))}
-                    </Grid> */}
+                    </Grid>
 
 
                     {booking.bookingStatus === "Pending" && (< Grid item xs={12} md={12} sx={{ mb: 4 }}>
@@ -365,6 +380,15 @@ const SingleRoomBooking = () => {
                         </Box>
                     </Grid>
                     )}
+
+                    <Grid item xs={12}>
+                        <Divider sx={{ mb: 2 }} />
+
+                        {/* <Divider sx={{ mb: 2 }} /> */}
+                        <Typography variant="body1">
+                            <strong>Booking Created Date & Time:</strong>  {booking.createdAt ? formatDateTime(booking.createdAt) : "N/A"}
+                        </Typography>
+                    </Grid>
                 </Grid>
 
 

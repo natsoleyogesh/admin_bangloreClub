@@ -144,7 +144,7 @@ const SingleBooking = () => {
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Banquet:</strong> {booking?.banquetType?.banquetName?.name || "N/A"}
+                            <strong>Banquet Venue:</strong> {booking?.banquetType?.banquetName?.name || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Party Date:</strong>{" "}
@@ -248,10 +248,10 @@ const SingleBooking = () => {
                             <strong>Primary Member:</strong> {booking.primaryMemberId?.name || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Admin:</strong> {booking.invitationOfmember || "N/A"}
+                            <strong>Hosted By:</strong> {booking.invitationOfmember || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Guests:</strong> {booking.attendingGuests || "N/A"}
+                            <strong>No of Pax:</strong> {booking.attendingGuests || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Mobile:</strong> {booking.mobileNumber || "N/A"}

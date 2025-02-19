@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
@@ -7,6 +7,7 @@ import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { deleteDownload, fetchAllDownloads } from "../api/download";
+import { getRequest } from "../api/commonAPI";
 
 const Downloads = () => {
 
@@ -16,7 +17,13 @@ const Downloads = () => {
     const [downloadList, setDownloadList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedDownload, setSelectedDownload] = useState(null);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
     // Format date to "14 December 2024"
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -119,23 +126,34 @@ const Downloads = () => {
 
     ];
 
-    const getDownload = async () => {
-        setLoading(true)
+    // Fetch downloads with pagination
+    const getDownload = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const download = await fetchAllDownloads();
-            console.log(download.data.downloads, "user")
-            setDownloadList(download?.data.downloads);
-            setLoading(false)
+            // const response = await fetchAllDownloads({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/downloads?page=${pageNumber}&limit=${pageSize}`);
+
+            setDownloadList(response?.data?.downloads || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalDownloads || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
-            console.error("Failed to fetch members:", error);
-            setLoading(false)
+            console.error("Failed to fetch downloads:", error);
+            showToast("Failed to fetch downloads. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
-
         getDownload();
-    }, []);
+    }, [getDownload]);
 
     console.log(downloadList, "member")
 
@@ -204,6 +222,28 @@ const Downloads = () => {
                 routeLink="download"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
             <ConfirmationDialog
                 open={openDialog}

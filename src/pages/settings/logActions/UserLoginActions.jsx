@@ -247,7 +247,7 @@
 // export default UserLoginActions;
 
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     Box,
     Typography,
@@ -257,6 +257,8 @@ import {
     Select,
     MenuItem,
     TextField,
+    Autocomplete,
+    CircularProgress,
 } from "@mui/material";
 import Table from "../../../components/Table";
 import ConfirmationDialog from "../../../api/ConfirmationDialog";
@@ -264,12 +266,13 @@ import { getRequest, deleteRequest } from "../../../api/commonAPI";
 import { fetchAllMembers } from "../../../api/member";
 import { showToast } from "../../../api/toast";
 import { formatDateTime } from "../../../api/config";
+import debounce from "lodash.debounce";
 
 const UserLoginActions = () => {
     const [actions, setActions] = useState([]);
     const [filters, setFilters] = useState({
         userType: "User",
-        userId: "all",
+        userId: "",
         filter: "all",
         action: "all",
         startDate: "",
@@ -279,6 +282,21 @@ const UserLoginActions = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedAction, setSelectedAction] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    // User Search & Infinite Scroll State
+    const [users, setUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [userPage, setUserPage] = useState(1);
+    const [userTotalPages, setUserTotalPages] = useState(1);
+    const [fetchingUsers, setFetchingUsers] = useState(false);
+    const [hasMoreUsers, setHasMoreUsers] = useState(true);
+    const scrollRef = useRef(null);
 
     // Table columns definition
     const columns = [
@@ -293,38 +311,70 @@ const UserLoginActions = () => {
         },
     ];
 
-    // Fetch all members
-    const getActiveMembers = async () => {
+    /** 📌 Fetch Users for Autocomplete with Pagination */
+    const fetchUsers = async ({ search = "", page = 1, reset = false }) => {
+        if (fetchingUsers || page > userTotalPages) return;
+
+        setFetchingUsers(true);
         try {
-            const response = await fetchAllMembers();
-            setActiveMembers(response.users || []);
+            const response = await getRequest(`/admin/get-users?search=${search}&page=${page}&limit=10`);
+            setUsers((prevUsers) => (reset ? response.data.users : [...prevUsers, ...response.data.users]));
+            setUserTotalPages(response.data.pagination.totalPages);
+            setUserPage(page);
+            setHasMoreUsers(page < response.data.pagination.totalPages);
         } catch (error) {
-            console.error("Failed to fetch members:", error);
-            showToast("Failed to fetch members. Please try again.", "error");
+            console.error("Error fetching users:", error);
+        } finally {
+            setFetchingUsers(false);
         }
     };
 
-    // Fetch action logs based on filters
-    const fetchLogActions = async () => {
+    /** 📌 Debounced function to optimize API calls while searching */
+    const debouncedFetchUsers = debounce((query) => fetchUsers({ search: query, page: 1, reset: true }), 500);
+
+    /** 📌 Fetch Users on Component Mount */
+    useEffect(() => {
+        fetchUsers({ search: "", page: 1, reset: true });
+    }, []);
+
+    /** 📌 Handle Search Change */
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        debouncedFetchUsers(query);
+    };
+
+    /** 📌 Handle Scroll to Fetch More Users */
+    const handleScroll = (event) => {
+        const bottom = event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 20;
+        if (bottom && hasMoreUsers) {
+            fetchUsers({ search: searchQuery, page: userPage + 1, reset: false });
+        }
+    };
+    // Fetch action logs based on filters with pagination
+    const fetchLogActions = useCallback(async () => {
         setLoading(true);
         try {
-            const queryParams = { ...filters };
+            const queryParams = { ...filters, page, limit };
 
-            // Remove unused parameters for better query construction
+            // Remove empty or 'all' filters for better query construction
             Object.keys(queryParams).forEach(
                 (key) => queryParams[key] === "all" || !queryParams[key] ? delete queryParams[key] : null
             );
 
             const queryString = new URLSearchParams(queryParams).toString();
             const response = await getRequest(`/actions?${queryString}`);
+
             setActions(response?.data?.data || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalActions || 0);
         } catch (error) {
             console.error("Error fetching action logs:", error);
             showToast("Failed to fetch action logs. Please try again.", "error");
         } finally {
             setLoading(false);
         }
-    };
+    }, [filters, page, limit]);
 
     // Handle delete confirmation dialog
     const handleDeleteClick = (action) => {
@@ -370,13 +420,10 @@ const UserLoginActions = () => {
         });
     };
 
-    useEffect(() => {
-        getActiveMembers();
-    }, []);
 
     useEffect(() => {
         fetchLogActions();
-    }, [filters]);
+    }, [fetchLogActions]);
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -395,7 +442,7 @@ const UserLoginActions = () => {
             {/* Filters Section */}
             <Box sx={{ mb: 3 }}>
                 <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} sm={3} md={2}>
+                    {/* <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Select Member</InputLabel>
                         <FormControl fullWidth size="small">
                             <Select
@@ -411,6 +458,34 @@ const UserLoginActions = () => {
                                 ))}
                             </Select>
                         </FormControl>
+                    </Grid> */}
+                    <Grid item xs={12} sm={3} md={2}>
+                        <InputLabel>Select Member</InputLabel>
+                        <Autocomplete
+                            options={users}
+                            getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                            value={users.find((user) => user._id === filters.userId) || null}
+                            onChange={(event, newValue) => handleFilterChange("userId", newValue ? newValue._id : "")}
+                            loading={fetchingUsers}
+                            ListboxProps={{
+                                ref: scrollRef,
+                                onScroll: handleScroll,
+                                style: { maxHeight: 200, overflow: "auto" },
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    fullWidth
+                                    size="small"
+                                    onChange={handleSearchChange}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: fetchingUsers ? <CircularProgress color="inherit" size={20} /> : null,
+                                    }}
+                                />
+                            )}
+                        />
                     </Grid>
 
                     <Grid item xs={12} sm={3} md={2}>
@@ -491,6 +566,28 @@ const UserLoginActions = () => {
                 routeLink='user-action-logs'
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
 
             {/* Delete Confirmation Dialog */}

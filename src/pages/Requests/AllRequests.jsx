@@ -11,15 +11,13 @@ import ConfirmationDialog from "../../api/ConfirmationDialog";
 import { formatDateTime } from "../../api/config";
 
 const AllRequests = () => {
-    const { requests, removeRequest } = useContext(WebSocketContext); // Consume WebSocketContext
+    // const { requests, removeRequest } = useContext(WebSocketContext); // Consume WebSocketContext
+    const {
+        requests, removeRequest, page, setPage, limit, setLimit,
+        totalPages, totalRecords, loading
+    } = useContext(WebSocketContext);
     const [openDialog, setOpenDialog] = useState(false); // Manage dialog state
     const [selectedRequest, setSelectedRequest] = useState(null); // Track selected request for deletion
-    // const [loading, setLoading] = useState(null)
-    // // Utility function to format dates
-    // const formatDate = (dateString) => {
-    //     const options = { year: "numeric", month: "long", day: "numeric" };
-    //     return new Date(dateString).toLocaleDateString(undefined, options);
-    // };
 
     // Table columns definition
     const columns = [
@@ -129,6 +127,14 @@ const AllRequests = () => {
                 showPreview
                 routeLink="request"
                 handleDelete={handleDeleteClick} // Trigger delete dialog
+                pagination={{
+                    page,
+                    pageSize: limit,
+                    totalPages,
+                    totalRecords,
+                    onPageChange: setPage,
+                    onPageSizeChange: setLimit,
+                }}
             />
 
             {/* Delete Confirmation Dialog */}

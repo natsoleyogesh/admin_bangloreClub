@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
@@ -7,6 +7,7 @@ import { deleteEvent, fetchAllEvents } from "../api/event";
 import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
+import { getRequest } from "../api/commonAPI";
 
 const Events = () => {
 
@@ -16,7 +17,13 @@ const Events = () => {
     const [eventList, setEventList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
     // Format date to "14 December 2024"
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -139,23 +146,35 @@ const Events = () => {
 
     ];
 
-    const getEvents = async () => {
-        setLoading(true)
+    // Fetch paginated events
+    const fetchEvents = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const event = await fetchAllEvents();
-            console.log(event.data.allEvents, "user")
-            setEventList(event?.data.allEvents);
-            setLoading(false)
+            // const response = await fetchAllEvents({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/event/all-events?isAdmin=true&page=${pageNumber}&limit=${pageSize}`);
+
+
+            setEventList(response?.data?.events || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalEvents || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
-            console.error("Failed to fetch members:", error);
-            setLoading(false)
+            console.error("Failed to fetch events:", error);
+            showToast("Failed to fetch events.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
-
-        getEvents();
-    }, []);
+        fetchEvents();
+    }, [fetchEvents]);
 
     console.log(eventList, "member")
 
@@ -169,7 +188,7 @@ const Events = () => {
         console.log(eventId, "usersgshg")
         try {
             await deleteEvent(eventId);
-            getEvents()
+            fetchEvents(page, limit)
             // const updatedList = eventList.filter((item) => item.eventId !== eventId);
             // setMemberList(updatedList);
             showToast("event deleted successfully.", "success");
@@ -225,6 +244,30 @@ const Events = () => {
                 routeLink="events"
                 // handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
+
+
             />
             <ConfirmationDialog
                 open={openDialog}

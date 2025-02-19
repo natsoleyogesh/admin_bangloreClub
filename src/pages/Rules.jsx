@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { deleteRuleByeLaw, fetchAllRuleByeLaws } from "../api/ruleByelaws";
+import { getRequest } from "../api/commonAPI";
 
 
 const Rules = () => {
@@ -16,6 +17,12 @@ const Rules = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedRule, setSelectedRule] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
 
     // Format date to "14 December 2024"
     const formatDate = (dateString) => {
@@ -60,23 +67,34 @@ const Rules = () => {
         },
     ];
 
-    // Fetch all rules/byelaws
-    const fetchRules = async () => {
+    // Fetch all rules/byelaws with pagination
+    const fetchRules = useCallback(async (pageNumber, pageSize) => {
         setLoading(true);
         try {
-            const response = await fetchAllRuleByeLaws();
+            // const response = await fetchAllRuleByeLaws({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/rulebyelaws?page=${pageNumber}&limit=${pageSize}`);
+
             setRulesList(response?.data?.ruleByelaws || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalRulesBylaws || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
             console.error("Failed to fetch rules/byelaws:", error);
             showToast("Failed to fetch rules/byelaws. Please try again.", "error");
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
         fetchRules();
-    }, []);
+    }, [fetchRules]);
 
     // Handle delete button click
     const handleDeleteClick = (rule) => {
@@ -146,6 +164,28 @@ const Rules = () => {
                 routeLink="rulebyelaw"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
 
             {/* Delete Confirmation Dialog */}

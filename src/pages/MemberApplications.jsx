@@ -546,7 +546,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import MaterialReactTable from "material-react-table";
 import { FiPlus } from "react-icons/fi";
 import { formatDateTime } from "../api/config";
@@ -561,29 +561,68 @@ const MemberApplications = () => {
     const [openUploadDialog, setOpenUploadDialog] = useState(false);
     const [file, setFile] = useState(null);
 
-    const fetchApplications = async () => {
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    // const fetchApplications = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const queryParams = {
+    //             search: ""
+    //         };
+    //         if (searchTerm) {
+    //             queryParams.search = searchTerm
+    //         }
+    //         const queryString = new URLSearchParams(queryParams).toString();
+    //         const response = await getRequest(`/membershipwaitings?${queryString}`);
+    //         const data = response.data || [];
+    //         setApplicationsList(data);
+    //     } catch (error) {
+    //         console.error("Failed to fetch applications:", error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     fetchApplications();
+    // }, [searchTerm]);
+
+    // Fetch applications with pagination
+    const fetchApplications = useCallback(async () => {
         setLoading(true);
         try {
             const queryParams = {
-                search: ""
+                page,
+                limit,
+                search: searchTerm || "",
             };
-            if (searchTerm) {
-                queryParams.search = searchTerm
-            }
             const queryString = new URLSearchParams(queryParams).toString();
             const response = await getRequest(`/membershipwaitings?${queryString}`);
-            const data = response.data || [];
-            setApplicationsList(data);
+
+            setApplicationsList(response?.data?.applications || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalApplications || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
             console.error("Failed to fetch applications:", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit, searchTerm]);
 
     useEffect(() => {
         fetchApplications();
-    }, [searchTerm]);
+    }, [fetchApplications]);
 
     // const handleSearch = async (event) => {
     //     const value = event.target.value;
@@ -612,51 +651,6 @@ const MemberApplications = () => {
             setFile(null);
         }
     };
-
-    // const columns = useMemo(() => {
-    //     if (!applicationsList.length) return [];
-
-    //     const seconderKeys = new Set();
-    //     applicationsList.forEach((item) => {
-    //         Object.keys(item.seconders || {}).forEach((key) => seconderKeys.add(key));
-    //     });
-
-    //     const seconderColumns = Array.from(seconderKeys).flatMap((key) => [
-    //         {
-    //             accessorKey: `seconders.${key}.name`,
-    //             header: `${key.replace("seconder-", "Seconder-")}`,
-    //         },
-    //         {
-    //             accessorKey: `seconders.${key}.accountNumber`,
-    //             header: `A/C No`,
-    //         },
-    //     ]);
-
-    //     return [
-    //         {
-    //             accessorKey: "applicationNumber",
-    //             header: "Application Number",
-    //         },
-    //         {
-    //             accessorKey: "applicantName",
-    //             header: "Applicant Name",
-    //         },
-    //         {
-    //             accessorKey: "applicationDate",
-    //             header: "Application Date",
-    //             Cell: ({ cell }) => formatDateTime(cell.getValue()),
-    //         },
-    //         {
-    //             accessorKey: "proposer.name",
-    //             header: "Proposer Name",
-    //         },
-    //         {
-    //             accessorKey: "proposer.accountNumber",
-    //             header: "Proposer Account Number",
-    //         },
-    //         ...seconderColumns,
-    //     ];
-    // }, [applicationsList]);
 
 
     const columns = useMemo(() => {
@@ -750,6 +744,15 @@ const MemberApplications = () => {
                 enableColumnFilters
                 enableGlobalFilter
                 state={{ loading }} // Pass the loading state here
+                manualPagination
+                rowCount={totalRecords}
+                pagination={{
+                    pageIndex: page - 1, // MaterialReactTable uses 0-based indexing
+                    pageSize: limit,
+                    onPageChange: (newPage) => setPage(newPage + 1),
+                    onPageSizeChange: (newPageSize) => setLimit(newPageSize),
+                }}
+
             />
 
             <Dialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)}>

@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
@@ -8,6 +8,7 @@ import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 // import { deleteDownload, fetchAllDownloads } from "../api/download";
 import { deleteCOM, fetchAllCOMs } from "../api/com";
+import { getRequest } from "../api/commonAPI";
 
 const COMs = () => {
 
@@ -25,6 +26,11 @@ const COMs = () => {
         return date.toLocaleDateString(undefined, options);
     };
 
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
 
 
     const ComColumns = [
@@ -119,24 +125,34 @@ const COMs = () => {
         },
 
     ];
-
-    const getCOM = async () => {
-        setLoading(true)
+    // Fetch all rules/byelaws with pagination
+    const getCOM = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const com = await fetchAllCOMs();
-            console.log(com.data.coms, "coms")
-            setComList(com?.data.coms);
-            setLoading(false)
+            // const response = await fetchAllRuleByeLaws({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/coms?page=${pageNumber}&limit=${pageSize}`);
+
+            setComList(response?.data?.coms || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalCOMs || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
-            console.error("Failed to fetch members:", error);
-            setLoading(false)
+            console.error("Failed to fetch rules/byelaws:", error);
+            showToast("Failed to fetch rules/byelaws. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
-
-        getCOM();
-    }, []);
+        getCOM(page, limit);
+    }, [getCOM]);
 
     console.log(comList, "member")
 
@@ -205,6 +221,28 @@ const COMs = () => {
                 routeLink="com"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
             <ConfirmationDialog
                 open={openDialog}

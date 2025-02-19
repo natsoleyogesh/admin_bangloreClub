@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 // Function to fetch all users
 export const fetchAllEvents = async () => {
     try {
-        const response = await axiosInstance.get("/event/all-events?isAdmin=true");
+        const response = await axiosInstance.get("/event/all-events-list?isAdmin=true");
         return response; // Assuming the API returns user data in `response.data`
     } catch (error) {
         console.error("Error fetching users:", error);

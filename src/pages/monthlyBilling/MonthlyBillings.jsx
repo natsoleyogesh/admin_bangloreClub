@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     Box,
     Button,
@@ -28,6 +28,7 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 import { formatDateTime } from "../../api/config";
 import { getRequest, postFormDataRequest } from "../../api/commonAPI";
 import { FiPlus } from "react-icons/fi";
+import debounce from "lodash.debounce";
 
 const formatMonthYear = (value) => {
     if (!value) return "";
@@ -52,6 +53,21 @@ const MonthlyBillings = () => {
     const [openFileDialog, setOpenFileDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
 
+
+    // Pagination State
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    // User Search & Infinite Scroll State
+    const [users, setUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [userPage, setUserPage] = useState(1);
+    const [userTotalPages, setUserTotalPages] = useState(1);
+    const [fetchingUsers, setFetchingUsers] = useState(false);
+    const [hasMoreUsers, setHasMoreUsers] = useState(true);
+    const scrollRef = useRef(null);
 
     // Utility function to format dates and times
     const formatDate = (dateString) => {
@@ -98,55 +114,78 @@ const MonthlyBillings = () => {
         setTransactionMonth(formattedValue);
     };
 
-    // Fetch all billings with filters
-    const fetchAllOfflineBillingData = async () => {
-        setLoading(true)
+    // Fetch paginated offline billing data with filters
+    const fetchAllOfflineBillingData = useCallback(async (pageNumber = 1, pageSize = 10) => {
+        setLoading(true);
         try {
-            const queryParams = {
-            };
-            if (paymentStatus !== "all") {
-                queryParams.paymentStatus = paymentStatus
-            }
-            if (userId !== "all") {
-                queryParams.userId = userId;
-            }
-            if (transactionMonth !== "") {
-                queryParams.transactionMonth = transactionMonth;
-            }
+            const queryParams = { page: pageNumber, limit: pageSize };
 
-            const queryString = new URLSearchParams(queryParams).toString();
-            const response = await getRequest(`/offline-billings?${queryString}`);
-            setMonthlyBillings(response?.data?.billings || []); // Set billings to the fetched data
-            setTotals(response?.data?.totals)
-            setLoading(false)
+            if (paymentStatus !== "all") queryParams.paymentStatus = paymentStatus;
+            if (userId !== "all") queryParams.userId = userId;
+            if (transactionMonth !== "") queryParams.transactionMonth = transactionMonth;
+
+            const response = await getRequest(`/offline-billings?${new URLSearchParams(queryParams)}`);
+            setMonthlyBillings(response?.data?.billings || []);
+            setTotals(response?.data?.totals || {});
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalRecords || 0);
         } catch (error) {
             console.error("Error fetching billings:", error);
-            setMonthlyBillings([])
-            setLoading(false)
-            // showToast("Failed to fetch billings. Please try again.", "error");
-        }
-    };
-
-    const getActiveMembers = async () => {
-        setFetching(true);
-        try {
-            const response = await fetchAllMembers();
-            setActiveMembers(response.users);
-        } catch (error) {
-            console.error("Failed to fetch members :", error);
-            showToast("Failed to fetch Members. Please try again.", "error");
+            setMonthlyBillings([]);
         } finally {
-            setFetching(false);
+            setLoading(false);
+        }
+    }, [paymentStatus, transactionMonth, userId]);
+
+    /** 📌 Fetch Users for Autocomplete with Pagination */
+    const fetchUsers = async ({ search = "", page = 1, reset = false }) => {
+        if (fetchingUsers || page > userTotalPages) return;
+
+        setFetchingUsers(true);
+        try {
+            const response = await getRequest(`/admin/get-users?search=${search}&page=${page}&limit=10`);
+            setUsers((prevUsers) => (reset ? response.data.users : [...prevUsers, ...response.data.users]));
+            setUserTotalPages(response.data.pagination.totalPages);
+            setUserPage(page);
+            setHasMoreUsers(page < response.data.pagination.totalPages);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        } finally {
+            setFetchingUsers(false);
         }
     };
 
-    // Fetch billings on component mount and when filters change
+    /** 📌 Debounced function to optimize API calls while searching */
+    const debouncedFetchUsers = debounce((query) => fetchUsers({ search: query, page: 1, reset: true }), 500);
+
+    /** 📌 Fetch Users on Component Mount */
     useEffect(() => {
-        getActiveMembers();
-    }, [])
+        fetchUsers({ search: "", page: 1, reset: true });
+    }, []);
+
+    /** 📌 Handle Search Change */
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        debouncedFetchUsers(query);
+    };
+
+    /** 📌 Handle User Selection */
+    const handleUserChange = (event, selectedUser) => {
+        setUserId(selectedUser ? selectedUser._id : "all");
+    };
+
+    /** 📌 Handle Scroll to Fetch More Users */
+    const handleScroll = (event) => {
+        const bottom = event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 20;
+        if (bottom && hasMoreUsers) {
+            fetchUsers({ search: searchQuery, page: userPage + 1, reset: false });
+        }
+    };
+
     useEffect(() => {
-        fetchAllOfflineBillingData();
-    }, [paymentStatus, transactionMonth, userId]);
+        fetchAllOfflineBillingData(page, limit);
+    }, [paymentStatus, transactionMonth, userId, page, limit, fetchAllOfflineBillingData]);
 
 
     const exportToPDF = () => {
@@ -288,28 +327,32 @@ const MonthlyBillings = () => {
 
 
                 <Grid container spacing={2} alignItems="center">
-                    {!id && <Grid item xs={12} sm={3} md={2}>
-                        <InputLabel>Select Member</InputLabel>
-
-                        <FormControl fullWidth size="small">
+                    {!id && (
+                        <Grid item xs={12} sm={3} md={2}>
+                            <InputLabel>Select Member</InputLabel>
                             <Autocomplete
-                                options={activeMembers}
+                                options={users}
                                 getOptionLabel={(option) => `${option.name} (${option.memberId})`}
-                                value={activeMembers.find((member) => member._id === userId) || null}
-                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
-                                loading={fetching}
+                                value={users.find((user) => user._id === userId) || null}
+                                onChange={handleUserChange}
+                                loading={fetchingUsers}
+                                ListboxProps={{
+                                    ref: scrollRef,
+                                    onScroll: handleScroll,
+                                    style: { maxHeight: 200, overflow: "auto" },
+                                }}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
                                         variant="outlined"
                                         fullWidth
                                         size="small"
-                                        sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
+                                        onChange={handleSearchChange}
                                         InputProps={{
                                             ...params.InputProps,
                                             endAdornment: (
                                                 <>
-                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {fetchingUsers ? <CircularProgress color="inherit" size={20} /> : null}
                                                     {params.InputProps.endAdornment}
                                                 </>
                                             ),
@@ -317,8 +360,8 @@ const MonthlyBillings = () => {
                                     />
                                 )}
                             />
-                        </FormControl>
-                    </Grid>}
+                        </Grid>
+                    )}
                     <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Payment Status</InputLabel>
                         <FormControl fullWidth size="small">
@@ -376,6 +419,28 @@ const MonthlyBillings = () => {
                 showPreview
                 routeLink="monthly-billing"
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
 
             {/* Dialog for File Upload */}
@@ -401,3 +466,193 @@ const MonthlyBillings = () => {
 };
 
 export default MonthlyBillings;
+
+
+// import React, { useEffect, useState, useCallback } from "react";
+// import {
+//     Box, Button, Typography, Select, MenuItem, FormControl, InputLabel,
+//     Grid, TextField, Dialog, DialogTitle, DialogContent, DialogActions,
+//     Autocomplete, CircularProgress
+// } from "@mui/material";
+// import Table from "../../components/Table";
+// import { showToast } from "../../api/toast";
+// import jsPDF from "jspdf";
+// import autoTable from "jspdf-autotable";
+// import * as XLSX from "xlsx";
+// import { useParams } from "react-router-dom";
+// import { formatDateTime } from "../../api/config";
+// import { getRequest, postFormDataRequest } from "../../api/commonAPI";
+// import { FiPlus } from "react-icons/fi";
+
+// const formatMonthYear = (value) => {
+//     if (!value) return "";
+//     const [year, month] = value.split("-");
+//     return `${new Date(year, month - 1).toLocaleString("default", { month: "long" })}-${year}`;
+// };
+
+// const MonthlyBillings = () => {
+//     const { id } = useParams();
+
+//     const [monthlyBillings, setMonthlyBillings] = useState([]);
+//     const [totals, setTotals] = useState({});
+//     const [paymentStatus, setPaymentStatus] = useState("all");
+//     const [transactionMonth, setTransactionMonth] = useState("");
+//     const [showTransactionMonth, setShowTransactionMonth] = useState("");
+//     const [userId, setUserId] = useState(id || "all");
+//     const [loading, setLoading] = useState(false);
+//     const [fetching, setFetching] = useState(false); // To show loading while fetching users
+
+//     const [openFileDialog, setOpenFileDialog] = useState(false);
+//     const [selectedFile, setSelectedFile] = useState(null);
+
+//     // Pagination State
+//     const [page, setPage] = useState(1);
+//     const [limit, setLimit] = useState(10);
+//     const [totalPages, setTotalPages] = useState(1);
+//     const [totalRecords, setTotalRecords] = useState(0);
+
+//     const columns = [
+//         { accessorKey: "invoiceNumber", header: "Invoice Number" },
+//         { accessorKey: "memberId.memberId", header: "Membership ID" },
+//         { accessorKey: "memberId.name", header: "Member Name" },
+//         { accessorKey: "paymentStatus", header: "Payment Status" },
+//         { accessorKey: "transactionMonth", header: "Transaction Month" },
+//         {
+//             accessorKey: "invoiceDate",
+//             header: "Invoice Date & Time",
+//             Cell: ({ cell }) => formatDateTime(cell.getValue()),
+//         },
+//         {
+//             accessorKey: "totalAmount",
+//             header: "Total Amount",
+//             Cell: ({ cell }) => `₹${cell.getValue()}`,
+//         },
+//         {
+//             accessorKey: "createdAt",
+//             header: "Created Date & Time",
+//             Cell: ({ cell }) => formatDateTime(cell.getValue()),
+//         },
+//     ];
+
+//     const handleTransactionMonthChange = (e) => {
+//         const rawValue = e.target.value;
+//         setShowTransactionMonth(rawValue);
+//         setTransactionMonth(formatMonthYear(rawValue));
+//     };
+
+//     // Fetch paginated offline billing data with filters
+//     const fetchAllOfflineBillingData = useCallback(async (pageNumber = 1, pageSize = 10) => {
+//         setLoading(true);
+//         try {
+//             const queryParams = { page: pageNumber, limit: pageSize };
+
+//             if (paymentStatus !== "all") queryParams.paymentStatus = paymentStatus;
+//             if (userId !== "all") queryParams.userId = userId;
+//             if (transactionMonth !== "") queryParams.transactionMonth = transactionMonth;
+
+//             const response = await getRequest(`/offline-billings?${new URLSearchParams(queryParams)}`);
+//             setMonthlyBillings(response?.data?.billings || []);
+//             setTotals(response?.data?.totals || {});
+//             setTotalPages(response?.data?.pagination?.totalPages || 1);
+//             setTotalRecords(response?.data?.pagination?.totalRecords || 0);
+//         } catch (error) {
+//             console.error("Error fetching billings:", error);
+//             setMonthlyBillings([]);
+//         } finally {
+//             setLoading(false);
+//         }
+//     }, [paymentStatus, transactionMonth, userId]);
+
+//     useEffect(() => {
+//         fetchAllOfflineBillingData(page, limit);
+//     }, [paymentStatus, transactionMonth, userId, page, limit, fetchAllOfflineBillingData]);
+
+//     return (
+//         <Box sx={{ pt: "80px", pb: "20px" }}>
+//             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+//                 <Typography variant="h6">Offline Billings</Typography>
+//                 <Button
+//                     variant="contained"
+//                     color="primary"
+//                     startIcon={<FiPlus />}
+//                     sx={{ borderRadius: "20px" }}
+//                     onClick={() => setOpenFileDialog(true)}
+//                 >
+//                     Upload Bill
+//                 </Button>
+//             </Box>
+
+//             <Grid container spacing={2} alignItems="center">
+//                 <Grid item xs={12} sm={3} md={2}>
+//                     <InputLabel>Payment Status</InputLabel>
+//                     <FormControl fullWidth size="small">
+//                         <Select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)} size="small">
+//                             <MenuItem value="Paid">Paid</MenuItem>
+//                             <MenuItem value="Paid Offline">Paid Offline</MenuItem>
+//                             <MenuItem value="Due">Due</MenuItem>
+//                             <MenuItem value="Overdue">Overdue</MenuItem>
+//                             <MenuItem value="all">All</MenuItem>
+//                         </Select>
+//                     </FormControl>
+//                 </Grid>
+//                 <Grid item xs={12} sm={3} md={2}>
+//                     <InputLabel>Transaction Month</InputLabel>
+//                     <TextField type="month" value={showTransactionMonth} onChange={handleTransactionMonthChange} fullWidth size="small" />
+//                 </Grid>
+//             </Grid>
+
+//             <Table
+//                 data={monthlyBillings}
+//                 fields={columns}
+//                 numberOfRows={monthlyBillings.length}
+//                 enableTopToolBar
+//                 enableBottomToolBar
+//                 enablePagination
+//                 enableRowSelection
+//                 enableColumnFilters
+//                 enableEditing
+//                 enableColumnDragging
+//                 showPreview
+//                 routeLink="monthly-billing"
+//                 isLoading={loading}
+//                 pagination={{
+//                     page: page > 0 ? page : 1,
+//                     pageSize: limit > 0 ? limit : 10,
+//                     totalPages: totalPages || 1,
+//                     totalRecords: totalRecords || 0,
+//                     onPageChange: (newPage) => {
+//                         if (!isNaN(newPage) && newPage > 0) {
+//                             console.log("Setting Page to:", newPage);
+//                             setPage(newPage);
+//                         } else {
+//                             console.warn("Invalid page number received:", newPage);
+//                         }
+//                     },
+//                     onPageSizeChange: (newLimit) => {
+//                         if (!isNaN(newLimit) && newLimit > 0) {
+//                             console.log("Setting Page Size to:", newLimit);
+//                             setLimit(newLimit);
+//                         } else {
+//                             console.warn("Invalid page size received:", newLimit);
+//                         }
+//                     },
+//                 }}
+//             />
+
+//             <Dialog open={openFileDialog} onClose={() => setOpenFileDialog(false)}>
+//                 <DialogTitle>Upload Monthly Bill</DialogTitle>
+//                 <DialogContent>
+//                     <input type="file" accept=".xlsx, .xls" onChange={(e) => setSelectedFile(e.target.files[0])} />
+//                 </DialogContent>
+//                 <DialogActions>
+//                     <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>
+//                     <Button onClick={() => { /* handleUploadFile() */ }} variant="contained" color="primary">
+//                         Upload
+//                     </Button>
+//                 </DialogActions>
+//             </Dialog>
+//         </Box>
+//     );
+// };
+
+// export default MonthlyBillings;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -33,6 +33,13 @@ const AdminLoginActions = () => {
     const [selectedAction, setSelectedAction] = useState(null);
     const [loading, setLoading] = useState(false);
 
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
     // Table columns definition
     const columns = [
         { accessorKey: "user.name", header: "Name" },
@@ -57,13 +64,13 @@ const AdminLoginActions = () => {
     //     }
     // };
 
-    // Fetch action logs based on filters
-    const fetchLogActions = async () => {
+    // Fetch action logs with pagination
+    const fetchLogActions = useCallback(async () => {
         setLoading(true);
         try {
-            const queryParams = { ...filters };
+            const queryParams = { ...filters, page, limit };
 
-            // Remove unused parameters for better query construction
+            // Remove empty or 'all' filters for better query construction
             Object.keys(queryParams).forEach(
                 (key) => queryParams[key] === "all" || !queryParams[key] ? delete queryParams[key] : null
             );
@@ -71,13 +78,26 @@ const AdminLoginActions = () => {
             const queryString = new URLSearchParams(queryParams).toString();
             const response = await getRequest(`/actions?${queryString}`);
             setActions(response?.data?.data || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalActions || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
             console.error("Error fetching action logs:", error);
             showToast("Failed to fetch action logs. Please try again.", "error");
         } finally {
             setLoading(false);
         }
-    };
+    }, [filters, page, limit]);
+
+    useEffect(() => {
+        fetchLogActions();
+    }, [fetchLogActions]);
 
     // Handle delete confirmation dialog
     const handleDeleteClick = (action) => {
@@ -125,10 +145,6 @@ const AdminLoginActions = () => {
     // useEffect(() => {
     //     getActiveMembers();
     // }, []);
-
-    useEffect(() => {
-        fetchLogActions();
-    }, [filters]);
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -242,6 +258,28 @@ const AdminLoginActions = () => {
                 showPreview
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
 
             {/* Delete Confirmation Dialog */}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -26,7 +26,11 @@ const Notifications = () => {
     const [customEndDate, setCustomEndDate] = useState("");
     const [loading, setLoading] = useState(null)
 
-
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
 
     // Utility function to format dates and times
     const formatDate = (dateString) => {
@@ -117,32 +121,43 @@ const Notifications = () => {
         },
     ];
 
-    // Fetch all billings with filters
-    const fetchAllNotificationData = async () => {
-        setLoading(true)
+    // Fetch notifications with pagination
+    const fetchAllNotificationData = useCallback(async () => {
+        setLoading(true);
         try {
             const queryParams = {
+                page,
+                limit,
                 filterType,
             };
-            if (filterType === 'custom') {
-                queryParams.customStartDate = customStartDate
-                queryParams.customEndDate = customEndDate
+
+            if (filterType === "custom") {
+                queryParams.customStartDate = customStartDate;
+                queryParams.customEndDate = customEndDate;
             }
 
             const response = await fetchAllNotifications(queryParams);
-            setNotifications(response?.data?.data || []); // Set billings to the fetched data
-            setLoading(false)
+            setNotifications(response?.data?.data || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalNotifications || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
-            console.error("Error fetching billings:", error);
-            setNotifications([])
-            setLoading(false)
-            // showToast("Failed to fetch billings. Please try again.", "error");
+            console.error("Error fetching notifications:", error);
+            setNotifications([]);
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit, filterType, customStartDate, customEndDate]);
 
     useEffect(() => {
         fetchAllNotificationData();
-    }, [filterType, customStartDate, customEndDate]);
+    }, [fetchAllNotificationData]);
 
 
 
@@ -248,6 +263,28 @@ const Notifications = () => {
                     enableEditing
                     enableColumnDragging
                     isLoading={loading}
+                    pagination={{
+                        page: page > 0 ? page : 1,
+                        pageSize: limit > 0 ? limit : 10,
+                        totalPages: totalPages || 1,
+                        totalRecords: totalRecords || 0,
+                        onPageChange: (newPage) => {
+                            if (!isNaN(newPage) && newPage > 0) {
+                                console.log("Setting Page to:", newPage);
+                                setPage(newPage);
+                            } else {
+                                console.warn("Invalid page number received:", newPage);
+                            }
+                        },
+                        onPageSizeChange: (newLimit) => {
+                            if (!isNaN(newLimit) && newLimit > 0) {
+                                console.log("Setting Page Size to:", newLimit);
+                                setLimit(newLimit);
+                            } else {
+                                console.warn("Invalid page size received:", newLimit);
+                            }
+                        },
+                    }}
                 />
             </Box>
         </Box>

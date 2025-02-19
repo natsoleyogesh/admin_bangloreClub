@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import moment from "moment";
 
 export const REACT_APP_BUILD_VERSION = "2.0"
-export const REACT_APP_BUILD_DATE = "17022025.113810"
+export const REACT_APP_BUILD_DATE = "19022025.035810"
 
 
 // export const PUBLIC_API_URI = "http://localhost:3005/api"

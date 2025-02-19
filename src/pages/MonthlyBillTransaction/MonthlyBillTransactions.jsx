@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     Autocomplete,
     Box,
@@ -21,6 +21,7 @@ import { fetchAllMembers } from "../../api/member";
 import { useParams } from "react-router-dom";
 import { formatDateTime } from "../../api/config";
 import { getRequest } from "../../api/commonAPI";
+import debounce from "lodash.debounce";
 
 const MonthlyBillTransactions = () => {
     const { id } = useParams();
@@ -35,6 +36,21 @@ const MonthlyBillTransactions = () => {
     const [activeMembers, setActiveMembers] = useState([]);
     const [loading, setLoading] = useState(null);
     const [fetching, setFetching] = useState(false); // To show loading while fetching users
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    // User Search & Infinite Scroll State
+    const [users, setUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [userPage, setUserPage] = useState(1);
+    const [userTotalPages, setUserTotalPages] = useState(1);
+    const [fetchingUsers, setFetchingUsers] = useState(false);
+    const [hasMoreUsers, setHasMoreUsers] = useState(true);
+    const scrollRef = useRef(null);
     // Utility function to format dates
     const formatDate = (dateString) => {
         const options = { year: "numeric", month: "long", day: "numeric" };
@@ -93,55 +109,97 @@ const MonthlyBillTransactions = () => {
         },
     ];
 
-    // Fetch all transactions
-    const fetchAllTransactionData = async () => {
-        setLoading(true)
+    // Fetch transactions with pagination
+    const fetchAllTransactionData = useCallback(async () => {
+        setLoading(true);
         try {
             const queryParams = {
-                filterType,
-                customStartDate: customStartDate || undefined,
-                customEndDate: customEndDate || undefined,
+                page,
+                limit,
             };
-            if (paymentStatus !== "all") {
-                queryParams.paymentStatus = paymentStatus
-            }
-            if (userId !== "all") {
-                queryParams.userId = userId;
-            }
+
+            if (filterType !== "all") queryParams.filterType = filterType;
+            if (paymentStatus !== "all") queryParams.paymentStatus = paymentStatus;
+            if (userId !== "all") queryParams.userId = userId;
+            if (customStartDate) queryParams.customStartDate = customStartDate;
+            if (customEndDate) queryParams.customEndDate = customEndDate;
+
             const queryString = new URLSearchParams(queryParams).toString();
             const response = await getRequest(`/offline-bill-transactions?${queryString}`);
-            setTransactions(response?.data?.transactions || []); // Set transactions to the fetched data
-            setLoading(false)
+
+            setTransactions(response?.data?.transactions || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalTransactions || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
             console.error("Error fetching transactions:", error);
-            setLoading(false)
-            // showToast("Failed to fetch transactions. Please try again.", "error");
+            setTransactions([]);
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit, filterType, paymentStatus, customStartDate, customEndDate, userId]);
 
-    const getActiveMembers = async () => {
-        setFetching(true);
+
+    /** 📌 Fetch Users for Autocomplete with Pagination */
+    const fetchUsers = async ({ search = "", page = 1, reset = false }) => {
+        if (fetchingUsers || page > userTotalPages) return;
+
+        setFetchingUsers(true);
         try {
-            const response = await fetchAllMembers();
-            setActiveMembers(response.users);
+            const response = await getRequest(`/admin/get-users?search=${search}&page=${page}&limit=10`);
+            setUsers((prevUsers) => (reset ? response.data.users : [...prevUsers, ...response.data.users]));
+            setUserTotalPages(response.data.pagination.totalPages);
+            setUserPage(page);
+            setHasMoreUsers(page < response.data.pagination.totalPages);
         } catch (error) {
-            console.error("Failed to fetch members :", error);
-            showToast("Failed to fetch Members. Please try again.", "error");
-        }
-        finally {
-            setFetching(false);
+            console.error("Error fetching users:", error);
+        } finally {
+            setFetchingUsers(false);
         }
     };
 
-    // Fetch billings on component mount and when filters change
-    useEffect(() => {
-        getActiveMembers();
-    }, [])
+    /** 📌 Debounced function to optimize API calls while searching */
+    const debouncedFetchUsers = debounce((query) => fetchUsers({ search: query, page: 1, reset: true }), 500);
 
-    // Fetch transactions on component mount
+    /** 📌 Fetch Users on Component Mount */
+    useEffect(() => {
+        fetchUsers({ search: "", page: 1, reset: true });
+    }, []);
+
+    /** 📌 Handle Search Change */
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        debouncedFetchUsers(query);
+    };
+
+    /** 📌 Handle User Selection */
+    const handleUserChange = (event, selectedUser) => {
+        setUserId(selectedUser ? selectedUser._id : "all");
+    };
+
+    /** 📌 Handle Scroll to Fetch More Users */
+    const handleScroll = (event) => {
+        const bottom = event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 20;
+        if (bottom && hasMoreUsers) {
+            fetchUsers({ search: searchQuery, page: userPage + 1, reset: false });
+        }
+    };
+
+    // // Fetch transactions on component mount
+    // useEffect(() => {
+    //     fetchAllTransactionData();
+    // }, [filterType, paymentStatus, customStartDate, customEndDate, userId]);
+
     useEffect(() => {
         fetchAllTransactionData();
-    }, [filterType, paymentStatus, customStartDate, customEndDate, userId]);
+    }, [fetchAllTransactionData]);
 
     // Export to PDF
     const exportToPDF = () => {
@@ -205,27 +263,32 @@ const MonthlyBillTransactions = () => {
             <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>Billings</Typography>
                 <Grid container spacing={2} alignItems="center">
-                    {!id && <Grid item xs={12} sm={3} md={2}>
-                        <InputLabel>Select Member</InputLabel>
-                        <FormControl fullWidth size="small">
+                    {!id && (
+                        <Grid item xs={12} sm={3} md={2}>
+                            <InputLabel>Select Member</InputLabel>
                             <Autocomplete
-                                options={activeMembers}
+                                options={users}
                                 getOptionLabel={(option) => `${option.name} (${option.memberId})`}
-                                value={activeMembers.find((member) => member._id === userId) || null}
-                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
-                                loading={fetching}
+                                value={users.find((user) => user._id === userId) || null}
+                                onChange={handleUserChange}
+                                loading={fetchingUsers}
+                                ListboxProps={{
+                                    ref: scrollRef,
+                                    onScroll: handleScroll,
+                                    style: { maxHeight: 200, overflow: "auto" },
+                                }}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
                                         variant="outlined"
                                         fullWidth
                                         size="small"
-                                        sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
+                                        onChange={handleSearchChange}
                                         InputProps={{
                                             ...params.InputProps,
                                             endAdornment: (
                                                 <>
-                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                    {fetchingUsers ? <CircularProgress color="inherit" size={20} /> : null}
                                                     {params.InputProps.endAdornment}
                                                 </>
                                             ),
@@ -233,8 +296,8 @@ const MonthlyBillTransactions = () => {
                                     />
                                 )}
                             />
-                        </FormControl>
-                    </Grid>}
+                        </Grid>
+                    )}
                     <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Filter Type</InputLabel>
                         <FormControl fullWidth size="small">
@@ -326,6 +389,28 @@ const MonthlyBillTransactions = () => {
                 enableEditing
                 enableColumnDragging
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
         </Box>
     );

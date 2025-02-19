@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
@@ -9,6 +9,7 @@ import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 
 import { showToast } from "../api/toast";
 import ConfirmationDialog from "../api/ConfirmationDialog";
+import { getRequest } from "../api/commonAPI";
 
 const Rooms = () => {
     // const navigate = useNavigate();
@@ -17,7 +18,13 @@ const Rooms = () => {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("");
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
     // Fetch all categories (room types)
     const getAllCategories = async () => {
         try {
@@ -29,23 +36,51 @@ const Rooms = () => {
         }
     };
 
-    // Fetch all rooms
-    const getRooms = async () => {
-        setLoading(true)
+    // Fetch all rules/byelaws with pagination
+    const getRooms = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const response = await fetchAllRooms();
+            // const response = await fetchAllRuleByeLaws({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/roomwithcategorys?page=${pageNumber}&limit=${pageSize}`);
+
             setRoomList(response?.data?.data || []);
-            setLoading(false)
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalRooms || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
-            console.error("Failed to fetch rooms:", error);
-            setLoading(false)
-            showToast("Failed to fetch rooms.", "error");
+            console.error("Failed to fetch rules/byelaws:", error);
+            showToast("Failed to fetch rules/byelaws. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
+
+    useEffect(() => {
+        getRooms(page, limit);
+    }, [getRooms]);
+
+    // // Fetch all rooms
+    // const getRooms = async () => {
+    //     setLoading(true)
+    //     try {
+    //         const response = await fetchAllRooms();
+    //         setRoomList(response?.data?.data || []);
+    //         setLoading(false)
+    //     } catch (error) {
+    //         console.error("Failed to fetch rooms:", error);
+    //         setLoading(false)
+    //         showToast("Failed to fetch rooms.", "error");
+    //     }
+    // };
 
     useEffect(() => {
         getAllCategories();
-        getRooms();
     }, []);
 
     // const handleDeleteClick = (room) => {
@@ -187,7 +222,29 @@ const Rooms = () => {
                 showPreview={true}
                 routeLink="roomwith-category"
                 isLoading={loading}
-            // handleDelete={handleDeleteClick}
+                // handleDelete={handleDeleteClick}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
             <ConfirmationDialog
                 open={openDialog}

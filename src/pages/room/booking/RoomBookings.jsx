@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Typography, Grid, Paper, List, ListItem, ListItemText, InputLabel, FormControl, Select, MenuItem, TextField, Autocomplete, CircularProgress } from "@mui/material";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import { Link } from "react-router-dom";
@@ -11,6 +11,8 @@ import { fetchAllMembers } from "../../../api/member";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
+import debounce from "lodash.debounce";
+import { getRequest } from "../../../api/commonAPI";
 
 
 // Utility function to format dates
@@ -44,6 +46,21 @@ const RoomBookings = () => {
     const [userId, setUserId] = useState("all");
     const [activeMembers, setActiveMembers] = useState([]);
 
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    // User Search & Infinite Scroll State
+    const [users, setUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [userPage, setUserPage] = useState(1);
+    const [userTotalPages, setUserTotalPages] = useState(1);
+    const [fetchingUsers, setFetchingUsers] = useState(false);
+    const [hasMoreUsers, setHasMoreUsers] = useState(true);
+    const scrollRef = useRef(null);
+
     const columns = [
         { accessorKey: "primaryMemberId.memberId", header: "MemberShip ID" },
         { accessorKey: "primaryMemberId.name", header: "Member Name" },
@@ -64,36 +81,72 @@ const RoomBookings = () => {
         },
     ];
 
-    // Fetch all bookings
+    // // Fetch all bookings
+    // const fetchBookings = async () => {
+    //     setLoading(true)
+    //     try {
+    //         const queryParams = {
+    //             filterType,
+    //             customStartDate: customStartDate || undefined,
+    //             customEndDate: customEndDate || undefined,
+    //         };
+    //         if (bookingStatus !== "all") {
+    //             queryParams.bookingStatus = bookingStatus
+    //         }
+    //         if (userId !== "all") {
+    //             queryParams.userId = userId;
+    //         }
+    //         const response = await fetchAllRoomBookingss(queryParams);
+    //         setBookings(response?.data?.bookings || []);
+    //         setLoading(false)
+    //     } catch (error) {
+    //         console.error("Error fetching bookings:", error);
+    //         setBookings([])
+    //         setLoading(false)
+    //         showToast(error.response.data.message || "Failed to fetch bookings. Please try again.", "error");
+    //     }
+    // };
+
+    // // Fetch bookings on component mount
+    // useEffect(() => {
+    //     fetchBookings();
+    // }, [filterType, bookingStatus, customStartDate, customEndDate, userId]);
+
+    // Fetch bookings with pagination
     const fetchBookings = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
             const queryParams = {
                 filterType,
-                customStartDate: customStartDate || undefined,
-                customEndDate: customEndDate || undefined,
+                page,
+                limit,
+                ...(customStartDate && { customStartDate }),
+                ...(customEndDate && { customEndDate }),
             };
             if (bookingStatus !== "all") {
-                queryParams.bookingStatus = bookingStatus
+                queryParams.bookingStatus = bookingStatus;
             }
             if (userId !== "all") {
                 queryParams.userId = userId;
             }
+
             const response = await fetchAllRoomBookingss(queryParams);
             setBookings(response?.data?.bookings || []);
-            setLoading(false)
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalBookings || 0);
         } catch (error) {
             console.error("Error fetching bookings:", error);
-            setBookings([])
-            setLoading(false)
-            showToast(error.response.data.message || "Failed to fetch bookings. Please try again.", "error");
+            setBookings([]);
+            showToast(error.response?.data?.message || "Failed to fetch bookings.", "error");
+        } finally {
+            setLoading(false);
         }
     };
 
-    // Fetch bookings on component mount
+    // Fetch bookings when filters change
     useEffect(() => {
         fetchBookings();
-    }, [filterType, bookingStatus, customStartDate, customEndDate, userId]);
+    }, [filterType, bookingStatus, customStartDate, customEndDate, userId, page, limit]);
 
     // Handle delete confirmation dialog
     const handleDeleteClick = (booking) => {
@@ -124,23 +177,51 @@ const RoomBookings = () => {
         setSelectedBooking(null);
     };
 
-    const getActiveMembers = async () => {
-        setFetching(true);
+    /** 📌 Fetch Users for Autocomplete with Pagination */
+    const fetchUsers = async ({ search = "", page = 1, reset = false }) => {
+        if (fetchingUsers || page > userTotalPages) return;
+
+        setFetchingUsers(true);
         try {
-            const response = await fetchAllMembers();
-            setActiveMembers(response.users);
+            const response = await getRequest(`/admin/get-users?search=${search}&page=${page}&limit=10`);
+            setUsers((prevUsers) => (reset ? response.data.users : [...prevUsers, ...response.data.users]));
+            setUserTotalPages(response.data.pagination.totalPages);
+            setUserPage(page);
+            setHasMoreUsers(page < response.data.pagination.totalPages);
         } catch (error) {
-            console.error("Failed to fetch members :", error);
-            // showToast("Failed to fetch Members. Please try again.", "error");
+            console.error("Error fetching users:", error);
         } finally {
-            setFetching(false);
+            setFetchingUsers(false);
         }
     };
 
-    // Fetch billings on component mount and when filters change
+    /** 📌 Debounced function to optimize API calls while searching */
+    const debouncedFetchUsers = debounce((query) => fetchUsers({ search: query, page: 1, reset: true }), 500);
+
+    /** 📌 Fetch Users on Component Mount */
     useEffect(() => {
-        getActiveMembers();
+        fetchUsers({ search: "", page: 1, reset: true });
     }, []);
+
+    /** 📌 Handle Search Change */
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        debouncedFetchUsers(query);
+    };
+
+    /** 📌 Handle User Selection */
+    const handleUserChange = (event, selectedUser) => {
+        setUserId(selectedUser ? selectedUser._id : "all");
+    };
+
+    /** 📌 Handle Scroll to Fetch More Users */
+    const handleScroll = (event) => {
+        const bottom = event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 20;
+        if (bottom && hasMoreUsers) {
+            fetchUsers({ search: searchQuery, page: userPage + 1, reset: false });
+        }
+    };
 
     // // Export to PDF
     const exportToPDF = () => {
@@ -326,36 +407,41 @@ const RoomBookings = () => {
             <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" sx={{ mb: 2 }} >Room Bookings</Typography>
                 <Grid container spacing={2} alignItems="center">
+
                     <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Select Member</InputLabel>
-                        <FormControl fullWidth size="small">
-                            <Autocomplete
-                                options={activeMembers}
-                                getOptionLabel={(option) => `${option.name} (${option.memberId})`}
-                                value={activeMembers.find((member) => member._id === userId) || null}
-                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
-                                loading={fetching}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        variant="outlined"
-                                        fullWidth
-                                        size="small"
-                                        sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
-                                        InputProps={{
-                                            ...params.InputProps,
-                                            endAdornment: (
-                                                <>
-                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
-                                                    {params.InputProps.endAdornment}
-                                                </>
-                                            ),
-                                        }}
-                                    />
-                                )}
-                            />
-                        </FormControl>
+                        <Autocomplete
+                            options={users}
+                            getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                            value={users.find((user) => user._id === userId) || null}
+                            onChange={handleUserChange}
+                            loading={fetchingUsers}
+                            ListboxProps={{
+                                ref: scrollRef,
+                                onScroll: handleScroll,
+                                style: { maxHeight: 200, overflow: "auto" },
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    fullWidth
+                                    size="small"
+                                    onChange={handleSearchChange}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <>
+                                                {fetchingUsers ? <CircularProgress color="inherit" size={20} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </>
+                                        ),
+                                    }}
+                                />
+                            )}
+                        />
                     </Grid>
+
                     <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Filter Type</InputLabel>
                         <FormControl fullWidth size="small">
@@ -450,6 +536,28 @@ const RoomBookings = () => {
                 routeLink="room-booking"
                 // handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
 
             {/* Delete Confirmation Dialog */}

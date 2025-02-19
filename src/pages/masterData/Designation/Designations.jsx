@@ -1,26 +1,162 @@
+// // import React, { useEffect, useState } from "react";
+// // import { Box, Button, Typography } from "@mui/material";
+// // import { FiPlus } from "react-icons/fi";
+// // import { Link } from "react-router-dom";
+// // import Table from "../../../components/Table";
+// // import ConfirmationDialog from "../../../api/ConfirmationDialog";
+// // import { deleteDepartment, fetchAllDepartments } from "../../../api/masterData/department";
+// // import { showToast } from "../../../api/toast";
+// // import { formatDateTime } from "../../../api/config";
+// // import { deleteRequest, getRequest } from "../../../api/commonAPI";
+
+// // const Designations = () => {
+// //     const [departments, setDepartments] = useState([]);
+// //     const [openDialog, setOpenDialog] = useState(false);
+// //     const [selectedDepartment, setSelectedDepartment] = useState(null);
+// //     const [loading, setLoading] = useState(null)
+// //     // Utility function to format dates
+// //     const formatDate = (dateString) => {
+// //         const options = { year: "numeric", month: "long", day: "numeric" };
+// //         return new Date(dateString).toLocaleDateString(undefined, options);
+// //     };
+
+// //     // Table columns definition
+// //     const columns = [
+// //         { accessorKey: "designationName", header: "Designation Name" },
+// //         { accessorKey: "status", header: "Status" },
+// //         {
+// //             accessorKey: "createdAt",
+// //             header: "Created Date & Time",
+// //             Cell: ({ cell }) => formatDateTime(cell.getValue()),
+// //         },
+// //     ];
+
+// //     // Fetch all departments
+// //     const fetchDepartments = async () => {
+// //         setLoading(true)
+// //         try {
+// //             const response = await getRequest(`/designations`);
+// //             setDepartments(response?.data?.designations || []); // Set departments to the fetched data
+// //             setLoading(false)
+// //         } catch (error) {
+// //             console.error("Error fetching departments:", error);
+// //             setLoading(false)
+// //             showToast("Failed to fetch departments. Please try again.", "error");
+// //         }
+// //     };
+
+// //     // Fetch departments on component mount
+// //     useEffect(() => {
+// //         fetchDepartments();
+// //     }, []);
+
+// //     // Handle delete confirmation dialog
+// //     const handleDeleteClick = (department) => {
+// //         setSelectedDepartment(department);
+// //         setOpenDialog(true);
+// //     };
+
+// //     // Confirm and delete department
+// //     const handleConfirmDelete = async () => {
+// //         try {
+// //             if (selectedDepartment) {
+// //                 await deleteRequest(`/designation/${selectedDepartment._id}`);
+// //                 showToast("Department deleted successfully.", "success");
+// //                 fetchDepartments(); // Refresh departments list
+// //             }
+// //         } catch (error) {
+// //             console.error("Error deleting department:", error);
+// //             showToast("Failed to delete department. Please try again.", "error");
+// //         } finally {
+// //             setOpenDialog(false);
+// //             setSelectedDepartment(null);
+// //         }
+// //     };
+
+// //     // Cancel delete dialog
+// //     const handleCancelDelete = () => {
+// //         setOpenDialog(false);
+// //         setSelectedDepartment(null);
+// //     };
+
+// //     return (
+// //         <Box sx={{ pt: "80px", pb: "20px" }}>
+// //             {/* Header Section */}
+// //             <Box
+// //                 sx={{
+// //                     display: "flex",
+// //                     alignItems: "center",
+// //                     justifyContent: "space-between",
+// //                     mb: 2,
+// //                 }}
+// //             >
+// //                 <Typography variant="h6">Designations</Typography>
+// //                 <Link to="/department/add" style={{ textDecoration: "none" }}>
+// //                     <Button
+// //                         variant="contained"
+// //                         color="primary"
+// //                         startIcon={<FiPlus />}
+// //                         sx={{ borderRadius: "20px" }}
+// //                     >
+// //                         Add Designation
+// //                     </Button>
+// //                 </Link>
+// //             </Box>
+
+// //             {/* Departments Table */}
+// //             <Table
+// //                 data={departments}
+// //                 fields={columns}
+// //                 numberOfRows={departments.length}
+// //                 enableTopToolBar
+// //                 enableBottomToolBar
+// //                 enablePagination
+// //                 enableRowSelection
+// //                 enableColumnFilters
+// //                 enableEditing
+// //                 enableColumnDragging
+// //                 showPreview
+// //                 routeLink="department"
+// //                 handleDelete={handleDeleteClick}
+// //                 isLoading={loading}
+// //             />
+
+// //             {/* Delete Confirmation Dialog */}
+// //             <ConfirmationDialog
+// //                 open={openDialog}
+// //                 title="Delete Department"
+// //                 message={`Are you sure you want to delete the department "${selectedDepartment?.designationName}"? This action cannot be undone.`}
+// //                 onConfirm={handleConfirmDelete}
+// //                 onCancel={handleCancelDelete}
+// //                 confirmText="Delete"
+// //                 cancelText="Cancel"
+// //                 loadingText="Deleting..."
+// //             />
+// //         </Box>
+// //     );
+// // };
+
+// // export default Designations;
+
+
 // import React, { useEffect, useState } from "react";
 // import { Box, Button, Typography } from "@mui/material";
 // import { FiPlus } from "react-icons/fi";
 // import { Link } from "react-router-dom";
 // import Table from "../../../components/Table";
 // import ConfirmationDialog from "../../../api/ConfirmationDialog";
-// import { deleteDepartment, fetchAllDepartments } from "../../../api/masterData/department";
 // import { showToast } from "../../../api/toast";
 // import { formatDateTime } from "../../../api/config";
 // import { deleteRequest, getRequest } from "../../../api/commonAPI";
 
 // const Designations = () => {
-//     const [departments, setDepartments] = useState([]);
+//     // State variables
+//     const [designations, setDesignations] = useState([]);
 //     const [openDialog, setOpenDialog] = useState(false);
-//     const [selectedDepartment, setSelectedDepartment] = useState(null);
-//     const [loading, setLoading] = useState(null)
-//     // Utility function to format dates
-//     const formatDate = (dateString) => {
-//         const options = { year: "numeric", month: "long", day: "numeric" };
-//         return new Date(dateString).toLocaleDateString(undefined, options);
-//     };
+//     const [selectedDesignation, setSelectedDesignation] = useState(null);
+//     const [loading, setLoading] = useState(false);
 
-//     // Table columns definition
+//     // Table column definitions
 //     const columns = [
 //         { accessorKey: "designationName", header: "Designation Name" },
 //         { accessorKey: "status", header: "Status" },
@@ -31,53 +167,41 @@
 //         },
 //     ];
 
-//     // Fetch all departments
-//     const fetchDepartments = async () => {
-//         setLoading(true)
+//     // Fetch designations data
+//     const fetchDesignations = async () => {
+//         setLoading(true);
 //         try {
-//             const response = await getRequest(`/designations`);
-//             setDepartments(response?.data?.designations || []); // Set departments to the fetched data
-//             setLoading(false)
+//             const response = await getRequest("/designations");
+//             setDesignations(response?.data?.designations || []);
 //         } catch (error) {
-//             console.error("Error fetching departments:", error);
-//             setLoading(false)
-//             showToast("Failed to fetch departments. Please try again.", "error");
+//             console.error("Error fetching designations:", error);
+//             showToast("Failed to fetch designations. Please try again.", "error");
+//         } finally {
+//             setLoading(false);
 //         }
 //     };
 
-//     // Fetch departments on component mount
-//     useEffect(() => {
-//         fetchDepartments();
-//     }, []);
+//     // Delete a designation
+//     const handleDeleteDesignation = async () => {
+//         if (!selectedDesignation) return;
 
-//     // Handle delete confirmation dialog
-//     const handleDeleteClick = (department) => {
-//         setSelectedDepartment(department);
-//         setOpenDialog(true);
-//     };
-
-//     // Confirm and delete department
-//     const handleConfirmDelete = async () => {
 //         try {
-//             if (selectedDepartment) {
-//                 await deleteRequest(`/designation/${selectedDepartment._id}`);
-//                 showToast("Department deleted successfully.", "success");
-//                 fetchDepartments(); // Refresh departments list
-//             }
+//             await deleteRequest(`/designation/${selectedDesignation._id}`);
+//             showToast("Designation deleted successfully.", "success");
+//             fetchDesignations();
 //         } catch (error) {
-//             console.error("Error deleting department:", error);
-//             showToast("Failed to delete department. Please try again.", "error");
+//             console.error("Error deleting designation:", error);
+//             showToast("Failed to delete designation. Please try again.", "error");
 //         } finally {
 //             setOpenDialog(false);
-//             setSelectedDepartment(null);
+//             setSelectedDesignation(null);
 //         }
 //     };
 
-//     // Cancel delete dialog
-//     const handleCancelDelete = () => {
-//         setOpenDialog(false);
-//         setSelectedDepartment(null);
-//     };
+//     // Lifecycle: fetch designations on component mount
+//     useEffect(() => {
+//         fetchDesignations();
+//     }, []);
 
 //     return (
 //         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -91,7 +215,7 @@
 //                 }}
 //             >
 //                 <Typography variant="h6">Designations</Typography>
-//                 <Link to="/department/add" style={{ textDecoration: "none" }}>
+//                 <Link to="/designation/add" style={{ textDecoration: "none" }}>
 //                     <Button
 //                         variant="contained"
 //                         color="primary"
@@ -103,11 +227,11 @@
 //                 </Link>
 //             </Box>
 
-//             {/* Departments Table */}
+//             {/* Designations Table */}
 //             <Table
-//                 data={departments}
+//                 data={designations}
 //                 fields={columns}
-//                 numberOfRows={departments.length}
+//                 numberOfRows={designations.length}
 //                 enableTopToolBar
 //                 enableBottomToolBar
 //                 enablePagination
@@ -116,18 +240,24 @@
 //                 enableEditing
 //                 enableColumnDragging
 //                 showPreview
-//                 routeLink="department"
-//                 handleDelete={handleDeleteClick}
+//                 routeLink="designation"
+//                 handleDelete={(designation) => {
+//                     setSelectedDesignation(designation);
+//                     setOpenDialog(true);
+//                 }}
 //                 isLoading={loading}
 //             />
 
 //             {/* Delete Confirmation Dialog */}
 //             <ConfirmationDialog
 //                 open={openDialog}
-//                 title="Delete Department"
-//                 message={`Are you sure you want to delete the department "${selectedDepartment?.designationName}"? This action cannot be undone.`}
-//                 onConfirm={handleConfirmDelete}
-//                 onCancel={handleCancelDelete}
+//                 title="Delete Designation"
+//                 message={`Are you sure you want to delete the designation "${selectedDesignation?.designationName}"? This action cannot be undone.`}
+//                 onConfirm={handleDeleteDesignation}
+//                 onCancel={() => {
+//                     setOpenDialog(false);
+//                     setSelectedDesignation(null);
+//                 }}
 //                 confirmText="Delete"
 //                 cancelText="Cancel"
 //                 loadingText="Deleting..."
@@ -139,7 +269,7 @@
 // export default Designations;
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
 import { Link } from "react-router-dom";
@@ -156,6 +286,12 @@ const Designations = () => {
     const [selectedDesignation, setSelectedDesignation] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    // Pagination State
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
     // Table column definitions
     const columns = [
         { accessorKey: "designationName", header: "Designation Name" },
@@ -168,18 +304,25 @@ const Designations = () => {
     ];
 
     // Fetch designations data
-    const fetchDesignations = async () => {
+    const fetchDesignations = useCallback(async (pageNumber = 1, pageSize = 10) => {
         setLoading(true);
         try {
-            const response = await getRequest("/designations");
+            const response = await getRequest(`/designations?page=${pageNumber}&limit=${pageSize}`);
             setDesignations(response?.data?.designations || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalDesignations || 0);
         } catch (error) {
             console.error("Error fetching designations:", error);
             showToast("Failed to fetch designations. Please try again.", "error");
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    // Fetch data on mount and when pagination state changes
+    useEffect(() => {
+        fetchDesignations(page, limit);
+    }, [page, limit, fetchDesignations]);
 
     // Delete a designation
     const handleDeleteDesignation = async () => {
@@ -188,7 +331,7 @@ const Designations = () => {
         try {
             await deleteRequest(`/designation/${selectedDesignation._id}`);
             showToast("Designation deleted successfully.", "success");
-            fetchDesignations();
+            fetchDesignations(page, limit); // Refresh data after delete
         } catch (error) {
             console.error("Error deleting designation:", error);
             showToast("Failed to delete designation. Please try again.", "error");
@@ -197,11 +340,6 @@ const Designations = () => {
             setSelectedDesignation(null);
         }
     };
-
-    // Lifecycle: fetch designations on component mount
-    useEffect(() => {
-        fetchDesignations();
-    }, []);
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -246,6 +384,29 @@ const Designations = () => {
                     setOpenDialog(true);
                 }}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
+
             />
 
             {/* Delete Confirmation Dialog */}

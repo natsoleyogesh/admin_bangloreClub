@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
@@ -7,13 +7,20 @@ import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { deleteGCM, fetchAllGCMs } from "../api/gcm";
+import { getRequest } from "../api/commonAPI";
 
 const GCMs = () => {
     // const navigate = useNavigate();
     const [gcmList, setGcmList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedGCM, setSelectedGCM] = useState(null);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
 
     // // Format date to "Wed, Apr 28 • 5:30 PM"
     // const formatDate = (dateString) => {
@@ -84,23 +91,27 @@ const GCMs = () => {
         },
     ];
 
-    // Fetch all GCMs
-    const getAllGCMs = async () => {
-        setLoading(true)
+    // Fetch GCMs with pagination
+    const getAllGCMs = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const response = await fetchAllGCMs();
+            // const response = await fetchAllGCMs({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/gcms?page=${pageNumber}&limit=${pageSize}`);
+
             setGcmList(response?.data?.gcms || []);
-            setLoading(false)
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalRecords || 0);
         } catch (error) {
             console.error("Failed to fetch GCMs:", error);
-            setLoading(false)
             showToast(error.message || "Failed to fetch GCMs.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
         getAllGCMs();
-    }, []);
+    }, [getAllGCMs]);
 
     const handleDeleteClick = (gcm) => {
         setSelectedGCM(gcm);
@@ -164,6 +175,28 @@ const GCMs = () => {
                 routeLink="gcm"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
             <ConfirmationDialog
                 open={openDialog}

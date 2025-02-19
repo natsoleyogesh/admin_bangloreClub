@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
 import { Link } from "react-router-dom";
@@ -6,7 +6,8 @@ import { deleteBanquet, fetchAllBanquets } from "../../../api/banquet";
 import { showToast } from "../../../api/toast";
 import Table from "../../../components/Table";
 import ConfirmationDialog from "../../../api/ConfirmationDialog";
-import { formatDateTime } from "../../../api/config";
+import { formatDateTime, PUBLIC_API_URI } from "../../../api/config";
+import { getRequest } from "../../../api/commonAPI";
 
 const Banquets = () => {
     const [banquets, setBanquets] = useState([]);
@@ -118,24 +119,42 @@ const Banquets = () => {
     /**
      * Fetches all banquets.
      */
-    const [loading, setLoading] = useState(null)
-    const fetchBanquets = async () => {
-        setLoading(true)
-        try {
-            const response = await fetchAllBanquets();
-            setBanquets(response?.data?.data || []);
-            setLoading(false)
-        } catch (error) {
-            console.error("Error fetching banquets:", error);
-            showToast(error.message || "Failed to fetch banquets.", "error");
-            setLoading(false)
+    const [loading, setLoading] = useState(false)
 
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    // Fetch all rules/byelaws with pagination
+    const fetchBanquets = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
+        try {
+            // const response = await fetchAllRuleByeLaws({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/banquets?page=${pageNumber}&limit=${pageSize}`);
+
+            setBanquets(response?.data?.data || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalBanquets || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
+        } catch (error) {
+            console.error("Failed to fetch rules/byelaws:", error);
+            showToast("Failed to fetch rules/byelaws. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
-        fetchBanquets();
-    }, []);
+        fetchBanquets(page, limit);
+    }, [fetchBanquets]);
 
     /**
      * Handles the deletion of a banquet.
@@ -208,7 +227,29 @@ const Banquets = () => {
                 showPreview
                 routeLink="banquet"
                 isLoading={loading}
-            // handleDelete={handleDeleteClick}
+                // handleDelete={handleDeleteClick}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
 
             <ConfirmationDialog

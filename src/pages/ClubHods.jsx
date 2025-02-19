@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
@@ -7,6 +7,7 @@ import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { deleteHod, fetchAllHods } from "../api/clubhods";
+import { getRequest } from "../api/commonAPI";
 
 const ClubHods = () => {
 
@@ -16,7 +17,13 @@ const ClubHods = () => {
     const [hodList, setHodList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedHod, setSelectedHod] = useState(null);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
     // // Format date to "14 December 2024"
     // const formatDate = (dateString) => {
     //     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -88,23 +95,28 @@ const ClubHods = () => {
 
     ];
 
-    const getHods = async () => {
-        setLoading(true)
+    // Fetch HODs with pagination
+    const getHods = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const hod = await fetchAllHods();
-            console.log(hod.data.hods, "user")
-            setHodList(hod?.data.hods);
-            setLoading(false)
+            // const response = await fetchAllHods({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/hods?page=${pageNumber}&limit=${pageSize}`);
+
+            setHodList(response?.data?.hods || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalHODs || 0);
         } catch (error) {
-            console.error("Failed to fetch members:", error);
-            setLoading(false)
+            console.error("Failed to fetch HODs:", error);
+            showToast("Failed to fetch HODs. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
-
         getHods();
-    }, []);
+    }, [getHods]);
+
 
     console.log(hodList, "member")
 
@@ -173,6 +185,28 @@ const ClubHods = () => {
                 routeLink="hod"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                totalDownloadspagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
             <ConfirmationDialog
                 open={openDialog}

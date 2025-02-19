@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Table from "../components/Table";
@@ -7,12 +7,19 @@ import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { deleteNotice, fetchAllNotices } from "../api/clubNotice";
+import { getRequest } from "../api/commonAPI";
 
 const ClubNotices = () => {
     const [noticeList, setNoticeList] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedNotice, setSelectedNotice] = useState(null);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
     // Format date to "Wed, Apr 28 • 5:30 PM" in IST
     const formatDate = (dateString) => {
         const options = {
@@ -139,21 +146,34 @@ const ClubNotices = () => {
         },
     ];
 
-    const getNotices = async () => {
-        setLoading(true)
+    // Fetch all rules/byelaws with pagination
+    const getNotices = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const response = await fetchAllNotices();
-            setNoticeList(response?.data.notices || []);
-            setLoading(false)
+            // const response = await fetchAllRuleByeLaws({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/notices?page=${pageNumber}&limit=${pageSize}`);
+
+            setNoticeList(response?.data?.notices || []);
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalNotices || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
-            console.error("Failed to fetch notices:", error);
-            setLoading(false)
+            console.error("Failed to fetch rules/byelaws:", error);
+            showToast("Failed to fetch rules/byelaws. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
-        getNotices();
-    }, []);
+        getNotices(page, limit);
+    }, [getNotices]);
 
     const handleDeleteClick = (notice) => {
         setSelectedNotice(notice);
@@ -216,6 +236,28 @@ const ClubNotices = () => {
                 routeLink="notice"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
             <ConfirmationDialog
                 open={openDialog}

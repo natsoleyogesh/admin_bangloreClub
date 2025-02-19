@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Typography, Chip } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Table from "../components/Table";
@@ -7,12 +7,19 @@ import { formatDateTime, PUBLIC_API_URI } from "../api/config";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { fetchAllFoodAndBeverages, deleteFoodAndBeverage } from "../api/foodAndBeverage";
+import { getRequest } from "../api/commonAPI";
 
 const FoodAndBeverages = () => {
     const [foodAndBeverages, setFoodAndBeverages] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedFoodAndBeverage, setSelectedFoodAndBeverage] = useState(null);
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
     // Format date to "14 December 2024"
     // const formatDate = (dateString) => {
     //     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -105,22 +112,34 @@ const FoodAndBeverages = () => {
         },
     ];
 
-    const fetchFoodAndBeverages = async () => {
-        setLoading(true)
+    // Fetch all rules/byelaws with pagination
+    const fetchFoodAndBeverages = useCallback(async (pageNumber, pageSize) => {
+        setLoading(true);
         try {
-            const response = await fetchAllFoodAndBeverages();
+            // const response = await fetchAllRuleByeLaws({ page, limit });
+            const response = await getRequest(`${PUBLIC_API_URI}/foodAndBeverages?page=${pageNumber}&limit=${pageSize}`);
+
             setFoodAndBeverages(response?.data?.foodAndBeverages || []);
-            setLoading(false)
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalFoodAndBeverages || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
-            console.error("Failed to fetch food and beverages:", error);
-            setLoading(false)
-            showToast("Failed to fetch food and beverages. Please try again.", "error");
+            console.error("Failed to fetch rules/byelaws:", error);
+            showToast("Failed to fetch rules/byelaws. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
-        fetchFoodAndBeverages();
-    }, []);
+        fetchFoodAndBeverages(page, limit);
+    }, [fetchFoodAndBeverages]);
 
     const handleDeleteClick = (foodAndBeverage) => {
         setSelectedFoodAndBeverage(foodAndBeverage);
@@ -185,6 +204,28 @@ const FoodAndBeverages = () => {
                 routeLink="foodAndBeverage"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
             />
             <ConfirmationDialog
                 open={openDialog}

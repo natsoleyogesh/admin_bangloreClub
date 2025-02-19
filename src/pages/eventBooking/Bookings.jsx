@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Autocomplete, Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import Table from "../../components/Table";
 import { showToast } from "../../api/toast";
@@ -11,6 +11,8 @@ import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { fetchAllMembers } from "../../api/member";
 import BookingsExport from "./bookingExports";
+import debounce from "lodash.debounce";
+import { getRequest } from "../../api/commonAPI";
 
 const Bookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -30,6 +32,20 @@ const Bookings = () => {
     const [eventId, setEventId] = useState("all");
 
 
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    // User Search & Infinite Scroll State
+    const [users, setUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [userPage, setUserPage] = useState(1);
+    const [userTotalPages, setUserTotalPages] = useState(1);
+    const [fetchingUsers, setFetchingUsers] = useState(false);
+    const [hasMoreUsers, setHasMoreUsers] = useState(true);
+    const scrollRef = useRef(null);
 
     // Utility function to format dates
     const formatDate = (dateString) => {
@@ -58,15 +74,19 @@ const Bookings = () => {
         },
     ];
 
-    // Fetch all bookings
-    const fetchBookings = async () => {
-        setLoading(true)
+    // Fetch paginated bookings
+    const fetchBookings = useCallback(async () => {
+        setLoading(true);
         try {
-
             const queryParams = {
+                page,
+                limit,
                 filterType,
                 customStartDate: customStartDate || undefined,
                 customEndDate: customEndDate || undefined,
+                // bookingStatus: bookingStatus !== "all" ? bookingStatus : undefined,
+                // userId: userId !== "all" ? userId : undefined,
+                // eventId: eventId !== "all" ? eventId : undefined,
             };
             if (bookingStatus !== "all") {
                 queryParams.bookingStatus = bookingStatus
@@ -80,19 +100,26 @@ const Bookings = () => {
 
             const response = await fetchAllBookings(queryParams);
             setBookings(response?.data?.bookings || []);
-            setLoading(false)
+            setTotalPages(response?.data?.pagination?.totalPages || 1);
+            setTotalRecords(response?.data?.pagination?.totalBookings || 0);
+            if (response.data.pagination?.currentPage) {
+                setPage(response.data.pagination.currentPage);
+            }
+
+            if (response.data.pagination?.pageSize) {
+                setLimit(response.data.pagination.pageSize);
+            }
         } catch (error) {
             console.error("Error fetching bookings:", error);
-            setLoading(false)
-            // showToast("Failed to fetch bookings. Please try again.", "error");
+            showToast("Failed to fetch bookings. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page, limit, filterType, bookingStatus, customStartDate, customEndDate, userId, eventId]);
 
-    // Fetch bookings on component mount
     useEffect(() => {
         fetchBookings();
-    }, [filterType, bookingStatus, customStartDate, customEndDate, userId, eventId]);
-
+    }, [fetchBookings]);
 
 
     // Handle delete confirmation dialog
@@ -124,24 +151,51 @@ const Bookings = () => {
         setSelectedBooking(null);
     };
 
-    const getActiveMembers = async () => {
-        setFetching(true);
+    /** 📌 Fetch Users for Autocomplete with Pagination */
+    const fetchUsers = async ({ search = "", page = 1, reset = false }) => {
+        if (fetchingUsers || page > userTotalPages) return;
+
+        setFetchingUsers(true);
         try {
-            const response = await fetchAllMembers();
-            setActiveMembers(response.users);
+            const response = await getRequest(`/admin/get-users?search=${search}&page=${page}&limit=10`);
+            setUsers((prevUsers) => (reset ? response.data.users : [...prevUsers, ...response.data.users]));
+            setUserTotalPages(response.data.pagination.totalPages);
+            setUserPage(page);
+            setHasMoreUsers(page < response.data.pagination.totalPages);
         } catch (error) {
-            console.error("Failed to fetch members :", error);
-            showToast("Failed to fetch Members. Please try again.", "error");
-        }
-        finally {
-            setFetching(false);
+            console.error("Error fetching users:", error);
+        } finally {
+            setFetchingUsers(false);
         }
     };
 
-    // Fetch billings on component mount and when filters change
+    /** 📌 Debounced function to optimize API calls while searching */
+    const debouncedFetchUsers = debounce((query) => fetchUsers({ search: query, page: 1, reset: true }), 500);
+
+    /** 📌 Fetch Users on Component Mount */
     useEffect(() => {
-        getActiveMembers();
-    }, [])
+        fetchUsers({ search: "", page: 1, reset: true });
+    }, []);
+
+    /** 📌 Handle Search Change */
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        debouncedFetchUsers(query);
+    };
+
+    /** 📌 Handle User Selection */
+    const handleUserChange = (event, selectedUser) => {
+        setUserId(selectedUser ? selectedUser._id : "all");
+    };
+
+    /** 📌 Handle Scroll to Fetch More Users */
+    const handleScroll = (event) => {
+        const bottom = event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 20;
+        if (bottom && hasMoreUsers) {
+            fetchUsers({ search: searchQuery, page: userPage + 1, reset: false });
+        }
+    };
 
     const getEvents = async () => {
         setEventFetching(true)
@@ -290,36 +344,41 @@ const Bookings = () => {
                             />
                         </FormControl>
                     </Grid>
+
                     <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Select Member</InputLabel>
-                        <FormControl fullWidth size="small">
-                            <Autocomplete
-                                options={activeMembers}
-                                getOptionLabel={(option) => `${option.name} (${option.memberId})`}
-                                value={activeMembers.find((member) => member._id === userId) || null}
-                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}
-                                loading={fetching}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        variant="outlined"
-                                        fullWidth
-                                        size="small"
-                                        sx={{ minHeight: "40px" }}  // Ensures same height as other inputs
-                                        InputProps={{
-                                            ...params.InputProps,
-                                            endAdornment: (
-                                                <>
-                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
-                                                    {params.InputProps.endAdornment}
-                                                </>
-                                            ),
-                                        }}
-                                    />
-                                )}
-                            />
-                        </FormControl>
+                        <Autocomplete
+                            options={users}
+                            getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                            value={users.find((user) => user._id === userId) || null}
+                            onChange={handleUserChange}
+                            loading={fetchingUsers}
+                            ListboxProps={{
+                                ref: scrollRef,
+                                onScroll: handleScroll,
+                                style: { maxHeight: 200, overflow: "auto" },
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    fullWidth
+                                    size="small"
+                                    onChange={handleSearchChange}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <>
+                                                {fetchingUsers ? <CircularProgress color="inherit" size={20} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </>
+                                        ),
+                                    }}
+                                />
+                            )}
+                        />
                     </Grid>
+
                     <Grid item xs={12} sm={3} md={2}>
                         <InputLabel>Filter Type</InputLabel>
                         <FormControl fullWidth size="small">
@@ -415,6 +474,29 @@ const Bookings = () => {
                 routeLink="booking"
                 // handleDelete={handleDeleteClick}
                 isLoading={loading}
+                pagination={{
+                    page: page > 0 ? page : 1,
+                    pageSize: limit > 0 ? limit : 10,
+                    totalPages: totalPages || 1,
+                    totalRecords: totalRecords || 0,
+                    onPageChange: (newPage) => {
+                        if (!isNaN(newPage) && newPage > 0) {
+                            console.log("Setting Page to:", newPage);
+                            setPage(newPage);
+                        } else {
+                            console.warn("Invalid page number received:", newPage);
+                        }
+                    },
+                    onPageSizeChange: (newLimit) => {
+                        if (!isNaN(newLimit) && newLimit > 0) {
+                            console.log("Setting Page Size to:", newLimit);
+                            setLimit(newLimit);
+                        } else {
+                            console.warn("Invalid page size received:", newLimit);
+                        }
+                    },
+                }}
+
             />
 
             {/* Delete Confirmation Dialog */}
@@ -433,4 +515,3 @@ const Bookings = () => {
 };
 
 export default Bookings;
-

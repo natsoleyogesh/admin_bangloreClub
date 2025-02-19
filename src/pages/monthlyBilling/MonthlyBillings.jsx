@@ -128,7 +128,7 @@ const MonthlyBillings = () => {
             setMonthlyBillings(response?.data?.billings || []);
             setTotals(response?.data?.totals || {});
             setTotalPages(response?.data?.pagination?.totalPages || 1);
-            setTotalRecords(response?.data?.pagination?.totalRecords || 0);
+            setTotalRecords(response?.data?.pagination?.totalBillings || 0);
         } catch (error) {
             console.error("Error fetching billings:", error);
             setMonthlyBillings([]);

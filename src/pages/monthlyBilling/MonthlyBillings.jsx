@@ -39,6 +39,7 @@ const formatMonthYear = (value) => {
 const MonthlyBillings = () => {
 
     const { id } = useParams();
+    const [uploadLoading, setUploadLoading] = useState(false);
 
     const [monthlyBillings, setMonthlyBillings] = useState([]);
     const [totals, setTotals] = useState({});
@@ -285,6 +286,7 @@ const MonthlyBillings = () => {
         }
         const formData = new FormData();
         formData.append("file", selectedFile);
+        setUploadLoading(true)
         try {
             await postFormDataRequest("/upload-offline-bill", formData);
             showToast("File uploaded and Bills updated successfully.", "success");
@@ -295,6 +297,7 @@ const MonthlyBillings = () => {
         } finally {
             setOpenFileDialog(false);
             setSelectedFile(null);
+            setUploadLoading(false)
         }
     };
 
@@ -454,9 +457,15 @@ const MonthlyBillings = () => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>
+                    {/* <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>
                     <Button onClick={handleUploadFile} variant="contained" color="primary">
                         Upload
+                    </Button> */}
+                    {!uploadLoading && <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>}
+                    <Button onClick={handleUploadFile} variant="contained" color="primary">
+
+                        {uploadLoading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Upload"}
+
                     </Button>
                 </DialogActions>
             </Dialog>

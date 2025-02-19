@@ -479,6 +479,7 @@ import {
     Typography,
     Grid,
     IconButton,
+    Autocomplete,
 } from "@mui/material";
 import {
     Add,
@@ -497,6 +498,8 @@ import { fetchAllActiveMembers } from "../api/member";
 import Breadcrumb from "../components/common/Breadcrumb";
 import { fetchAllActiveDepartments } from "../api/masterData/department";
 import { getRequest } from "../api/commonAPI";
+
+import debounce from "lodash.debounce";
 
 const statusOptions = ["Active", "Inactive"];
 // const categoryOptions = ["Chairperson", "Co-Chairperson", "Member"];
@@ -535,6 +538,15 @@ const AddGCM = () => {
     const [activeMembers, setActiveMembers] = useState([]);
     const [selectedMember, setSelectedMember] = useState({});
 
+    // User Search & Infinite Scroll State
+    const [users, setUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [userPage, setUserPage] = useState(1);
+    const [userTotalPages, setUserTotalPages] = useState(1);
+    const [fetchingUsers, setFetchingUsers] = useState(false);
+    const [hasMoreUsers, setHasMoreUsers] = useState(true);
+    const scrollRef = useRef(null);
+
     const [activeDepartments, setActiveDepartments] = useState([]);
     const [activeDesignation, setActiveDesignation] = useState([]);
     useEffect(() => {
@@ -567,18 +579,61 @@ const AddGCM = () => {
     };
 
 
-    useEffect(() => {
-        fetchMembers();
-    }, []);
+    // useEffect(() => {
+    //     fetchMembers();
+    // }, []);
 
-    const fetchMembers = async () => {
+    // const fetchMembers = async () => {
+    //     try {
+    //         const response = await fetchAllActiveMembers();
+    //         setActiveMembers(response.data.users);
+    //     } catch (error) {
+    //         showToast("Failed to fetch Members. Please try again.", "error");
+    //     }
+    // };
+
+
+    /** 📌 Fetch Users for Autocomplete with Pagination */
+    const fetchUsers = async ({ search = "", page = 1, reset = false }) => {
+        if (fetchingUsers || page > userTotalPages) return;
+
+        setFetchingUsers(true);
         try {
-            const response = await fetchAllActiveMembers();
-            setActiveMembers(response.data.users);
+            const response = await getRequest(`/admin/get-users?search=${search}&page=${page}&limit=10`);
+            setUsers((prevUsers) => (reset ? response.data.users : [...prevUsers, ...response.data.users]));
+            setUserTotalPages(response.data.pagination.totalPages);
+            setUserPage(page);
+            setHasMoreUsers(page < response.data.pagination.totalPages);
         } catch (error) {
-            showToast("Failed to fetch Members. Please try again.", "error");
+            console.error("Error fetching users:", error);
+        } finally {
+            setFetchingUsers(false);
         }
     };
+
+    /** 📌 Debounced function to optimize API calls while searching */
+    const debouncedFetchUsers = debounce((query) => fetchUsers({ search: query, page: 1, reset: true }), 500);
+
+    /** 📌 Fetch Users on Component Mount */
+    useEffect(() => {
+        fetchUsers({ search: "", page: 1, reset: true });
+    }, []);
+
+    /** 📌 Handle Search Change */
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        debouncedFetchUsers(query);
+    };
+
+    /** 📌 Handle Scroll to Fetch More Users */
+    const handleScroll = (event) => {
+        const bottom = event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 20;
+        if (bottom && hasMoreUsers) {
+            fetchUsers({ search: searchQuery, page: userPage + 1, reset: false });
+        }
+    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -637,12 +692,13 @@ const AddGCM = () => {
             setLoading(false);
         }
     };
-
-    const handleMemberSelect = (e) => {
-        const selected = activeMembers.find((member) => member._id === e.target.value);
-        setSelectedMember(selected);
-        setGcmData({ ...gcmData, userId: selected?._id });
+    // Handle Member Selection
+    const handleMemberSelect = (event, newValue) => {
+        const selected = users.find((member) => member._id === newValue?._id);
+        setSelectedMember(selected || {});
+        setGcmData((prev) => ({ ...prev, userId: selected?._id || "" }));
     };
+
 
     const handleCategoryChange = (index, value) => {
         const updated = [...categories];
@@ -678,6 +734,16 @@ const AddGCM = () => {
         setCategories(updated);
     };
 
+    // Handle filter changes
+    const handleFilterChange = (key, value) => {
+        setGcmData((prev) => {
+            const updatedFilters = { ...prev, [key]: value };
+            return updatedFilters;
+        });
+        const selected = users.find((member) => member._id === gcmData.userId);
+        setSelectedMember(selected);
+    };
+
     return (
         <Box sx={{ pt: "70px", pb: "20px", px: "10px" }}>
             <Breadcrumb />
@@ -688,20 +754,31 @@ const AddGCM = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
                         <InputLabel>Select Member</InputLabel>
-                        <Select
-                            name="memberId"
-                            value={gcmData.userId}
+                        <Autocomplete
+                            options={users}
+                            getOptionLabel={(option) => `${option.name} (${option.memberId})`}
+                            value={users.find((user) => user._id === gcmData.userId) || null}
                             onChange={handleMemberSelect}
-                            fullWidth
-                            size="small"
-                        >
-                            <MenuItem value="" disabled>Select Member</MenuItem>
-                            {activeMembers.map((member) => (
-                                <MenuItem key={member._id} value={member._id}>
-                                    {member.name} (ID: {member.memberId})
-                                </MenuItem>
-                            ))}
-                        </Select>
+                            loading={fetchingUsers}
+                            ListboxProps={{
+                                ref: scrollRef,
+                                onScroll: handleScroll,
+                                style: { maxHeight: 200, overflow: "auto" },
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    fullWidth
+                                    size="small"
+                                    onChange={handleSearchChange}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: fetchingUsers ? <CircularProgress size={20} /> : null,
+                                    }}
+                                />
+                            )}
+                        />
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <InputLabel>Name</InputLabel>

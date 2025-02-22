@@ -156,7 +156,7 @@ const AddDownload = () => {
         <Box sx={{ pt: "70px", pb: "20px", px: "10px" }}>
             <Breadcrumb />
             <Typography variant="h5" sx={{ mb: "20px", textAlign: "center", fontWeight: 600 }}>
-                Add New Download
+                Add New Club Notice / Download
             </Typography>
             <Paper
                 elevation={3}
@@ -298,7 +298,7 @@ const AddDownload = () => {
                         disabled={loading}
                         onClick={handleSubmit}
                     >
-                        {loading ? <CircularProgress size={20} color="inherit" /> : "Add Download"}
+                        {loading ? <CircularProgress size={20} color="inherit" /> : "Add Club Notice / Download"}
                     </Button>
                 </Box>
             </Paper>

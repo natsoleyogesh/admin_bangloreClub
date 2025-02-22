@@ -30,6 +30,14 @@ import { getRequest, postFormDataRequest } from "../../api/commonAPI";
 import { FiPlus } from "react-icons/fi";
 import debounce from "lodash.debounce";
 
+// ✅ Utility function to get the current month & year in "YYYY-MM" format
+const getCurrentMonth = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Ensures 2-digit format
+    return `${year}-${month}`;
+};
+
 const formatMonthYear = (value) => {
     if (!value) return "";
     const [year, month] = value.split("-");
@@ -83,6 +91,14 @@ const MonthlyBillings = () => {
         };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
+
+    // ✅ Set default transaction month when component mounts
+    useEffect(() => {
+        const defaultMonth = getCurrentMonth(); // "YYYY-MM"
+        setShowTransactionMonth(defaultMonth);
+        setTransactionMonth(formatMonthYear(defaultMonth)); // "Month-Year"
+    }, []);
+
 
     // Table columns definition
     const columns = [
@@ -235,7 +251,7 @@ const MonthlyBillings = () => {
             ...totalsRow,
             ...monthlyBillings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
-                MemberName: row.memberId?.memberId || "N/A",
+                MemberShipID: row.memberId?.memberId || "N/A",
                 MemberName: row.memberId?.name || "N/A",
                 PaymentStatus: row.paymentStatus,
                 InvoiceDate: formatDate(row.invoiceDate),
@@ -264,7 +280,7 @@ const MonthlyBillings = () => {
             ...totalsRow,
             ...monthlyBillings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
-                MemberName: row.memberId?.memberId || "N/A",
+                MemberShipID: row.memberId?.memberId || "N/A",
                 MemberName: row.memberId?.name || "N/A",
                 PaymentStatus: row.paymentStatus,
                 InvoiceDate: formatDate(row.invoiceDate),

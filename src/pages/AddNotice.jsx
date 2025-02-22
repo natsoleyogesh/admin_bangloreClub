@@ -185,7 +185,7 @@ const AddNotice = () => {
         <Box sx={{ pt: "70px", pb: "20px", px: "10px" }}>
             <Breadcrumb />
             <Typography variant="h5" sx={{ mb: "20px", textAlign: "center", fontWeight: 600 }}>
-                Add New Notice
+                Add Upcoming Event
             </Typography>
             <Paper
                 elevation={3}
@@ -372,7 +372,7 @@ const AddNotice = () => {
                         disabled={loading}
                         onClick={handleSubmit}
                     >
-                        {loading ? <CircularProgress size={20} color="inherit" /> : "Add Notice"}
+                        {loading ? <CircularProgress size={20} color="inherit" /> : "Add Upcoming Event"}
                     </Button>
                 </Box>
             </Paper>

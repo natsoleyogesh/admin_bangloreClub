@@ -111,7 +111,7 @@ const SingleDownload = () => {
         <Box sx={{ pt: "80px", pb: "20px" }}>
             <Breadcrumb />
             <Typography variant="h4" sx={{ mb: 2 }}>
-                Download Details
+                Club Notice / Download Details
             </Typography>
             <Paper
                 sx={{
@@ -162,7 +162,7 @@ const SingleDownload = () => {
                             onClick={handleEditClick}
                             sx={{ mt: 2 }}
                         >
-                            Edit Download Details
+                            Edit Club Notice / Download Details
                         </Button>
                     </Grid>
                 </Grid>
@@ -175,7 +175,7 @@ const SingleDownload = () => {
                 fullWidth
                 maxWidth="sm"
             >
-                <DialogTitle>Edit Download Details</DialogTitle>
+                <DialogTitle>Edit Club Notice / Download Details</DialogTitle>
                 <DialogContent>
                     <TextField
                         label="Title"

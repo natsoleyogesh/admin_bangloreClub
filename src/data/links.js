@@ -591,11 +591,11 @@ export const links = [
     ],
   },
   {
-    name: "Club Notices",
+    name: "Upcoming Events",
     icon: <MdNotificationsActive style={iconProps} />,
     subLinks: [
       {
-        name: "All Club Notices",
+        name: "All Upcoming Events",
         url: "/notices",
         icon: <MdNotificationsActive style={iconProps} />,
       },
@@ -657,11 +657,11 @@ export const links = [
     ],
   },
   {
-    name: "Downloads",
+    name: "Club Notice / Downloads",
     icon: <MdDownload style={iconProps} />,
     subLinks: [
       {
-        name: "All Downloads",
+        name: "All Club Notice / Downloads",
         url: "/downloads",
         icon: <MdDownload style={iconProps} />,
       },

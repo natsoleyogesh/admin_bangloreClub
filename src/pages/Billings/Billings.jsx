@@ -687,6 +687,7 @@ const Billings = () => {
             ...totalsRow,
             ...billings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
+                MemberShipId: row.row.memberId,
                 MemberName: row.memberId?.name || "N/A",
                 ServiceType: row.serviceType,
                 PaymentStatus: row.paymentStatus,
@@ -716,6 +717,7 @@ const Billings = () => {
             ...totalsRow,
             ...billings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
+                MemberShipId: row.row.memberId,
                 MemberName: row.memberId?.name || "N/A",
                 ServiceType: row.serviceType,
                 PaymentStatus: row.paymentStatus,

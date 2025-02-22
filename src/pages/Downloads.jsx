@@ -47,7 +47,7 @@ const Downloads = () => {
         // },
         {
             accessorKey: "title", //access nested data with dot notation
-            header: "Download Title",
+            header: "Title",
         },
         {
             accessorKey: "description",
@@ -195,7 +195,7 @@ const Downloads = () => {
                     marginBottom: "16px",
                 }}
             >
-                <Typography variant="h6">Downloads</Typography>
+                <Typography variant="h6">Club Notice / Downloads</Typography>
                 <Link to="/download/add" style={{ textDecoration: "none" }}>
                     <Button
                         variant="contained"
@@ -203,7 +203,7 @@ const Downloads = () => {
                         startIcon={<FiPlus />}
                         sx={{ borderRadius: "20px" }}
                     >
-                        Add Download
+                        Add Club Notice / Download
                     </Button>
                 </Link>
             </Box>
@@ -247,8 +247,8 @@ const Downloads = () => {
             />
             <ConfirmationDialog
                 open={openDialog}
-                title="Delete Hod"
-                message={`Are you sure you want to delete Download ${selectedDownload?.title}? This action cannot be undone.`}
+                title="Delete Club Notice / Download"
+                message={`Are you sure you want to delete Club Notice / Download ${selectedDownload?.title}? This action cannot be undone.`}
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCancelDelete}
                 confirmText="Delete"

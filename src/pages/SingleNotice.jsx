@@ -163,7 +163,7 @@ const SingleNotice = () => {
         <Box sx={{ pt: "80px", pb: "20px" }}>
             <Breadcrumb />
             <Typography variant="h4" sx={{ mb: 2 }}>
-                Notice Details
+                Upcoming Event Details
             </Typography>
             <Paper
                 sx={{
@@ -238,7 +238,7 @@ const SingleNotice = () => {
                             onClick={handleEditClick}
                             sx={{ mt: 2 }}
                         >
-                            Edit Notice Details
+                            Edit Upcoming Event Details
                         </Button>
                     </Grid>
                 </Grid>
@@ -251,7 +251,7 @@ const SingleNotice = () => {
                 fullWidth
                 maxWidth="sm"
             >
-                <DialogTitle>Edit Notice Details</DialogTitle>
+                <DialogTitle>Edit Upcoming Event Details</DialogTitle>
                 <DialogContent>
                     <TextField
                         label="Title"

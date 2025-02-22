@@ -202,6 +202,7 @@ const Transactions = () => {
             head: [columns.map((col) => col.header)],
             body: transactions.map((row) => [
                 row.transactionId,
+                row.memberId?.memberId || "N/A",
                 row.memberId?.name || "N/A",
                 row.billingId?.invoiceNumber || "N/A",
                 row.paymentStatus,
@@ -218,6 +219,7 @@ const Transactions = () => {
     const exportToCSV = () => {
         const csvData = transactions.map((row) => ({
             TransactionID: row.transactionId,
+            memberShipID: row.memberId?.memberId,
             MemberName: row.memberId?.name || "N/A",
             InvoiceNumber: row.billingId?.invoiceNumber || "N/A",
             PaymentStatus: row.paymentStatus,
@@ -236,6 +238,7 @@ const Transactions = () => {
     const exportToXLS = () => {
         const xlsData = transactions.map((row) => ({
             TransactionID: row.transactionId,
+            memberShipID: row.memberId?.memberId,
             MemberName: row.memberId?.name || "N/A",
             InvoiceNumber: row.billingId?.invoiceNumber || "N/A",
             PaymentStatus: row.paymentStatus,

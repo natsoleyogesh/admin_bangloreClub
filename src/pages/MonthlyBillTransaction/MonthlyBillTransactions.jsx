@@ -209,7 +209,7 @@ const MonthlyBillTransactions = () => {
             head: [columns.map((col) => col.header)],
             body: transactions.map((row) => [
                 row.transactionId,
-                row.memberId?.name || "N/A",
+                row.memberId?.memberId || "N/A",
                 row.memberId?.name || "N/A",
                 row.billingId?.invoiceNumber || "N/A",
                 row.paymentStatus,

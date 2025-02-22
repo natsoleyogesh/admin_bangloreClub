@@ -232,7 +232,7 @@ const RoomBookings = () => {
             // Table Headers
             const tableHeaders = [
                 "Membership ID", "Member Name", "Email", "Mobile Number", "Status",
-                "Total Amount", "Date"
+                "Total Amount", "Date", "Check-In", "Check-Out"
             ];
 
             // Table Rows
@@ -244,6 +244,8 @@ const RoomBookings = () => {
                 row.bookingStatus || "N/A",
                 `${row.pricingDetails?.final_totalAmount || 0}`,
                 formatDateTime(row.createdAt),
+                formatDate(row.bookingDates.checkIn),
+                formatDate(row.bookingDates.checkOut)
             ]);
 
             // Generate the table
@@ -358,6 +360,8 @@ const RoomBookings = () => {
                 "Status": row.bookingStatus || "N/A",
                 "Total Amount": `${row.pricingDetails?.final_totalAmount || 0}`,
                 "Date": formatDateTime(row.createdAt),
+                "Check-In": formatDate(row.bookingDates.checkIn),
+                "Check-Out": formatDate(row.bookingDates.checkOut)
             }));
 
             const worksheet = XLSX.utils.json_to_sheet(csvData);
@@ -380,6 +384,8 @@ const RoomBookings = () => {
                 "Status": row.bookingStatus || "N/A",
                 "Total Amount": `${row.pricingDetails?.final_totalAmount || 0}`,
                 "Date": formatDateTime(row.createdAt),
+                "Check-In": formatDate(row.bookingDates.checkIn),
+                "Check-Out": formatDate(row.bookingDates.checkOut)
             }));
 
             const worksheet = XLSX.utils.json_to_sheet(xlsData);

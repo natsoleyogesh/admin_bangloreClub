@@ -220,19 +220,19 @@
 //             </Grid>
 
 //             <Table
-//                 data={clubList}
-//                 fields={ClubsColumns}
-//                 numberOfRows={clubList.length}
-//                 enableTopToolBar={true}
-//                 enableBottomToolBar={true}
-//                 enablePagination={true}
-//                 enableRowSelection={true}
-//                 enableColumnFilters={true}
-//                 enableEditing={true}
-//                 enableColumnDragging={true}
-//                 showPreview
-//                 routeLink="affiliated-club"
-//                 handleDelete={handleDeleteClick}
+// data={clubList}
+// fields={ClubsColumns}
+// numberOfRows={clubList.length}
+// enableTopToolBar={true}
+// enableBottomToolBar={true}
+// enablePagination={true}
+// enableRowSelection={true}
+// enableColumnFilters={true}
+// enableEditing={true}
+// enableColumnDragging={true}
+// showPreview
+// routeLink="affiliated-club"
+// handleDelete={handleDeleteClick}
 //                 isLoading={loading}
 //             />
 
@@ -248,7 +248,7 @@
 //                 loadingText="Deleting..."
 //             />
 
-//             {/* Dialog for File Upload */}
+// //             {/* Dialog for File Upload */}
 //             <Dialog open={openFileDialog} onClose={() => setOpenFileDialog(false)}>
 //                 <DialogTitle>Upload Clubs</DialogTitle>
 //                 <DialogContent>
@@ -272,7 +272,7 @@
 // export default AffiliatedClubs;
 
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import React, { useEffect, useState, useCallback } from "react";
 import { FiPlus } from "react-icons/fi";
 import { deleteRequest, getRequest, postFormDataRequest } from "../../api/commonAPI";
@@ -288,9 +288,14 @@ const AffiliatedClubs = () => {
     const [selectedClub, setSelectedClub] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    // const [countries, setCountries] = useState([]);
+    // const [states, setStates] = useState([]);
+    // Country & State Selection
     const [countries, setCountries] = useState([]);
-    const [countryDescription, setCountryDescription] = useState("all");
-
+    const [states, setStates] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState({ name: "all", id: "all" }); // Country name & ID
+    const [selectedState, setSelectedState] = useState("all");
+    const [fetchingStates, setFetchingStates] = useState(false);
     // Pagination State
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -317,49 +322,109 @@ const AffiliatedClubs = () => {
         { accessorKey: "createdAt", header: "Created Date & Time", Cell: ({ cell }) => formatDateTime(cell.getValue()) },
     ];
 
-    const getClubs = useCallback(async (pageNumber = 1, pageSize = 10) => {
+    // const getClubs = useCallback(async (pageNumber = 1, pageSize = 10) => {
+    //     setLoading(true);
+    //     try {
+    //         const queryParams = { page: pageNumber, limit: pageSize };
+    //         if (countryDescription !== "all") {
+    //             queryParams.countryDescription = countryDescription;
+    //         }
+    //         if (stateDescription !== "all") {
+    //             queryParams.stateDescription = stateDescription;
+    //         }
+    //         const queryString = new URLSearchParams(queryParams).toString();
+    //         const response = await getRequest(`/all-affiliated-clubs?${queryString}`);
+    //         setClubList(response?.data?.clubs || []);
+    //         setTotalPages(response?.data?.pagination?.totalPages || 1);
+    //         setTotalRecords(response?.data?.pagination?.totalClubs || 0);
+    //         if (response.data.pagination?.currentPage) {
+    //             setPage(response.data.pagination.currentPage);
+    //         }
+
+    //         if (response.data.pagination?.pageSize) {
+    //             setLimit(response.data.pagination.pageSize);
+    //         }
+    //     } catch (error) {
+    //         console.error("Failed to fetch clubs:", error);
+    //         showToast(error.message || "Failed to fetch clubs.", "error");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // }, [countryDescription, stateDescription]);
+
+
+    /** 📌 Fetch Clubs Based on Selected Filters & Pagination */
+    const getClubs = useCallback(async () => {
         setLoading(true);
         try {
-            const queryParams = { page: pageNumber, limit: pageSize };
-            if (countryDescription !== "all") {
-                queryParams.countryDescription = countryDescription;
-            }
+            const queryParams = { page, limit };
+            if (selectedCountry.name !== "all") queryParams.countryDescription = selectedCountry.name;
+            if (selectedState !== "all") queryParams.stateDescription = selectedState;
+
             const queryString = new URLSearchParams(queryParams).toString();
             const response = await getRequest(`/all-affiliated-clubs?${queryString}`);
+
             setClubList(response?.data?.clubs || []);
             setTotalPages(response?.data?.pagination?.totalPages || 1);
             setTotalRecords(response?.data?.pagination?.totalClubs || 0);
-            if (response.data.pagination?.currentPage) {
-                setPage(response.data.pagination.currentPage);
-            }
-
-            if (response.data.pagination?.pageSize) {
-                setLimit(response.data.pagination.pageSize);
-            }
         } catch (error) {
             console.error("Failed to fetch clubs:", error);
-            showToast(error.message || "Failed to fetch clubs.", "error");
+            showToast("Failed to fetch clubs.", "error");
         } finally {
             setLoading(false);
         }
-    }, [countryDescription]);
+    }, [selectedCountry, selectedState, page, limit]);
 
+    /** 📌 Fetch List of Countries */
     const getCountries = async () => {
         try {
             const response = await getRequest(`/countries`);
-            setCountries(response?.data || []);
+            const countryOptions = [{ id: "all", name: "all" }, ...response?.data];
+            setCountries(countryOptions);
         } catch (error) {
             console.error("Failed to fetch countries:", error);
         }
     };
 
+    /** 📌 Fetch States Based on Selected Country */
+    const getStates = async (countryId) => {
+        if (countryId === "all") {
+            setStates([]);
+            return;
+        }
+
+        setFetchingStates(true);
+        try {
+            const response = await getRequest(`/countries/${countryId}/states`);
+            setStates(response?.data);
+        } catch (error) {
+            console.error("Failed to fetch states:", error);
+        } finally {
+            setFetchingStates(false);
+        }
+    };
+
+
     useEffect(() => {
         getCountries();
+        getClubs();
     }, []);
 
     useEffect(() => {
-        getClubs(page, limit);
-    }, [page, limit, countryDescription, getClubs]);
+        getClubs();
+    }, [selectedCountry, selectedState, page, limit]);
+
+
+    /** 📌 Handle Country Change */
+    const handleCountryChange = (event) => {
+        const selectedCountryId = event.target.value;
+        const countryObj = countries.find((c) => c.id === selectedCountryId);
+        setSelectedCountry(countryObj);
+        setSelectedState("all"); // Reset state when country changes
+        getStates(countryObj.id);
+    };
+
+
 
     const handleDeleteClick = (club) => {
         setSelectedClub(club);
@@ -408,7 +473,7 @@ const AffiliatedClubs = () => {
                     Add Clubs
                 </Button>
             </Box>
-            <Grid container spacing={2} alignItems="center" mb={2}>
+            {/* <Grid container spacing={2} alignItems="center" mb={2}>
                 <Grid item xs={12} sm={3} md={2}>
                     <InputLabel>Select Country</InputLabel>
                     <FormControl fullWidth size="small">
@@ -420,11 +485,62 @@ const AffiliatedClubs = () => {
                         </Select>
                     </FormControl>
                 </Grid>
+                {countryDescription != "all" && <Grid item xs={12} sm={3} md={2}>
+                    <InputLabel>Select State</InputLabel>
+                    <FormControl fullWidth size="small">
+                        <Select value={stateDescription} onChange={(e) => setStateDescription(e.target.value)}>
+                            <MenuItem value="all">All</MenuItem>
+                            {states.map((option) => (
+                                <MenuItem key={option.id} value={option.name}>{option.name}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>}
+            </Grid> */}
+            {/* Country & State Filters */}
+            <Grid container spacing={2} alignItems="center" mb={2}>
+                <Grid item xs={12} sm={3} md={2}>
+                    <InputLabel>Select Country</InputLabel>
+                    <FormControl fullWidth size="small">
+                        <Select value={selectedCountry.id} onChange={handleCountryChange}>
+                            {countries.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                    {option.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+
+                <Grid item xs={12} sm={3} md={2}>
+                    <InputLabel>Select State</InputLabel>
+                    <FormControl fullWidth size="small" disabled={selectedCountry.id === "all"}>
+                        <Select value={selectedState} onChange={(e) => setSelectedState(e.target.value)}>
+                            {states.map((option) => (
+                                <MenuItem key={option.id} value={option.name}>
+                                    {option.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    {fetchingStates && <CircularProgress size={20} />}
+                </Grid>
             </Grid>
 
             <Table
                 data={clubList}
                 fields={ClubsColumns}
+                numberOfRows={clubList.length}
+                enableTopToolBar={true}
+                enableBottomToolBar={true}
+                enablePagination={true}
+                enableRowSelection={true}
+                enableColumnFilters={true}
+                enableEditing={true}
+                enableColumnDragging={true}
+                showPreview
+                routeLink="affiliated-club"
+                handleDelete={handleDeleteClick}
                 isLoading={loading}
                 pagination={{
                     page,
@@ -434,10 +550,27 @@ const AffiliatedClubs = () => {
                     onPageChange: (newPage) => setPage(newPage),
                     onPageSizeChange: (newLimit) => setLimit(newLimit),
                 }}
-                handleDelete={handleDeleteClick}
             />
 
             <ConfirmationDialog open={openDialog} title="Delete Club" message={`Are you sure you want to delete club ${selectedClub?.name}?`} onConfirm={handleConfirmDelete} onCancel={() => setOpenDialog(false)} confirmText="Delete" cancelText="Cancel" loadingText="Deleting..." />
+
+            {/* Dialog for File Upload */}
+            <Dialog open={openFileDialog} onClose={() => setOpenFileDialog(false)}>
+                <DialogTitle>Upload Clubs</DialogTitle>
+                <DialogContent>
+                    <input
+                        type="file"
+                        accept=".xlsx, .xls"
+                        onChange={(e) => setSelectedFile(e.target.files[0])}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenFileDialog(false)}>Cancel</Button>
+                    <Button onClick={handleUploadFile} variant="contained" color="primary">
+                        Upload
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

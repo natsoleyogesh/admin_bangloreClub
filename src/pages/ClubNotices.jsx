@@ -52,7 +52,7 @@ const ClubNotices = () => {
         },
         {
             accessorKey: "title",
-            header: "Notice Title",
+            header: "Title",
         },
         // {
         //     accessorKey: "description",
@@ -209,7 +209,7 @@ const ClubNotices = () => {
                     marginBottom: "16px",
                 }}
             >
-                <Typography variant="h6">Club Notices</Typography>
+                <Typography variant="h6">Upcoming Events</Typography>
                 <Link to="/notice/add" style={{ textDecoration: "none" }}>
                     <Button
                         variant="contained"
@@ -217,7 +217,7 @@ const ClubNotices = () => {
                         startIcon={<FiPlus />}
                         sx={{ borderRadius: "20px" }}
                     >
-                        Add Notice
+                        Add Upcoming Event
                     </Button>
                 </Link>
             </Box>
@@ -261,8 +261,8 @@ const ClubNotices = () => {
             />
             <ConfirmationDialog
                 open={openDialog}
-                title="Delete Notice"
-                message={`Are you sure you want to delete notice "${selectedNotice?.title}"? This action cannot be undone.`}
+                title="Delete Upcoming Event"
+                message={`Are you sure you want to delete upcoming event "${selectedNotice?.title}"? This action cannot be undone.`}
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCancelDelete}
                 confirmText="Delete"

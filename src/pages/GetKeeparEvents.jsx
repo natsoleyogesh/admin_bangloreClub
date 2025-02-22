@@ -20,7 +20,7 @@ const GetKeeparEvents = () => {
 
                 const response = await fetchAllctiveEvents();
                 if (response.status === 200) {
-                    setEvents(response.data.allEvents);
+                    setEvents(response.data.events);
                 } else {
                     setError("Failed to fetch events.");
                 }

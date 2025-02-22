@@ -16,6 +16,9 @@ import { formatDateTime, PUBLIC_API_URI } from "../../api/config";
 import { fetchAllNotifications } from "../../api/notification";
 import { Link } from "react-router-dom";
 import { FiPlus } from "react-icons/fi";
+import ConfirmationDialog from "../../api/ConfirmationDialog";
+import { showToast } from "../../api/toast";
+import { deleteRequest } from "../../api/commonAPI";
 
 const Notifications = () => {
 
@@ -24,7 +27,10 @@ const Notifications = () => {
     const [filterType, setFilterType] = useState("all");
     const [customStartDate, setCustomStartDate] = useState("");
     const [customEndDate, setCustomEndDate] = useState("");
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(null);
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedNotification, setSelectedNotification] = useState(null);
 
     // Pagination state
     const [page, setPage] = useState(1);
@@ -172,6 +178,35 @@ const Notifications = () => {
         // Update the filter type
         setFilterType(value);
     };
+
+    const handleConfirmDelete = async () => {
+        const notificationId = selectedNotification._id;
+        console.log(notificationId, "usersgshg")
+        try {
+            await deleteRequest(`/notification/${notificationId}`);
+            fetchAllNotificationData()
+
+            showToast("Notification deleted successfully.", "success");
+        } catch (error) {
+            console.error("Failed to delete Notification:", error.response.data.message);
+            showToast(error.response.data.message || "Failed to delete Notification.", "error");
+        } finally {
+            setOpenDialog(false);
+            setSelectedNotification(null);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setOpenDialog(false);
+        setSelectedNotification(null);
+    };
+
+
+    const handleDeleteClick = (notification) => {
+        setSelectedNotification(notification);
+        setOpenDialog(true);
+    };
+
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
             {/* Header Section */}
@@ -263,6 +298,9 @@ const Notifications = () => {
                     enableEditing
                     enableColumnDragging
                     isLoading={loading}
+                    routeLink='notification'
+                    handleDelete={handleDeleteClick}
+
                     pagination={{
                         page: page > 0 ? page : 1,
                         pageSize: limit > 0 ? limit : 10,
@@ -287,6 +325,17 @@ const Notifications = () => {
                     }}
                 />
             </Box>
+
+            <ConfirmationDialog
+                open={openDialog}
+                title="Delete Hod"
+                message={`Are you sure you want to delete this notification? This action cannot be undone.`}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                confirmText="Delete"
+                cancelText="Cancel"
+                loadingText="Deleting..."
+            />
         </Box>
     );
 };

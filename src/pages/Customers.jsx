@@ -497,32 +497,234 @@
 
 // export default Customers;
 
+// working code --------------------------------------------------------------------------------------------------------------------------------------
+
+// import { Avatar, Box, Button, Typography } from "@mui/material";
+// import React, { useEffect, useState, useCallback } from "react";
+// import Table from "../components/Table";
+// import { deleteMember } from "../api/member";
+// import { formatDateTime, PUBLIC_API_URI } from "../api/config";
+// import { Link, useNavigate } from "react-router-dom";
+// import ConfirmationDialog from "../api/ConfirmationDialog";
+// import { showToast } from "../api/toast";
+// import { FiPlus } from "react-icons/fi";
+// import { getRequest } from "../api/commonAPI";
+
+// const Customers = ({ uploadData }) => {
+//   const navigate = useNavigate();
+//   const [memberList, setMemberList] = useState([]);
+//   const [openDialog, setOpenDialog] = useState(false);
+//   const [selectedMember, setSelectedMember] = useState(null);
+//   const [loading, setLoading] = useState(false);
+
+//   // Pagination State
+//   const [page, setPage] = useState(1);  // Default to page 1
+//   const [limit, setLimit] = useState(10); // Default to 10 records per page
+//   const [totalPages, setTotalPages] = useState(1);
+//   const [totalRecords, setTotalRecords] = useState(0);
+
+//   const [searchQuery, setSearchQuery] = useState("");
+
+//   const customersColumns = [
+//     {
+//       accessorKey: "profilePicture",
+//       header: "Image",
+//       size: 100,
+//       Cell: ({ cell }) => (
+//         <Avatar src={`${PUBLIC_API_URI}${cell.getValue()}`} sx={{ width: 30, height: 30 }} />
+//       ),
+//     },
+//     { accessorKey: "memberId", header: "Member Id" },
+//     { accessorKey: "name", header: "Member Name" },
+//     { accessorKey: "email", header: "Email" },
+//     { accessorKey: "mobileNumber", header: "Phone Number" },
+//     {
+//       accessorKey: "relation",
+//       header: "Relation ship",
+//       Cell: ({ cell }) => cell.getValue() || "N/A",
+//     },
+//     { accessorKey: "address", header: "Address" },
+//     {
+//       accessorKey: "creditStop",
+//       header: "Credit Stop",
+//       Cell: ({ cell }) => (
+//         <Typography variant="body2" sx={{ color: cell.getValue() ? "green" : "inherit", fontWeight: "bold" }}>
+//           {cell.getValue() ? "YES" : "NO"}
+//         </Typography>
+//       ),
+//     },
+//     { accessorKey: "creditLimit", header: "Credit Limit", Cell: ({ cell }) => cell.getValue() || 0 },
+//     { accessorKey: "createdAt", header: "Created Date & Time", Cell: ({ cell }) => formatDateTime(cell.getValue()) },
+//   ];
 
 
-import { Avatar, Box, Button, Typography } from "@mui/material";
+//   const getMembers = useCallback(async (search = "", pageNumber, pageSize) => {
+//     setLoading(true);
+//     try {
+//       // const response = await getRequest(`${PUBLIC_API_URI}/admin/all-users?page=${pageNumber}&limit=${pageSize}`);
+//       const response = await getRequest(`/admin/get-users?search=${search}&page=${pageNumber}&limit=${pageSize}`);
+
+//       if (response?.data) {
+//         setMemberList(response.data.users || []);
+
+//         // Ensure that we update pagination only if values exist
+//         setTotalPages(response.data.pagination?.totalPages || 1);
+//         setTotalRecords(response.data.pagination?.totalUsers || 0);
+
+//         if (response.data.pagination?.currentPage) {
+//           setPage(response.data.pagination.currentPage);
+//         }
+
+//         if (response.data.pagination?.pageSize) {
+//           setLimit(response.data.pagination.pageSize);
+//         }
+//       }
+//     } catch (error) {
+//       console.error("Failed to fetch members:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+
+//   // Re-fetch when page/limit changes
+//   useEffect(() => {
+//     getMembers({ search: searchQuery, page, limit });
+//   }, [page, limit]);
+//   /** 📌 Handle Search Change */
+//   const handleSearchChange = (event) => {
+//     const query = event.target.value;
+//     setSearchQuery(query);
+//     // debouncedFetchUsers(query);
+//   };
+
+
+//   // Handle Delete
+//   const handleDeleteClick = (member) => {
+//     setSelectedMember(member);
+//     setOpenDialog(true);
+//   };
+
+//   // Confirm Deletion
+//   const handleConfirmDelete = async () => {
+//     try {
+//       await deleteMember(selectedMember._id);
+//       showToast("Member deleted successfully.", "success");
+//       getMembers(page, limit); // Re-fetch updated members list
+//     } catch (error) {
+//       console.error("Failed to delete member:", error);
+//       showToast(error.message || "Failed to delete member.", "error");
+//     } finally {
+//       setOpenDialog(false);
+//       setSelectedMember(null);
+//     }
+//   };
+
+//   return (
+//     <Box sx={{ pt: "80px", pb: "20px" }}>
+//       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+//         <Typography variant="h6">Primary Members</Typography>
+//         {!uploadData && (
+//           <Link to="/member/add" style={{ textDecoration: "none" }}>
+//             <Button variant="contained" color="primary" startIcon={<FiPlus />} sx={{ borderRadius: "20px" }}>
+//               Add Member
+//             </Button>
+//           </Link>
+//         )}
+//       </Box>
+
+//       <Table
+//         data={memberList}
+//         fields={customersColumns}
+//         numberOfRows={memberList.length}
+//         enableTopToolBar={true}
+//         enableBottomToolBar={true}
+//         enablePagination={true}
+//         enableRowSelection={false}
+//         enableColumnFilters={true}
+//         enableEditing={true}
+//         enableColumnDragging={true}
+//         showPreview
+//         routeLink="members"
+//         handleDelete={handleDeleteClick}
+//         isLoading={loading}
+//         pagination={{
+//           page: page > 0 ? page : 1,
+//           pageSize: limit > 0 ? limit : 10,
+//           totalPages: totalPages || 1,
+//           totalRecords: totalRecords || 0,
+//           onPageChange: (newPage) => {
+//             if (!isNaN(newPage) && newPage > 0) {
+//               console.log("Setting Page to:", newPage);
+//               setPage(newPage);
+//             } else {
+//               console.warn("Invalid page number received:", newPage);
+//             }
+//           },
+//           onPageSizeChange: (newLimit) => {
+//             if (!isNaN(newLimit) && newLimit > 0) {
+//               console.log("Setting Page Size to:", newLimit);
+//               setLimit(newLimit);
+//             } else {
+//               console.warn("Invalid page size received:", newLimit);
+//             }
+//           },
+//         }}
+
+
+
+//       />
+
+
+//       <ConfirmationDialog
+//         open={openDialog}
+//         title="Delete Member"
+//         message={`Are you sure you want to delete member ${selectedMember?.name}? This action cannot be undone.`}
+//         onConfirm={handleConfirmDelete}
+//         onCancel={() => setOpenDialog(false)}
+//         confirmText="Delete"
+//         cancelText="Cancel"
+//         loadingText="Deleting..."
+//       />
+//     </Box>
+//   );
+// };
+
+// export default Customers;
+
+
+// working code----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 import React, { useEffect, useState, useCallback } from "react";
+import { Avatar, Box, Button, Typography, TextField, CircularProgress } from "@mui/material";
 import Table from "../components/Table";
 import { deleteMember } from "../api/member";
 import { formatDateTime, PUBLIC_API_URI } from "../api/config";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ConfirmationDialog from "../api/ConfirmationDialog";
 import { showToast } from "../api/toast";
 import { FiPlus } from "react-icons/fi";
 import { getRequest } from "../api/commonAPI";
+import debounce from "lodash.debounce";
 
 const Customers = ({ uploadData }) => {
-  const navigate = useNavigate();
   const [memberList, setMemberList] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false); // Loading state for search
 
   // Pagination State
-  const [page, setPage] = useState(1);  // Default to page 1
-  const [limit, setLimit] = useState(10); // Default to 10 records per page
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
 
+  // Search State
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Table Columns
   const customersColumns = [
     {
       accessorKey: "profilePicture",
@@ -538,7 +740,7 @@ const Customers = ({ uploadData }) => {
     { accessorKey: "mobileNumber", header: "Phone Number" },
     {
       accessorKey: "relation",
-      header: "Relation ship",
+      header: "Relationship",
       Cell: ({ cell }) => cell.getValue() || "N/A",
     },
     { accessorKey: "address", header: "Address" },
@@ -555,66 +757,62 @@ const Customers = ({ uploadData }) => {
     { accessorKey: "createdAt", header: "Created Date & Time", Cell: ({ cell }) => formatDateTime(cell.getValue()) },
   ];
 
-  // Fetch Members
-  // const getMembers = useCallback(async (pageNumber, pageSize) => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await getRequest(`${PUBLIC_API_URI}/admin/all-users?page=${pageNumber}&limit=${pageSize}`);
-  //     setMemberList(response?.data?.users || []);
-  //     setTotalPages(response?.data?.pagination.totalPages || 1);
-  //     setTotalRecords(response?.data?.pagination.totalUsers || 0);
-  //   } catch (error) {
-  //     console.error("Failed to fetch members:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, []);
-
-  const getMembers = useCallback(async (pageNumber, pageSize) => {
+  /** 📌 Fetch Members with Search & Pagination */
+  const getMembers = useCallback(async (search = "", pageNumber = page, pageSize = limit) => {
     setLoading(true);
+    setFetching(true);
     try {
-      const response = await getRequest(`${PUBLIC_API_URI}/admin/all-users?page=${pageNumber}&limit=${pageSize}`);
+      const response = await getRequest(`/admin/get-users?relation=Primary&search=${search}&page=${pageNumber}&limit=${pageSize}`);
 
       if (response?.data) {
         setMemberList(response.data.users || []);
-
-        // Ensure that we update pagination only if values exist
         setTotalPages(response.data.pagination?.totalPages || 1);
         setTotalRecords(response.data.pagination?.totalUsers || 0);
-
-        if (response.data.pagination?.currentPage) {
-          setPage(response.data.pagination.currentPage);
-        }
-
-        if (response.data.pagination?.pageSize) {
-          setLimit(response.data.pagination.pageSize);
-        }
+        setPage(response.data.pagination?.currentPage || 1);
+        setLimit(response.data.pagination?.pageSize || 10);
       }
     } catch (error) {
       console.error("Failed to fetch members:", error);
+      showToast("Failed to fetch members. Please try again.", "error");
     } finally {
       setLoading(false);
+      setFetching(false);
     }
-  }, []);
-
-
-  // Re-fetch when page/limit changes
-  useEffect(() => {
-    getMembers(page, limit);
   }, [page, limit]);
 
-  // Handle Delete
+  /** 📌 Fetch Members on Component Mount & When Dependencies Change */
+  useEffect(() => {
+    getMembers(searchQuery, page, limit);
+  }, [page, limit, searchQuery, getMembers]);
+
+  /** 📌 Debounced Search Function */
+  const debouncedSearch = useCallback(
+    debounce((query) => {
+      setPage(1); // Reset to first page when searching
+      getMembers(query, 1, limit);
+    }, 500),
+    [limit, getMembers]
+  );
+
+  /** 📌 Handle Search Input */
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
+  };
+
+  /** 📌 Handle Delete */
   const handleDeleteClick = (member) => {
     setSelectedMember(member);
     setOpenDialog(true);
   };
 
-  // Confirm Deletion
+  /** 📌 Confirm Deletion */
   const handleConfirmDelete = async () => {
     try {
       await deleteMember(selectedMember._id);
       showToast("Member deleted successfully.", "success");
-      getMembers(page, limit); // Re-fetch updated members list
+      getMembers(searchQuery, page, limit); // Re-fetch updated members list
     } catch (error) {
       console.error("Failed to delete member:", error);
       showToast(error.message || "Failed to delete member.", "error");
@@ -637,6 +835,20 @@ const Customers = ({ uploadData }) => {
         )}
       </Box>
 
+      {/* Search Box */}
+      <Box sx={{ mb: 2, display: "flex", alignItems: "center" }}>
+        <TextField
+          // fullWidth
+          variant="outlined"
+          size="small"
+          placeholder="Search Members..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+        {fetching && <CircularProgress size={24} sx={{ marginLeft: "10px" }} />}
+      </Box>
+
+      {/* Members Table */}
       <Table
         data={memberList}
         fields={customersColumns}
@@ -652,28 +864,6 @@ const Customers = ({ uploadData }) => {
         routeLink="members"
         handleDelete={handleDeleteClick}
         isLoading={loading}
-        // pagination={{
-        //   page: page || 1,
-        //   pageSize: limit || 10,
-        //   totalPages: totalPages || 1,
-        //   totalRecords: totalRecords || 0,
-        //   onPageChange: (newPage) => {
-        //     if (!isNaN(newPage) && newPage > 0) {
-        //       console.log("Pagination Change -> New Page:", newPage);
-        //       setPage(newPage);
-        //     } else {
-        //       console.warn("Invalid page number:", newPage);
-        //     }
-        //   },
-        //   onPageSizeChange: (newLimit) => {
-        //     if (!isNaN(newLimit) && newLimit > 0) {
-        //       console.log("Pagination Change -> New Limit:", newLimit);
-        //       setLimit(newLimit);
-        //     } else {
-        //       console.warn("Invalid page size:", newLimit);
-        //     }
-        //   },
-        // }}
         pagination={{
           page: page > 0 ? page : 1,
           pageSize: limit > 0 ? limit : 10,
@@ -681,27 +871,18 @@ const Customers = ({ uploadData }) => {
           totalRecords: totalRecords || 0,
           onPageChange: (newPage) => {
             if (!isNaN(newPage) && newPage > 0) {
-              console.log("Setting Page to:", newPage);
               setPage(newPage);
-            } else {
-              console.warn("Invalid page number received:", newPage);
             }
           },
           onPageSizeChange: (newLimit) => {
             if (!isNaN(newLimit) && newLimit > 0) {
-              console.log("Setting Page Size to:", newLimit);
               setLimit(newLimit);
-            } else {
-              console.warn("Invalid page size received:", newLimit);
             }
           },
         }}
-
-
-
       />
 
-
+      {/* Delete Confirmation Dialog */}
       <ConfirmationDialog
         open={openDialog}
         title="Delete Member"

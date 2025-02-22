@@ -37,7 +37,7 @@ const Bookings = () => {
     const [loading, setLoading] = useState(null);
     const [fetching, setFetching] = useState(false); // To show loading while fetching users
 
-    const [filterType, setFilterType] = useState("all");
+    const [filterType, setFilterType] = useState("today");
     const [bookingStatus, setBookingStatus] = useState("all");
     const [customStartDate, setCustomStartDate] = useState("");
     const [customEndDate, setCustomEndDate] = useState("");

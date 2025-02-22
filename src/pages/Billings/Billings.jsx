@@ -508,7 +508,7 @@ const Billings = () => {
     const { id } = useParams();
     const [billings, setBillings] = useState([]);
     const [totals, setTotals] = useState({});
-    const [filterType, setFilterType] = useState("all");
+    const [filterType, setFilterType] = useState("today");
     const [paymentStatus, setPaymentStatus] = useState("all");
     const [customStartDate, setCustomStartDate] = useState("");
     const [customEndDate, setCustomEndDate] = useState("");

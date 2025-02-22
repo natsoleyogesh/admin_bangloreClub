@@ -39,7 +39,7 @@ const RoomBookings = () => {
     const [fetching, setFetching] = useState(false); // To show loading while fetching users
     // Table columns definition based on the provided structure
 
-    const [filterType, setFilterType] = useState("all");
+    const [filterType, setFilterType] = useState("today");
     const [bookingStatus, setBookingStatus] = useState("all");
     const [customStartDate, setCustomStartDate] = useState("");
     const [customEndDate, setCustomEndDate] = useState("");

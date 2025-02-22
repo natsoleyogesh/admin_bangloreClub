@@ -733,9 +733,9 @@ const EditRoom = () => {
         setRoomData({ ...roomData, description: value });
     };
 
-    // const handlePricingDiscriptionChange = (value) => {
-    //     setRoomData({ ...roomData, pricingDetailDescription: value });
-    // };
+    const handlePricingDiscriptionChange = (value) => {
+        setRoomData({ ...roomData, pricingDetailDescription: value });
+    };
 
 
     const handleGuestCheckboxChange = (guestType, isChecked) => {
@@ -859,7 +859,9 @@ const EditRoom = () => {
     // Handle image upload
     const handleUploadImage = async (event) => {
         const files = Array.from(event.target.files); // Convert FileList to an array
-        const maxSize = 100 * 1024; // 100KB in bytes
+        // const maxSize = 100 * 1024; // 100KB in bytes
+        const maxSize = 20 * 1024 * 1024; // 20 MB in bytes
+
 
         // Check if files are selected
         if (!files || files.length === 0) {
@@ -1554,7 +1556,7 @@ const EditRoom = () => {
                     <ReactQuill
                         name=" pricingDetailDescription"
                         value={roomData.pricingDetailDescription}
-                        onChange={handleDiscriptionChange}
+                        onChange={handlePricingDiscriptionChange}
                         placeholder="Enter Room  Pricing Detail Description"
                         style={{
                             height: "100px",

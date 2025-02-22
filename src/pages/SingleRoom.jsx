@@ -67,7 +67,7 @@ const SingleRoom = () => {
                         <Typography>Price Range: ₹{room.priceRange?.minPrice} - ₹{room.priceRange?.maxPrice}</Typography>
                         <Typography>Capacity: {room.maxAllowedPerRoom}</Typography>
                         {/* <Typography>Amenities: {room.amenities?.map(am => am.name).join(", ")}</Typography> */}
-                        <Typography variant="h  6">Room Amenities</Typography>
+                        <Typography variant="h6">Room Amenities</Typography>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
                             {room.amenities?.map((amenity, index) => (
                                 <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -88,6 +88,14 @@ const SingleRoom = () => {
                             <div
                                 dangerouslySetInnerHTML={{
                                     __html: room?.description || "N/A",
+                                }}
+                            />
+                        </Typography>
+                        <Typography>Pricing Details Description:
+
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: room?.pricingDetailDescription || "N/A",
                                 }}
                             /></Typography>
 

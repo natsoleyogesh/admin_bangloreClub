@@ -201,7 +201,9 @@ const EditBanquet = () => {
 
     const handleUploadImage = async (event) => {
         const files = Array.from(event.target.files); // Convert FileList to an array
-        const maxSize = 100 * 1024 * 1024; // 20 MB in bytes
+        // const maxSize = 100 * 1024 * 1024; // 20 MB in bytes
+        const maxSize = 20 * 1024 * 1024; // 20 MB in bytes
+
 
         if (!files || files.length === 0) {
             showToast("No files selected.", "error");

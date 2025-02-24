@@ -494,7 +494,7 @@ import {
 } from "@mui/material";
 import Table from "../../components/Table";
 import { fetchAllBillings } from "../../api/billing";
-import { getRequest } from "../../api/commonAPI";
+import { deleteRequest, getRequest } from "../../api/commonAPI";
 import { showToast } from "../../api/toast";
 import debounce from "lodash.debounce";
 import { useParams } from "react-router-dom";
@@ -502,6 +502,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { formatDateTime } from "../../api/config";
+import ConfirmationDialog from "../../api/ConfirmationDialog";
 
 const Billings = () => {
 
@@ -514,6 +515,8 @@ const Billings = () => {
     const [customEndDate, setCustomEndDate] = useState("");
     const [userId, setUserId] = useState(id || "all");
     const [loading, setLoading] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedBilling, setSelectedBilling] = useState(null);
 
     // Pagination State
     const [page, setPage] = useState(1);
@@ -732,6 +735,29 @@ const Billings = () => {
         XLSX.utils.book_append_sheet(workbook, worksheet, "Billings");
         XLSX.writeFile(workbook, "billings.xlsx");
     };
+
+
+
+    const handleDeleteClick = (club) => {
+        setSelectedBilling(club);
+        setOpenDialog(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteRequest(`/billing/${selectedBilling._id}`);
+            showToast("Invoice deleted successfully.", "success");
+            fetchAllBillingData(page, limit);
+        } catch (error) {
+            console.error("Failed to delete club:", error);
+            showToast(error.message || "Failed to delete club.", "error");
+        } finally {
+            setOpenDialog(false);
+            setSelectedBilling(null);
+        }
+    };
+
+    
 
 
     return (
@@ -963,6 +989,8 @@ const Billings = () => {
                 enableColumnFilters
                 enableEditing
                 enableColumnDragging
+                routeLink="billing"
+                handleDelete={handleDeleteClick}
                 isLoading={loading}
                 pagination={{
                     page: page > 0 ? page : 1,
@@ -987,6 +1015,16 @@ const Billings = () => {
                     },
                 }}
             />
+
+            <ConfirmationDialog open={openDialog} title="Delete Invoice"
+                message={`Are you sure you want to delete invoice ${selectedBilling?.invoiceNumber}?`}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setOpenDialog(false)}
+                confirmText="Delete"
+                cancelText="Cancel"
+                loadingText="Deleting..."
+            />
+
         </Box>
     );
 };

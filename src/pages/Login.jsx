@@ -123,8 +123,10 @@ const Login = () => {
         // Save token and role in both localStorage and sessionStorage
         localStorage.setItem("token", token);
         localStorage.setItem("role", user.role);
+        localStorage.setItem("roleId", user.roleId);
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("role", user.role);
+        sessionStorage.setItem("roleId", user.roleId);
 
         // Handle "Remember Me" option
         if (rememberMe) {

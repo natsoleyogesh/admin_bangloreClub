@@ -75,6 +75,7 @@ const AddEvent = () => {
         // bookingPermissionDaughter: false,
         bookingPermissionDependent: false,
         bookingPermissionSeniorDependent: false,
+        showInApp: true
     });
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -664,6 +665,22 @@ const AddEvent = () => {
                         InputProps={{ startAdornment: <AirplaneTicket sx={{ color: "gray", mr: 1 }} /> }}
                         disabled
                     />
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Event Showing In App</InputLabel>
+
+                    <FormControl fullWidth>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="showInApp"
+                                    checked={eventData.showInApp}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Show Event App"
+                        />
+                    </FormControl>
                 </Box>
                 <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Booking Permissioin</InputLabel>

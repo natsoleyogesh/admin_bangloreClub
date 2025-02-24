@@ -123,6 +123,13 @@ import UploadData from "./pages/settings/uploadData/UploadData";
 import RoomGuidlineOrCondition from "./pages/RoomGuidlineOrCondition";
 import UpdateQrData from "./pages/settings/uploadData/UpdateQRCode";
 
+
+import Admins from "./pages/masterData/admins/Admins";
+import SingleAdmin from "./pages/masterData/admins/SingleAdmin";
+import AddAdmin from "./pages/masterData/admins/AddAdmin";
+import DashboardHome from "./pages/DashboardHome";
+
+
 const sideBarWidth = 250;
 
 function App() {
@@ -178,6 +185,14 @@ function App() {
           {/* Protected Routes */}
           <Route
             path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
@@ -1161,6 +1176,32 @@ function App() {
             element={
               <ProtectedRoute>
                 <UpdateQrData />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admins */}
+          <Route
+            path="/admins"
+            element={
+              <ProtectedRoute>
+                <Admins />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/:id"
+            element={
+              <ProtectedRoute>
+                <SingleAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/add"
+            element={
+              <ProtectedRoute>
+                <AddAdmin />
               </ProtectedRoute>
             }
           />

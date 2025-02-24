@@ -679,14 +679,30 @@ export const links = [
     ],
   },
   {
+    name: "Events Scanner",
+    icon: <MdSchool style={iconProps} />,
+    subLinks: [
+      {
+        name: "GateKeeper Events",
+        url: "/gatekeeper/events",
+        icon: <MdSchool style={iconProps} />,
+      },
+    ],
+  },
+  {
     name: "Settings",
     icon: <FiSettings style={iconProps} />,
     subLinks: [
-      // {
-      //   name: "Roles & Permissions",
-      //   url: "/roles",
-      //   icon: <FiSettings style={iconProps} />,
-      // },
+      {
+        name: "Admins & GateKeepers",
+        url: "/admins",
+        icon: <FiSettings style={iconProps} />,
+      },
+      {
+        name: "Roles & Permissions",
+        url: "/roles",
+        icon: <FiSettings style={iconProps} />,
+      },
       {
         name: "SMTP Setting",
         url: "/smtpSecret",

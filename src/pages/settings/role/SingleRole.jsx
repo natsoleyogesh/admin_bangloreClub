@@ -22,6 +22,7 @@ import { fetchRestaurantDetails, updateRestaurantDetails } from "../../../api/ma
 import Breadcrumb from "../../../components/common/Breadcrumb";
 import ReactQuill from "react-quill";
 import { getRequest, putRequest } from "../../../api/commonAPI";
+import { formatDate, formatDateMoment } from "../../../api/config";
 
 const SingleRole = () => {
     const { id } = useParams();
@@ -115,7 +116,7 @@ const SingleRole = () => {
                         <Typography variant="body1">
                             <strong>Created At:</strong>{" "}
                             {role.createdAt
-                                ? new Date(role.createdAt).toLocaleDateString()
+                                ? formatDateMoment(role.createdAt)
                                 : "N/A"}
                         </Typography>
                         <Button
@@ -128,15 +129,17 @@ const SingleRole = () => {
                             Edit Role Details
                         </Button>
                     </Grid>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<FiEdit />}
-                        onClick={handleViewClick}
-                        sx={{ mt: 2 }}
-                    >
-                        View Permissoin
-                    </Button>
+                    <Grid item xs={12}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<FiEdit />}
+                            onClick={handleViewClick}
+                            sx={{ mt: 2 }}
+                        >
+                            View Permissoin
+                        </Button>
+                    </Grid>
                 </Grid>
             </Paper>
 

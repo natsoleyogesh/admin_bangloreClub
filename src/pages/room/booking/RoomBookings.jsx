@@ -137,7 +137,7 @@ const RoomBookings = () => {
         } catch (error) {
             console.error("Error fetching bookings:", error);
             setBookings([]);
-            showToast(error.response?.data?.message || "Failed to fetch bookings.", "error");
+            // showToast(error.response?.data?.message || "Failed to fetch bookings.", "error");
         } finally {
             setLoading(false);
         }

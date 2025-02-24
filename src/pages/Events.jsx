@@ -173,7 +173,7 @@ const Events = () => {
     }, [page, limit]);
 
     useEffect(() => {
-        fetchEvents();
+        fetchEvents(page, limit);
     }, [fetchEvents]);
 
     console.log(eventList, "member")

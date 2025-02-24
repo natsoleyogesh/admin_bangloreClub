@@ -100,7 +100,7 @@ const GCMs = () => {
 
             setGcmList(response?.data?.gcms || []);
             setTotalPages(response?.data?.pagination?.totalPages || 1);
-            setTotalRecords(response?.data?.pagination?.totalRecords || 0);
+            setTotalRecords(response?.data?.pagination?.totalGCMs || 0);
         } catch (error) {
             console.error("Failed to fetch GCMs:", error);
             showToast(error.message || "Failed to fetch GCMs.", "error");

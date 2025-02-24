@@ -114,7 +114,7 @@ const ClubHods = () => {
     }, [page, limit]);
 
     useEffect(() => {
-        getHods();
+        getHods(page, limit);
     }, [getHods]);
 
 
@@ -130,7 +130,7 @@ const ClubHods = () => {
         console.log(hodId, "usersgshg")
         try {
             await deleteHod(hodId);
-            getHods()
+            getHods(page, limit);
 
             showToast("Hod deleted successfully.", "success");
         } catch (error) {
@@ -158,7 +158,7 @@ const ClubHods = () => {
                     marginBottom: "16px",
                 }}
             >
-                <Typography variant="h6">Events</Typography>
+                <Typography variant="h6">HODs</Typography>
                 <Link to="/hod/add" style={{ textDecoration: "none" }}>
                     <Button
                         variant="contained"
@@ -185,7 +185,7 @@ const ClubHods = () => {
                 routeLink="hod"
                 handleDelete={handleDeleteClick}
                 isLoading={loading}
-                totalDownloadspagination={{
+                pagination={{
                     page: page > 0 ? page : 1,
                     pageSize: limit > 0 ? limit : 10,
                     totalPages: totalPages || 1,

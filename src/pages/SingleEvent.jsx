@@ -351,6 +351,9 @@ const SingleEvent = () => {
                         <Typography variant="body1" >
                             <strong>Show Banner Home:</strong> {event.showBanner === true ? "Yes" : "No"}
                         </Typography>
+                        <Typography variant="body1" >
+                            <strong>Show Event In App:</strong> {event.showInApp === true ? "Yes" : "No"}
+                        </Typography>
                         {/* <Typography variant="body1" >
                             <strong>Booking Permissioins</strong> <br />
                             <strong>Primary Member :-</strong>{event.bookingPermissionPrimary === true ? "Yes" : "No"} <br />
@@ -479,6 +482,23 @@ const SingleEvent = () => {
                     <TextField label="Spouse Member Ticket Price" fullWidth margin="dense" name="spouseMemberPrice" value={editEvent.spouseMemberPrice || ""} onChange={handleInputChange} />
                     <TextField label="Kids Member Ticket Price" fullWidth margin="dense" name="kidsMemberPrice" value={editEvent.kidsMemberPrice || ""} onChange={handleInputChange} />
                     <TextField label="Senior Dependent Member Ticket Price" fullWidth margin="dense" name="seniorDependentMemberPrice" value={editEvent.seniorDependentMemberPrice || ""} onChange={handleInputChange} />
+
+                    <Box sx={{ mb: 2 }}>
+                        <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Showing Event In App</InputLabel>
+
+                        <FormControl fullWidth>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name="showInApp"
+                                        checked={editEvent.showInApp}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label="Show Event App"
+                            />
+                        </FormControl>
+                    </Box>
 
                     <Box sx={{ mb: 2 }}>
                         <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Booking Permissioin</InputLabel>

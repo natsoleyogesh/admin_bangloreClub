@@ -26,7 +26,7 @@ import { fetchAllMembers } from "../../api/member"
 import { useParams } from "react-router-dom";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import { formatDateTime } from "../../api/config";
-import { getRequest, postFormDataRequest } from "../../api/commonAPI";
+import { deleteRequest, getRequest, postFormDataRequest } from "../../api/commonAPI";
 import { FiPlus } from "react-icons/fi";
 import debounce from "lodash.debounce";
 
@@ -95,8 +95,8 @@ const MonthlyBillings = () => {
     // ✅ Set default transaction month when component mounts
     useEffect(() => {
         const defaultMonth = getCurrentMonth(); // "YYYY-MM"
-        setShowTransactionMonth(defaultMonth);
         setTransactionMonth(formatMonthYear(defaultMonth)); // "Month-Year"
+        setShowTransactionMonth(defaultMonth);
     }, []);
 
 
@@ -317,6 +317,21 @@ const MonthlyBillings = () => {
         }
     };
 
+    const handleDeleteBilling = async () => {
+        try {
+             await deleteRequest(`/offline-billing-multiple?transactionMonth=${transactionMonth}`);
+            fetchAllOfflineBillingData(page, limit);
+            // const updatedList = eventList.filter((item) => item.eventId !== eventId);
+            // setMemberList(updatedList);
+            showToast(`${transactionMonth} Billing deleted successfully.`, "success");
+        } catch (error) {
+            console.error("Failed to delete member:", error);
+            showToast(error.response.data.message || "Failed to delete billing.", "error");
+        } finally {
+            // setSelectedEvent(null);
+        }
+    };
+
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -420,6 +435,21 @@ const MonthlyBillings = () => {
                     <Button variant="contained" color="primary" onClick={exportToXLS}>
                         Export to XLS
                     </Button>
+                </Box>
+                <Box sx={{ mt: 3 }}>
+                    <InputLabel>Delete Billing Month</InputLabel>
+                    <TextField
+                        type="month"
+                        value={showtransactionMonth}
+                        onChange={handleTransactionMonthChange}
+                        // fullWidth
+                        size="small"
+                        sx={{ minHeight: "40px", marginLeft: "10px" }}  // Ensures same height as other inputs
+                    />
+                    <Button variant="contained" color="primary" onClick={handleDeleteBilling} sx={{ marginLeft: "10px", }}>
+                        Delete Billing
+                    </Button>
+
                 </Box>
             </Box>
 

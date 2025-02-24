@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation
 
 import { fetchAllctiveEvents } from "../api/getKeeper";
+import { getRequest } from "../api/commonAPI";
 
 const GetKeeparEvents = () => {
     const [events, setEvents] = useState([]);
@@ -18,9 +19,11 @@ const GetKeeparEvents = () => {
                     throw new Error("User is not authenticated. Token is missing.");
                 }
 
-                const response = await fetchAllctiveEvents();
+                // const response = await fetchAllctiveEvents();
+                const response = await getRequest(`/event/all-events-list?isAdmin=true`);
+
                 if (response.status === 200) {
-                    setEvents(response.data.events);
+                    setEvents(response.data.allEvents);
                 } else {
                     setError("Failed to fetch events.");
                 }

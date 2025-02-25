@@ -354,6 +354,9 @@ const SingleEvent = () => {
                         <Typography variant="body1" >
                             <strong>Show Event In App:</strong> {event.showInApp === true ? "Yes" : "No"}
                         </Typography>
+                        <Typography variant="body1" >
+                            <strong>Show Event In GateKeeper:</strong> {event.showInGatekeeper === true ? "Yes" : "No"}
+                        </Typography>
                         {/* <Typography variant="body1" >
                             <strong>Booking Permissioins</strong> <br />
                             <strong>Primary Member :-</strong>{event.bookingPermissionPrimary === true ? "Yes" : "No"} <br />
@@ -496,6 +499,23 @@ const SingleEvent = () => {
                                     />
                                 }
                                 label="Show Event App"
+                            />
+                        </FormControl>
+                    </Box>
+
+                    <Box sx={{ mb: 2 }}>
+                        <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Showing Event In GateKeeper</InputLabel>
+
+                        <FormControl fullWidth>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name="showInGatekeeper"
+                                        checked={editEvent.showInGatekeeper}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label="Show Event GateKeeper"
                             />
                         </FormControl>
                     </Box>

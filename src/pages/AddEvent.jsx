@@ -75,7 +75,8 @@ const AddEvent = () => {
         // bookingPermissionDaughter: false,
         bookingPermissionDependent: false,
         bookingPermissionSeniorDependent: false,
-        showInApp: true
+        showInApp: true,
+        showInGatekeeper: false
     });
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -679,6 +680,22 @@ const AddEvent = () => {
                                 />
                             }
                             label="Show Event App"
+                        />
+                    </FormControl>
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontWeight: "bold", mb: "4px" }}>Event Showing In GateKeeper</InputLabel>
+
+                    <FormControl fullWidth>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="showInGatekeeper"
+                                    checked={eventData.showInGatekeeper}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="Show Event GateKeeper"
                         />
                     </FormControl>
                 </Box>

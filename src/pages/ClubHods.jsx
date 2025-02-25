@@ -100,7 +100,7 @@ const ClubHods = () => {
         setLoading(true);
         try {
             // const response = await fetchAllHods({ page, limit });
-            const response = await getRequest(`${PUBLIC_API_URI}/hods?page=${pageNumber}&limit=${pageSize}`);
+            const response = await getRequest(`${PUBLIC_API_URI}/hods-list?page=${pageNumber}&limit=${pageSize}`);
 
             setHodList(response?.data?.hods || []);
             setTotalPages(response?.data?.pagination?.totalPages || 1);

@@ -20,7 +20,7 @@ const GetKeeparEvents = () => {
                 }
 
                 // const response = await fetchAllctiveEvents();
-                const response = await getRequest(`/event/all-events-list?isAdmin=true`);
+                const response = await getRequest(`/event/all-events-list?isAdmin=false&gateKeeper=true`);
 
                 if (response.status === 200) {
                     setEvents(response.data.allEvents);

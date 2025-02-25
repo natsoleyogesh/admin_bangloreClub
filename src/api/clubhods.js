@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 // Function to fetch all users
 export const fetchAllHods = async () => {
     try {
-        const response = await axiosInstance.get("/hods");
+        const response = await axiosInstance.get("/hods-list");
         return response; // Assuming the API returns user data in `response.data`
     } catch (error) {
         console.error("Error fetching users:", error);

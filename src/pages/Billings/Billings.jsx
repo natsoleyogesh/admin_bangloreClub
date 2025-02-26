@@ -533,6 +533,9 @@ const Billings = () => {
     const [hasMoreUsers, setHasMoreUsers] = useState(true);
     const scrollRef = useRef(null);
 
+    const [loadingExport, setLoadingExport] = useState(false);
+
+
     // Utility function to format dates and times
     const formatDate = (dateString) => {
         const options = {
@@ -647,7 +650,49 @@ const Billings = () => {
     }, [filterType, paymentStatus, customStartDate, customEndDate, userId, page, limit, fetchAllBillingData]);
 
 
-    const exportToPDF = () => {
+    const fetchExportData = async ({ filterType, customStartDate, customEndDate, paymentStatus, userId, exportData }) => {
+        try {
+            setLoadingExport(false); // Hide loading 
+            const queryParams = { filterType };
+
+            if (customStartDate) queryParams.customStartDate = customStartDate;
+            if (customEndDate) queryParams.customEndDate = customEndDate;
+            if (paymentStatus !== "all") queryParams.paymentStatus = paymentStatus;
+            if (userId !== "all") queryParams.userId = userId;
+            if (exportData) queryParams.exportData = exportData;
+            // Generate query string correctly
+            const queryString = new URLSearchParams(queryParams).toString();
+
+            // Show toast message before export starts
+            showToast("📤 Fetching data for export...", "info");
+
+            // Fetch full data for export
+            const response = await getRequest(`/billings?${queryString}`);
+            setLoadingExport(false); // Hide loading
+            if (!response || !response.data) {
+                showToast("❌ No data available for export.", "error");
+                return null;
+            }
+            return response.data; // Returns billings & totals
+        } catch (error) {
+            setLoadingExport(false);
+            console.error("❌ Error fetching export data:", error);
+            showToast("❌ Error fetching export data. Try again.", "error");
+            return null;
+        }
+    };
+
+
+    const exportToPDF = async (exportParams) => {
+
+        setLoadingExport(true);
+        showToast("📤 Fetching data for PDF export...", "info");
+
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { billings, totals = {} } = data;
+
         const doc = new jsPDF();
         console.log(totals.totalOutstanding, "billings.totals.totalOutstanding")
         // Add Title
@@ -674,10 +719,18 @@ const Billings = () => {
 
         // Save PDF
         doc.save("billings.pdf");
+        setLoadingExport(false);
+        showToast("✅ PDF Exported Successfully!", "success");
     };
 
 
-    const exportToCSV = () => {
+    const exportToCSV = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for CSV export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { billings, totals = {} } = data;
         // Add totals to the top of the CSV
         const totalsRow = [
             { InvoiceNumber: "Total Outstanding", MemberName: `${totals.totalOutstanding}` },
@@ -704,10 +757,18 @@ const Billings = () => {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Billings");
         XLSX.writeFile(workbook, "billings.csv");
+        setLoadingExport(false);
+        showToast("✅ CSV Exported Successfully!", "success");
     };
 
 
-    const exportToXLS = () => {
+    const exportToXLS = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for Excel export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { billings, totals = {} } = data;
         // Add totals to the top of the XLS
         const totalsRow = [
             { InvoiceNumber: "Total Outstanding", MemberName: `${totals.totalOutstanding}` },
@@ -734,6 +795,8 @@ const Billings = () => {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Billings");
         XLSX.writeFile(workbook, "billings.xlsx");
+        setLoadingExport(false);
+        showToast("✅ Excel Exported Successfully!", "success");
     };
 
 
@@ -757,7 +820,7 @@ const Billings = () => {
         }
     };
 
-    
+
 
 
     return (
@@ -766,99 +829,6 @@ const Billings = () => {
             {/* Header Section */}
             <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>Billings</Typography>
-                {/* <Grid container spacing={2} alignItems="center">
-                    {!id && <Grid item xs={12} sm={3} md={2}>
-                        <InputLabel>Select Member</InputLabel>
-                        <FormControl fullWidth size="small">
-                            <Autocomplete
-                                options={activeMembers}
-                                getOptionLabel={(option) => `${option.name} (${option.memberId})`}
-                                // value={option._id}
-                                // onChange={(e) => setUserId(e.target.value)}
-                                value={activeMembers.find((member) => member._id === userId) || null}  // Ensure proper default selection
-                                onChange={(event, newValue) => setUserId(newValue ? newValue._id : "all")}  // Properly set `userId`
-                                loading={fetching}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        // label="Select User"
-                                        variant="outlined"
-                                        fullWidth
-                                        InputProps={{
-                                            ...params.InputProps,
-                                            endAdornment: (
-                                                <>
-                                                    {fetching ? <CircularProgress color="inherit" size={20} /> : null}
-                                                    {params.InputProps.endAdornment}
-                                                </>
-                                            ),
-                                        }}
-                                    />
-                                )}
-                            />
-                        </FormControl>
-                    </Grid>}
-                    <Grid item xs={12} sm={3} md={2}>
-                        <InputLabel>Filter Type</InputLabel>
-                        <FormControl fullWidth size="small">
-                            <Select
-                                value={filterType}
-                                onChange={(e) => setFilterType(e.target.value)}
-                            >
-                                <MenuItem value="today">Today</MenuItem>
-                                <MenuItem value="last7days">Last 7 Days</MenuItem>
-                                <MenuItem value="lastMonth">Last Month</MenuItem>
-                                <MenuItem value="lastThreeMonths">Last 3 Months</MenuItem>
-                                <MenuItem value="lastSixMonths">Last 6 Months</MenuItem>
-                                <MenuItem value="last1year">Last 1 Year</MenuItem>
-                                <MenuItem value="custom">Custom</MenuItem>
-                                <MenuItem value="all">All</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={3} md={2}>
-                        <InputLabel>Payment Status</InputLabel>
-                        <FormControl fullWidth size="small">
-                            <Select
-                                value={paymentStatus}
-                                onChange={(e) => setPaymentStatus(e.target.value)}
-                            >
-                                <MenuItem value="Paid">Paid</MenuItem>
-                                <MenuItem value="Due">Due</MenuItem>
-                                <MenuItem value="Overdue">Overdue</MenuItem>
-                                <MenuItem value="all">All</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    {filterType === "custom" && (
-                        <>
-                            <Grid item xs={12} sm={3} md={2}>
-                                <InputLabel>Custom Start Date</InputLabel>
-                                <TextField
-                                    // label="Start Date"
-                                    type="date"
-                                    fullWidth
-                                    size="small"
-                                    value={customStartDate}
-                                    onChange={(e) => setCustomStartDate(e.target.value)}
-                                    InputLabelProps={{ shrink: true }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={3} md={2}>
-                                <InputLabel>Custom End Date</InputLabel>
-                                <TextField
-                                    // label="End Date"
-                                    type="date"
-                                    fullWidth
-                                    size="small"
-                                    value={customEndDate}
-                                    onChange={(e) => setCustomEndDate(e.target.value)}
-                                    InputLabelProps={{ shrink: true }}
-                                />
-                            </Grid>
-                        </>
-                    )}
-                </Grid> */}
                 <Grid container spacing={2} alignItems="center">
                     {!id && (
                         <Grid item xs={12} sm={3} md={2}>
@@ -965,7 +935,7 @@ const Billings = () => {
                 </Grid>
 
                 <Box sx={{ mt: 3 }}>
-                    <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
+                    {/* <Button variant="contained" color="primary" onClick={(e) =>exportToPDF({customStartDate,customEndDate,paymentStatus,userId,exportData:true})} sx={{ mr: 1 }}>
                         Export to PDF
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToCSV} sx={{ mr: 1 }}>
@@ -973,7 +943,57 @@ const Billings = () => {
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToXLS}>
                         Export to XLS
+                    </Button> */}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToPDF({
+                            filterType,
+                            customStartDate,
+                            customEndDate,
+                            paymentStatus,
+                            userId,
+                            exportData: true
+                        })}
+                        sx={{ mr: 1 }}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to PDF"}
                     </Button>
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToCSV({
+                            filterType,
+                            customStartDate,
+                            customEndDate,
+                            paymentStatus,
+                            userId,
+                            exportData: true
+                        })}
+                        sx={{ mr: 1 }}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to CSV"}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToXLS({
+                            filterType,
+                            customStartDate,
+                            customEndDate,
+                            paymentStatus,
+                            userId,
+                            exportData: true
+                        })}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to XLS"}
+                    </Button>
+
                 </Box>
             </Box>
 

@@ -1,16 +1,58 @@
-import React from "react";
-import { Button } from "@mui/material";
+import React, { useState } from "react";
+import { Button, CircularProgress } from "@mui/material";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { formatDateCommon } from "../../api/config";
+import { showToast } from "../../api/toast";
+import { getRequest } from "../../api/commonAPI";
 
-const BookingsExport = ({ bookings = [] }) => {
+const BookingsExport = ({ filterType, customStartDate, customEndDate, bookingStatus, eventId, userId, }) => {
+
+    const [loadingExport, setLoadingExport] = useState(false);
+
+
+    const fetchExportData = async ({ filterType, customStartDate, customEndDate, bookingStatus, eventId, userId, exportData }) => {
+        try {
+            setLoadingExport(true); // Hide loading 
+            const queryParams = {};
+
+            if (filterType !== "all") queryParams.filterType = filterType;
+            if (bookingStatus !== "all") queryParams.bookingStatus = bookingStatus;
+            if (userId !== "all") queryParams.userId = userId;
+            if (customStartDate) queryParams.customStartDate = customStartDate;
+            if (customEndDate) queryParams.customEndDate = customEndDate;
+            if (eventId !== "all") {
+                queryParams.eventId = eventId;
+            }
+            if (exportData) queryParams.exportData = exportData;
+            // Generate query string correctly
+            const queryString = new URLSearchParams(queryParams).toString();
+
+            // Show toast message before export starts
+            showToast("📤 Fetching data for export...", "info");
+
+            // Fetch full data for export
+            const response = await getRequest(`/event/all-bookings?${queryString}`);
+            setLoadingExport(false); // Hide loading
+            if (!response || !response.data) {
+                showToast("❌ No data available for export.", "error");
+                return null;
+            }
+            return response.data; // Returns billings & totals
+        } catch (error) {
+            setLoadingExport(false);
+            console.error("❌ Error fetching export data:", error);
+            showToast("❌ Error fetching export data. Try again.", "error");
+            return null;
+        }
+    };
+
     // Ensure bookings is an array
-    if (!Array.isArray(bookings)) {
-        console.error("Invalid bookings data");
-        return null;
-    }
+    // if (!Array.isArray(bookings)) {
+    //     console.error("Invalid bookings data");
+    //     return null;
+    // }
 
     // Extract Member Name based on booking type
     const getMemberName = (booking) => {
@@ -43,7 +85,7 @@ const BookingsExport = ({ bookings = [] }) => {
     };
 
     // Format bookings into separate rows for dependents and guests
-    const formatBookings = () => {
+    const formatBookings = (bookings) => {
         let formattedRows = [];
 
         bookings.forEach(booking => {
@@ -108,7 +150,13 @@ const BookingsExport = ({ bookings = [] }) => {
     //     autoTable(doc, { head: [tableHeaders], body: tableRows });
     //     doc.save("bookings.pdf");
     // };
-    const exportToPDF = () => {
+    const exportToPDF = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for PDF export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { bookings } = data;
         const doc = new jsPDF({
             orientation: "landscape", // Makes the table fit better
             unit: "mm",
@@ -128,7 +176,7 @@ const BookingsExport = ({ bookings = [] }) => {
         ];
 
         // Get table data
-        const tableRows = formatBookings().map(row => Object.values(row));
+        const tableRows = formatBookings(bookings).map(row => Object.values(row));
 
         // Generate Table
         autoTable(doc, {
@@ -167,17 +215,36 @@ const BookingsExport = ({ bookings = [] }) => {
 
         // Save PDF
         doc.save("bookings.pdf");
+        setLoadingExport(false);
+        showToast("✅ PDF Exported Successfully!", "success");
+
+
     };
 
-    const exportToCSV = () => {
-        const worksheet = XLSX.utils.json_to_sheet(formatBookings());
+    const exportToCSV = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for CSV export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { bookings } = data;
+        const worksheet = XLSX.utils.json_to_sheet(formatBookings(bookings));
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
         XLSX.writeFile(workbook, "bookings.csv");
+        setLoadingExport(false);
+        showToast("✅ CSV Exported Successfully!", "success");
+
     };
 
-    const exportToXLS = () => {
-        const worksheet = XLSX.utils.json_to_sheet(formatBookings());
+    const exportToXLS = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for XSL export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { bookings } = data;
+        const worksheet = XLSX.utils.json_to_sheet(formatBookings(bookings));
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
         XLSX.writeFile(workbook, "bookings.xlsx");
@@ -185,7 +252,7 @@ const BookingsExport = ({ bookings = [] }) => {
 
     return (
         <div>
-            <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
+            {/* <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
                 Export to PDF
             </Button>
             <Button variant="contained" color="primary" onClick={exportToCSV} sx={{ mr: 1 }}>
@@ -193,6 +260,58 @@ const BookingsExport = ({ bookings = [] }) => {
             </Button>
             <Button variant="contained" color="primary" onClick={exportToXLS}>
                 Export to XLS
+            </Button> */}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={async () => await exportToPDF({
+                    filterType,
+                    customStartDate,
+                    customEndDate,
+                    bookingStatus,
+                    eventId,
+                    userId,
+                    exportData: true
+                })}
+                sx={{ mr: 1 }}
+                disabled={loadingExport}
+            >
+                {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to PDF"}
+            </Button>
+
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={async () => await exportToCSV({
+                    filterType,
+                    customStartDate,
+                    customEndDate,
+                    bookingStatus,
+                    eventId,
+                    userId,
+                    exportData: true
+                })}
+                sx={{ mr: 1 }}
+                disabled={loadingExport}
+            >
+                {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to CSV"}
+            </Button>
+
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={async () => await exportToXLS({
+                    filterType,
+                    customStartDate,
+                    customEndDate,
+                    bookingStatus,
+                    eventId,
+                    userId,
+                    exportData: true
+                })}
+                disabled={loadingExport}
+            >
+                {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to XLS"}
             </Button>
         </div>
     );

@@ -77,6 +77,8 @@ const MonthlyBillings = () => {
     const [fetchingUsers, setFetchingUsers] = useState(false);
     const [hasMoreUsers, setHasMoreUsers] = useState(true);
     const scrollRef = useRef(null);
+    const [loadingExport, setLoadingExport] = useState(false);
+
 
     // Utility function to format dates and times
     const formatDate = (dateString) => {
@@ -204,8 +206,45 @@ const MonthlyBillings = () => {
         fetchAllOfflineBillingData(page, limit);
     }, [paymentStatus, transactionMonth, userId, page, limit, fetchAllOfflineBillingData]);
 
+    const fetchExportData = async ({ paymentStatus, userId, transactionMonth, exportData }) => {
+        try {
+            setLoadingExport(true); // Hide loading 
+            const queryParams = {};
 
-    const exportToPDF = () => {
+            if (paymentStatus !== "all") queryParams.paymentStatus = paymentStatus;
+            if (userId !== "all") queryParams.userId = userId;
+            if (transactionMonth !== "") queryParams.transactionMonth = transactionMonth;
+            if (exportData) queryParams.exportData = exportData;
+            // Generate query string correctly
+            const queryString = new URLSearchParams(queryParams).toString();
+
+            // Show toast message before export starts
+            showToast("📤 Fetching data for export...", "info");
+
+            // Fetch full data for export
+            const response = await getRequest(`/offline-billings?${queryString}`);
+            setLoadingExport(false); // Hide loading
+            if (!response || !response.data) {
+                showToast("❌ No data available for export.", "error");
+                return null;
+            }
+            return response.data; // Returns billings & totals
+        } catch (error) {
+            setLoadingExport(false);
+            console.error("❌ Error fetching export data:", error);
+            showToast("❌ Error fetching export data. Try again.", "error");
+            return null;
+        }
+    };
+
+    const exportToPDF = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for PDF export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { billings, totals = {} } = data;
+
 
         const pdfColoum = ["Invoice Number", "MemberShip ID", "Member Name", "Payment Status", "Total Amount", "Invoice Date & Time"]
         const doc = new jsPDF();
@@ -222,7 +261,7 @@ const MonthlyBillings = () => {
         autoTable(doc, {
             startY: 50, // Start after the totals
             head: [pdfColoum.map((col) => col)],
-            body: monthlyBillings.map((row) => [
+            body: billings.map((row) => [
                 row.invoiceNumber,
                 row.memberId?.memberId || "N/A",
                 row.memberId?.name || "N/A",
@@ -234,11 +273,20 @@ const MonthlyBillings = () => {
 
         // Save PDF
         doc.save("offline-billings.pdf");
+        setLoadingExport(false);
+        showToast("✅ PDF Exported Successfully!", "success");
     };
 
 
 
-    const exportToCSV = () => {
+    const exportToCSV = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for CSV export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { billings, totals = {} } = data;
+
         // Add totals to the top of the CSV
         const totalsRow = [
             { InvoiceNumber: "Total Outstanding", MemberName: `${totals.totalOutstanding}` },
@@ -249,7 +297,7 @@ const MonthlyBillings = () => {
         // Prepare the billing data
         const csvData = [
             ...totalsRow,
-            ...monthlyBillings.map((row) => ({
+            ...billings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
                 MemberShipID: row.memberId?.memberId || "N/A",
                 MemberName: row.memberId?.name || "N/A",
@@ -264,10 +312,19 @@ const MonthlyBillings = () => {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Billings");
         XLSX.writeFile(workbook, "offline-billings.csv");
+        setLoadingExport(false);
+        showToast("✅ CSV Exported Successfully!", "success");
     };
 
 
-    const exportToXLS = () => {
+    const exportToXLS = async (exportParams) => {
+        setLoadingExport(true);
+        showToast("📤 Fetching data for Excel export...", "info");
+        const data = await fetchExportData(exportParams);
+        if (!data) return; // Prevent exporting if no data
+
+        const { billings, totals = {} } = data;
+
         // Add totals to the top of the XLS
         const totalsRow = [
             { InvoiceNumber: "Total Outstanding", MemberName: `${totals.totalOutstanding}` },
@@ -278,7 +335,7 @@ const MonthlyBillings = () => {
         // Prepare the billing data
         const xlsData = [
             ...totalsRow,
-            ...monthlyBillings.map((row) => ({
+            ...billings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
                 MemberShipID: row.memberId?.memberId || "N/A",
                 MemberName: row.memberId?.name || "N/A",
@@ -293,6 +350,8 @@ const MonthlyBillings = () => {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Billings");
         XLSX.writeFile(workbook, "offline-billings.xlsx");
+        setLoadingExport(false);
+        showToast("✅ Excel Exported Successfully!", "success");
     };
 
     const handleUploadFile = async () => {
@@ -319,7 +378,7 @@ const MonthlyBillings = () => {
 
     const handleDeleteBilling = async () => {
         try {
-             await deleteRequest(`/offline-billing-multiple?transactionMonth=${transactionMonth}`);
+            await deleteRequest(`/offline-billing-multiple?transactionMonth=${transactionMonth}`);
             fetchAllOfflineBillingData(page, limit);
             // const updatedList = eventList.filter((item) => item.eventId !== eventId);
             // setMemberList(updatedList);
@@ -426,7 +485,7 @@ const MonthlyBillings = () => {
                 </Grid>
 
                 <Box sx={{ mt: 3 }}>
-                    <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
+                    {/* <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
                         Export to PDF
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToCSV} sx={{ mr: 1 }}>
@@ -434,6 +493,43 @@ const MonthlyBillings = () => {
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToXLS}>
                         Export to XLS
+                    </Button> */}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToPDF({
+                            paymentStatus, userId, transactionMonth,
+                            exportData: true
+                        })}
+                        sx={{ mr: 1 }}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to PDF"}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToCSV({
+                            paymentStatus, userId, transactionMonth,
+                            exportData: true
+                        })}
+                        sx={{ mr: 1 }}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to CSV"}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToXLS({
+                            paymentStatus, userId, transactionMonth,
+                            exportData: true
+                        })}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to XLS"}
                     </Button>
                 </Box>
                 <Box sx={{ mt: 3 }}>

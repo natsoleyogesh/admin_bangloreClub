@@ -60,6 +60,8 @@ const RoomBookings = () => {
     const [fetchingUsers, setFetchingUsers] = useState(false);
     const [hasMoreUsers, setHasMoreUsers] = useState(true);
     const scrollRef = useRef(null);
+    const [loadingExport, setLoadingExport] = useState(false);
+
 
     const columns = [
         { accessorKey: "primaryMemberId.memberId", header: "MemberShip ID" },
@@ -223,9 +225,48 @@ const RoomBookings = () => {
         }
     };
 
-    // // Export to PDF
-    const exportToPDF = () => {
+    const fetchExportData = async ({ filterType, customStartDate, customEndDate, bookingStatus, userId, exportData }) => {
         try {
+            setLoadingExport(true); // Hide loading 
+            const queryParams = {};
+
+            if (filterType !== "all") queryParams.filterType = filterType;
+            if (bookingStatus !== "all") queryParams.bookingStatus = bookingStatus;
+            if (userId !== "all") queryParams.userId = userId;
+            if (customStartDate) queryParams.customStartDate = customStartDate;
+            if (customEndDate) queryParams.customEndDate = customEndDate;
+            if (exportData) queryParams.exportData = exportData;
+            // Generate query string correctly
+            const queryString = new URLSearchParams(queryParams).toString();
+
+            // Show toast message before export starts
+            showToast("📤 Fetching data for export...", "info");
+
+            // Fetch full data for export
+            const response = await getRequest(`/room-bookings?${queryString}`);
+            setLoadingExport(false); // Hide loading
+            if (!response || !response.data) {
+                showToast("❌ No data available for export.", "error");
+                return null;
+            }
+            return response.data; // Returns billings & totals
+        } catch (error) {
+            setLoadingExport(false);
+            console.error("❌ Error fetching export data:", error);
+            showToast("❌ Error fetching export data. Try again.", "error");
+            return null;
+        }
+    };
+
+    // // Export to PDF
+    const exportToPDF = async (exportParams) => {
+        try {
+            setLoadingExport(true);
+            showToast("📤 Fetching data for PDF export...", "info");
+            const data = await fetchExportData(exportParams);
+            if (!data) return; // Prevent exporting if no data
+
+            const { bookings } = data;
             const doc = new jsPDF();
             doc.text("Booking Records", 10, 10);
 
@@ -256,6 +297,8 @@ const RoomBookings = () => {
 
             // Save the PDF
             doc.save("roombookings.pdf");
+            setLoadingExport(false);
+            showToast("✅ PDF Exported Successfully!", "success");
         } catch (error) {
             console.error("Error exporting to PDF:", error);
         }
@@ -350,8 +393,14 @@ const RoomBookings = () => {
     // };
 
     // Export to CSV
-    const exportToCSV = () => {
+    const exportToCSV = async (exportParams) => {
         try {
+            setLoadingExport(true);
+            showToast("📤 Fetching data for CSV export...", "info");
+            const data = await fetchExportData(exportParams);
+            if (!data) return; // Prevent exporting if no data
+
+            const { bookings } = data;
             const csvData = bookings.map((row) => ({
                 "Membership ID": row.primaryMemberId?.memberId || "N/A",
                 "Member Name": row.primaryMemberId?.name || "N/A",
@@ -368,14 +417,23 @@ const RoomBookings = () => {
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
             XLSX.writeFile(workbook, "roombookings.csv");
+            setLoadingExport(false);
+            showToast("✅ CSV Exported Successfully!", "success");
+
         } catch (error) {
             console.error("Error exporting to CSV:", error);
         }
     };
 
     // Export to XLS
-    const exportToXLS = () => {
+    const exportToXLS = async (exportParams) => {
         try {
+            setLoadingExport(true);
+            showToast("📤 Fetching data for XSL export...", "info");
+            const data = await fetchExportData(exportParams);
+            if (!data) return; // Prevent exporting if no data
+
+            const { bookings } = data;
             const xlsData = bookings.map((row) => ({
                 "Membership ID": row.primaryMemberId?.memberId || "N/A",
                 "Member Name": row.primaryMemberId?.name || "N/A",
@@ -392,6 +450,9 @@ const RoomBookings = () => {
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
             XLSX.writeFile(workbook, "roombookings.xlsx");
+            setLoadingExport(false);
+            showToast("✅ XSL Exported Successfully!", "success");
+
         } catch (error) {
             console.error("Error exporting to XLS:", error);
         }
@@ -514,7 +575,7 @@ const RoomBookings = () => {
                     )}
                 </Grid>
                 <Box sx={{ mt: 3 }}>
-                    <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
+                    {/* <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ mr: 1 }}>
                         Export to PDF
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToCSV} sx={{ mr: 1 }}>
@@ -522,6 +583,55 @@ const RoomBookings = () => {
                     </Button>
                     <Button variant="contained" color="primary" onClick={exportToXLS}>
                         Export to XLS
+                    </Button> */}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToPDF({
+                            filterType,
+                            customStartDate,
+                            customEndDate,
+                            bookingStatus,
+                            userId,
+                            exportData: true
+                        })}
+                        sx={{ mr: 1 }}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to PDF"}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToCSV({
+                            filterType,
+                            customStartDate,
+                            customEndDate,
+                            bookingStatus,
+                            userId,
+                            exportData: true
+                        })}
+                        sx={{ mr: 1 }}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to CSV"}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={async () => await exportToXLS({
+                            filterType,
+                            customStartDate,
+                            customEndDate,
+                            bookingStatus,
+                            userId,
+                            exportData: true
+                        })}
+                        disabled={loadingExport}
+                    >
+                        {loadingExport ? <CircularProgress size={20} sx={{ color: "white" }} /> : "Export to XLS"}
                     </Button>
                 </Box>
             </Box>

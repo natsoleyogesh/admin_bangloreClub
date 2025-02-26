@@ -215,80 +215,6 @@ const Bookings = () => {
         getEvents();
     }, []);
 
-    // Export to PDF
-    const exportToPDF = () => {
-        try {
-            const doc = new jsPDF();
-            doc.text("Booking Records", 10, 10);
-
-            // Generate table headers and rows
-            const tableHeaders = ["Event Title", "Membership ID", "Primary Member", "Event Start Date", "Event End Date", "Booking Status", "Total Amount"];
-            const tableRows = bookings.map((row) => [
-                row.eventId?.eventTitle || "N/A",
-                row.primaryMemberId?.memberId || "N/A",
-                row.primaryMemberId?.name || "N/A",
-                formatDateCommon(row.eventId?.eventStartDate),
-                formatDateCommon(row.eventId?.eventEndDate),
-                row.bookingStatus,
-                `${row.ticketDetails?.totalAmount || 0}`,
-            ]);
-
-            // Generate the table
-            autoTable(doc, {
-                head: [tableHeaders],
-                body: tableRows,
-            });
-
-            // Save the PDF
-            doc.save("bookings.pdf");
-        } catch (error) {
-            console.error("Error exporting to PDF:", error);
-        }
-    };
-
-    // Export to CSV
-    const exportToCSV = () => {
-        try {
-            const csvData = bookings.map((row) => ({
-                "Event Title": row.eventId?.eventTitle || "N/A",
-                "Membership ID": row.primaryMemberId?.memberId || "N/A",
-                "Primary Member": row.primaryMemberId?.name || "N/A",
-                "Event Start Date": formatDateCommon(row.eventId?.eventStartDate),
-                "Event End Date": formatDateCommon(row.eventId?.eventEndDate),
-                "Booking Status": row.bookingStatus,
-                "Total Amount": `${row.ticketDetails?.totalAmount || 0}`,
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(csvData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
-            XLSX.writeFile(workbook, "bookings.csv");
-        } catch (error) {
-            console.error("Error exporting to CSV:", error);
-        }
-    };
-
-    // Export to XLS
-    const exportToXLS = () => {
-        try {
-            const xlsData = bookings.map((row) => ({
-                "Event Title": row.eventId?.eventTitle || "N/A",
-                "Membership ID": row.primaryMemberId?.memberId || "N/A",
-                "Primary Member": row.primaryMemberId?.name || "N/A",
-                "Event Start Date": formatDateCommon(row.eventId?.eventStartDate),
-                "Event End Date": formatDateCommon(row.eventId?.eventEndDate),
-                "Booking Status": row.bookingStatus,
-                "Total Amount": `${row.ticketDetails?.totalAmount || 0}`,
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(xlsData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
-            XLSX.writeFile(workbook, "bookings.xlsx");
-        } catch (error) {
-            console.error("Error exporting to XLS:", error);
-        }
-    };
 
     return (
         <Box sx={{ pt: "80px", pb: "20px" }}>
@@ -454,7 +380,7 @@ const Bookings = () => {
                     <Button variant="contained" color="primary" onClick={exportToXLS}>
                         Export to XLS
                     </Button> */}
-                    <BookingsExport bookings={bookings} />
+                    <BookingsExport bookings={bookings} filterType={filterType} customStartDate={customStartDate} customEndDate={customEndDate} bookingStatus={bookingStatus} eventId={eventId} userId={userId} />
                 </Box>
             </Box>
 

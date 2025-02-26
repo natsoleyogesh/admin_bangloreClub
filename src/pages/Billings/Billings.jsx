@@ -709,11 +709,13 @@ const Billings = () => {
             head: [columns.map((col) => col.header)],
             body: billings.map((row) => [
                 row.invoiceNumber,
+                row.memberId.memberId,
                 row.memberId?.name || "N/A",
                 row.serviceType,
                 row.paymentStatus,
                 formatDate(row.invoiceDate),
                 `${row.totalAmount}`,
+                formatDate(row.createdAt),
             ]),
         });
 
@@ -728,6 +730,7 @@ const Billings = () => {
         setLoadingExport(true);
         showToast("📤 Fetching data for CSV export...", "info");
         const data = await fetchExportData(exportParams);
+        console.log(data, "data")
         if (!data) return; // Prevent exporting if no data
 
         const { billings, totals = {} } = data;
@@ -743,12 +746,13 @@ const Billings = () => {
             ...totalsRow,
             ...billings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
-                MemberShipId: row.row.memberId,
+                MemberShipId: row.memberId.memberId,
                 MemberName: row.memberId?.name || "N/A",
                 ServiceType: row.serviceType,
                 PaymentStatus: row.paymentStatus,
                 InvoiceDate: formatDate(row.invoiceDate),
                 TotalAmount: `${row.totalAmount}`,
+                // CreatedDate: formatDate(row.createdAt),
             })),
         ];
 
@@ -781,12 +785,14 @@ const Billings = () => {
             ...totalsRow,
             ...billings.map((row) => ({
                 InvoiceNumber: row.invoiceNumber,
-                MemberShipId: row.row.memberId,
+                MemberShipId: row.memberId.memberId,
                 MemberName: row.memberId?.name || "N/A",
                 ServiceType: row.serviceType,
                 PaymentStatus: row.paymentStatus,
                 InvoiceDate: formatDate(row.invoiceDate),
                 TotalAmount: `${row.totalAmount}`,
+                // CreatedDate: formatDate(row.createdAt),
+
             })),
         ];
 

@@ -114,7 +114,7 @@ export const WebSocketProvider = ({ children }) => {
         intervalId = setInterval(() => fetchRequests(page, limit), 10000);
 
         // Establish WebSocket connection
-        // const socketConnection = io("https://13.60.85.75/");
+        // const socketConnection = io("http://localhost:3005/");
         const socketConnection = io("https://app.bangaloreclub.com/");
 
         setSocket(socketConnection);

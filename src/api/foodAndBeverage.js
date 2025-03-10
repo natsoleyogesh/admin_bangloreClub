@@ -11,6 +11,20 @@ const axiosInstance = axios.create({
     },
 });
 
+// Add a request interceptor to dynamically set the Authorization header
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Function to fetch all users
 export const fetchAllFoodAndBeverages = async () => {
     try {

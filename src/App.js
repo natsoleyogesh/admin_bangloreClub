@@ -128,6 +128,7 @@ import Admins from "./pages/masterData/admins/Admins";
 import SingleAdmin from "./pages/masterData/admins/SingleAdmin";
 import AddAdmin from "./pages/masterData/admins/AddAdmin";
 import DashboardHome from "./pages/DashboardHome";
+import AdminApiLogs from "./pages/settings/apiLogs/AdminApiLogs";
 
 
 const sideBarWidth = 250;
@@ -184,7 +185,7 @@ function App() {
 
           {/* Protected Routes */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardHome />
@@ -192,7 +193,7 @@ function App() {
             }
           />
           <Route
-            path="/dashboard"
+            path="/"
             element={
               <ProtectedRoute>
                 <Dashboard />
@@ -1202,6 +1203,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <AddAdmin />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admins */}
+          <Route
+            path="/admin-api-logs"
+            element={
+              <ProtectedRoute>
+                <AdminApiLogs />
               </ProtectedRoute>
             }
           />

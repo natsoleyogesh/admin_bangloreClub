@@ -719,6 +719,11 @@ export const links = [
         icon: <FiSettings style={iconProps} />,
       },
       {
+        name: "Admin API Logs",
+        url: "/admin-api-logs",
+        icon: <FiSettings style={iconProps} />,
+      },
+      {
         name: "About Us",
         url: "/aboutUs",
         icon: <FiSettings style={iconProps} />,

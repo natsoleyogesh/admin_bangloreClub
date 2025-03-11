@@ -106,8 +106,12 @@ const SingleBanquet = () => {
 
                     {/* Banquet Details */}
                     <Grid item xs={12} md={7}>
-                        <Typography variant="h5">
+                        <Typography variant="h5" sx={{ mb: 2 }}>
                             {banquet.banquetName?.name || "N/A"}
+                        </Typography>
+
+                        <Typography variant="body1" sx={{ mb: 2 }}>
+                            <strong>Priority:</strong> {banquet.priority || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 2 }}>
                             <strong>Description:</strong>

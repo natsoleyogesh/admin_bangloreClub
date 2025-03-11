@@ -141,7 +141,8 @@ const EditBanquet = () => {
                 },
                 features: banquet.features || { smokingAllowed: false, petFriendly: false, accessible: false },
                 pricingDetailDescription: banquet.pricingDetailDescription || "",
-                guideline: banquet.guideline || ""
+                guideline: banquet.guideline || "",
+                priority: banquet.priority,
             }));
 
             setImages(banquet.images || []);
@@ -554,6 +555,10 @@ const EditBanquet = () => {
                         </Box>
                         {/* <TextField label="Check-In Time" type="time" fullWidth margin="dense" name="checkInTime" value={banquetData.checkInTime || ""} onChange={handleInputChange} />
                         <TextField label="Check-Out Time" type="time" fullWidth margin="dense" name="checkOutTime" value={banquetData.checkOutTime || ""} onChange={handleInputChange} /> */}
+                        <TextField type="number"
+                            inputProps={{
+                                min: 0, // Set minimum value
+                            }} label="Priority" fullWidth margin="dense" name="priority" value={banquetData.priority || ""} onChange={handleInputChange} />
                         <TextField type="number"
                             inputProps={{
                                 min: 0, // Set minimum value

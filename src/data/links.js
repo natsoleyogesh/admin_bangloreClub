@@ -733,6 +733,11 @@ export const links = [
         url: "/contactUs",
         icon: <FiSettings style={iconProps} />,
       },
+      {
+        name: "Booking Date Setting",
+        url: "/admin-bookingDates-configure",
+        icon: <FiSettings style={iconProps} />,
+      },
     ],
   },
 ];

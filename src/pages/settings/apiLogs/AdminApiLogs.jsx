@@ -18,6 +18,7 @@ import { getRequest, deleteRequest } from "../../../api/commonAPI";
 import { showToast } from "../../../api/toast";
 import { formatDateTime } from "../../../api/config";
 import debounce from "lodash.debounce";
+import StatusNotes from "./statusCode";
 
 const AdminApiLogs = () => {
     const [actions, setActions] = useState([]);
@@ -354,6 +355,12 @@ const AdminApiLogs = () => {
                         </>
                     )}
                 </Grid>
+            </Box>
+
+            <Box >
+                <StatusNotes />
+
+                {/* Your existing table or components */}
             </Box>
 
             {/* Actions Table */}

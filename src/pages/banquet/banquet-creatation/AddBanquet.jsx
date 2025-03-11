@@ -7,6 +7,7 @@ import {
     FormControl,
     FormControlLabel,
     IconButton,
+    InputAdornment,
     InputLabel,
     MenuItem,
     Paper,
@@ -18,7 +19,7 @@ import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { addBanquet, fetchActiveAllBanquetCategories } from "../../../api/banquet";
 import { showToast } from "../../../api/toast";
-import { CurrencyRupee } from "@mui/icons-material";
+import { CurrencyRupee, Work } from "@mui/icons-material";
 import { fetchAllActiveTaxTypes } from "../../../api/masterData/taxType";
 import { fetchAllActiveAmenities } from "../../../api/masterData/amenities";
 import { FiTrash, FiPlus } from "react-icons/fi";
@@ -67,7 +68,8 @@ const AddBanquet = () => {
         pricingDetailDescription: "",
         status: 'Active',
         billable: true,
-        guideline: ""
+        guideline: "",
+        priority: 1,
     });
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -687,6 +689,23 @@ const AddBanquet = () => {
                         </Select>
                         {errors.banquetName && <Typography color="error">{errors.banquetName}</Typography>}
                     </FormControl>
+                </Box>
+
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel>Priority</InputLabel>
+                    <TextField
+                        fullWidth
+                        name="priority"
+                        value={banquetData.priority}
+                        onChange={handleInputChange}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Work />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
                 </Box>
 
                 {/* Description */}

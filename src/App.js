@@ -129,6 +129,7 @@ import SingleAdmin from "./pages/masterData/admins/SingleAdmin";
 import AddAdmin from "./pages/masterData/admins/AddAdmin";
 import DashboardHome from "./pages/DashboardHome";
 import AdminApiLogs from "./pages/settings/apiLogs/AdminApiLogs";
+import AddOrUpdateBookingDate from "./pages/settings/AddOrUpdateBookingDate/AddOrUpdateBookingDate";
 
 
 const sideBarWidth = 250;
@@ -1213,6 +1214,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminApiLogs />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin-bookingDates-configure"
+            element={
+              <ProtectedRoute>
+                <AddOrUpdateBookingDate />
               </ProtectedRoute>
             }
           />

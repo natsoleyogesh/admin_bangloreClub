@@ -16,8 +16,8 @@ const AddOrUpdateBookingDate = () => {
     const [bookingDetails, setBookingDetails] = useState({
         minCheckInDays: "",
         maxCheckOutMonths: "",
-        bookingStartDate: "",
-        bookingEndDate: ""
+        // bookingStartDate: "",
+        // bookingEndDate: ""
     });
 
     const [loading, setLoading] = useState(false);
@@ -39,8 +39,8 @@ const AddOrUpdateBookingDate = () => {
                 setBookingDetails({
                     minCheckInDays: data.minCheckInDays,
                     maxCheckOutMonths: data.maxCheckOutMonths,
-                    bookingStartDate: moment(data.bookingStartDate).format("YYYY-MM-DD"),
-                    bookingEndDate: moment(data.bookingEndDate).format("YYYY-MM-DD")
+                    // bookingStartDate: moment(data.bookingStartDate).format("YYYY-MM-DD"),
+                    // bookingEndDate: moment(data.bookingEndDate).format("YYYY-MM-DD")
                 });
                 setIsUpdating(true);
             }
@@ -62,28 +62,28 @@ const AddOrUpdateBookingDate = () => {
         try {
             setLoading(true);
 
-            // Convert dates to moment.js
-            const today = moment().startOf("day");
-            const startDate = moment(bookingDetails.bookingStartDate).startOf("day");
-            const endDate = moment(bookingDetails.bookingEndDate).endOf("day");
+            // // Convert dates to moment.js
+            // const today = moment().startOf("day");
+            // const startDate = moment(bookingDetails.bookingStartDate).startOf("day");
+            // const endDate = moment(bookingDetails.bookingEndDate).endOf("day");
 
-            // Expected start & end dates based on admin rules
-            const expectedCheckInDate = today.clone().add(parseInt(bookingDetails.minCheckInDays), "days");
-            const expectedCheckOutDate = startDate.clone().add(parseInt(bookingDetails.maxCheckOutMonths), "months");
+            // // Expected start & end dates based on admin rules
+            // const expectedCheckInDate = today.clone().add(parseInt(bookingDetails.minCheckInDays), "days");
+            // const expectedCheckOutDate = startDate.clone().add(parseInt(bookingDetails.maxCheckOutMonths), "months");
 
-            // ❌ Validation: Check-in must be exactly `minCheckInDays` after today
-            if (!startDate.isSame(expectedCheckInDate, "day")) {
-                showToast(`Check-in date must be exactly ${bookingDetails.minCheckInDays} days from today (${expectedCheckInDate.format("YYYY-MM-DD")}).`, "error");
-                setLoading(false);
-                return;
-            }
+            // // ❌ Validation: Check-in must be exactly `minCheckInDays` after today
+            // if (!startDate.isSame(expectedCheckInDate, "day")) {
+            //     showToast(`Check-in date must be exactly ${bookingDetails.minCheckInDays} days from today (${expectedCheckInDate.format("YYYY-MM-DD")}).`, "error");
+            //     setLoading(false);
+            //     return;
+            // }
 
-            // ❌ Validation: Check-out must be exactly `maxCheckOutMonths` after check-in
-            if (!endDate.isSame(expectedCheckOutDate, "day")) {
-                showToast(`Check-out must be exactly ${bookingDetails.maxCheckOutMonths} months from check-in (${expectedCheckOutDate.format("YYYY-MM-DD")}).`, "error");
-                setLoading(false);
-                return;
-            }
+            // // ❌ Validation: Check-out must be exactly `maxCheckOutMonths` after check-in
+            // if (!endDate.isSame(expectedCheckOutDate, "day")) {
+            //     showToast(`Check-out must be exactly ${bookingDetails.maxCheckOutMonths} months from check-in (${expectedCheckOutDate.format("YYYY-MM-DD")}).`, "error");
+            //     setLoading(false);
+            //     return;
+            // }
 
             // ✅ Submit data
             const response = await postRequest(`/add-or-update-booking-date`, bookingDetails);
@@ -141,7 +141,7 @@ const AddOrUpdateBookingDate = () => {
                             />
                         </Grid>
 
-                        <Grid item xs={12}>
+                        {/* <Grid item xs={12}>
                             <TextField
                                 label="Booking Start Date"
                                 name="bookingStartDate"
@@ -169,7 +169,7 @@ const AddOrUpdateBookingDate = () => {
                                 helperText="The last date bookings can be made."
                                 InputLabelProps={{ shrink: true }}
                             />
-                        </Grid>
+                        </Grid> */}
 
                         <Grid item xs={12}>
                             <Button

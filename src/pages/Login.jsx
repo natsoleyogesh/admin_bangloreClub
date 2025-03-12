@@ -349,7 +349,7 @@ const Login = () => {
   const [showOtpModal, setShowOtpModal] = useState(false); // OTP Modal State
   const [otpLoading, setOtpLoading] = useState(false);
   const [resendDisabled, setResendDisabled] = useState(true);
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(180);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -379,7 +379,7 @@ const Login = () => {
         showToast(response.data.message, "success")
         setShowOtpModal(true);
         setResendDisabled(true);
-        setTimer(60);
+        setTimer(180);
         startResendTimer();
       } else {
         setError("Login failed. Please check your email and password.");
@@ -441,7 +441,7 @@ const Login = () => {
 
   const handleResendOtp = async () => {
     setResendDisabled(true);
-    setTimer(60);
+    setTimer(180);
     startResendTimer();
 
     try {
@@ -455,7 +455,8 @@ const Login = () => {
   };
 
   const startResendTimer = () => {
-    let countdown = 60;
+    // let countdown = 60;
+    let countdown = 180; // 3 minutes = 180 seconds
     const interval = setInterval(() => {
       countdown -= 1;
       setTimer(countdown);

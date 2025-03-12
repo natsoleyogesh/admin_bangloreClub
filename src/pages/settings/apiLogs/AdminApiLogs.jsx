@@ -34,7 +34,7 @@ const AdminApiLogs = () => {
     const [filters, setFilters] = useState({
         userRole: "Admin",
         userId: "all",
-        filter: "all",
+        filter: "today",
         method: "all",
         endpoint: "",
         status: "all",

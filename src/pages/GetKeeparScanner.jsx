@@ -4,11 +4,14 @@ import { fetchEventAttendenceDetails, fetchMemberDetails, fetchMemberDetailsByQr
 import { formatDateTime } from "../api/config";
 import { useNavigate, useParams } from "react-router-dom";
 import Table from "../components/Table";
+import { fetchEventDetails } from "../api/event";
+import Breadcrumb from "../components/common/Breadcrumb";
+import { showToast } from "../api/toast";
 
 const GetKeeparScanner = () => {
     const { eventId } = useParams();
     const navigate = useNavigate();
-
+    const [event, setEvent] = useState({});
     const [scannedData, setScannedData] = useState("");
     const [manualQRCode, setManualQRCode] = useState("");
     const [userDetails, setUserDetails] = useState(null);
@@ -34,8 +37,21 @@ const GetKeeparScanner = () => {
         },
     ];
 
+
+    const getEventById = async (eventId) => {
+        try {
+            const response = await fetchEventDetails(eventId);
+            const eventData = response.data.event;
+            setEvent(eventData);
+            // setEditEvent({ ...eventData, taxTypes: eventData.taxTypes || [] });
+        } catch (error) {
+            showToast("Failed to fetch event details.", "error");
+        }
+    };
+
     // Fetch attendance data for the event
     useEffect(() => {
+        getEventById(eventId)
         fetchAllAttendance(eventId);
     }, [eventId]);
 
@@ -234,6 +250,15 @@ const GetKeeparScanner = () => {
         },
         errorMessage: { color: "red", marginTop: "10px", fontWeight: "bold" },
         textField: { marginTop: "20px", padding: "10px", width: "80%", fontSize: "16px" },
+        eventTitle: {
+            fontSize: "22px",
+            fontWeight: "bold",
+            marginBottom: "10px",
+        },
+        eventDetails: {
+            fontSize: "16px",
+            marginBottom: "10px",
+        },
     };
 
     return (
@@ -241,6 +266,17 @@ const GetKeeparScanner = () => {
             <button style={styles.button} onClick={navigateToAllEvents}>
                 All Events
             </button>
+            {/* <Breadcrumb /> */}
+
+            <div>
+                <p style={styles.eventTitle}>{event.eventTitle}</p>
+                <p style={styles.eventDetails}>
+                    <strong>Date:</strong> {new Date(event.eventStartDate).toLocaleDateString()}
+                </p>
+                <p style={styles.eventDetails}>
+                    <strong>Available Tickets:</strong> {event.totalAvailableTickets}
+                </p>
+            </div>
 
             <h2>QR Code Scanner</h2>
 

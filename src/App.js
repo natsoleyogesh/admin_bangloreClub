@@ -130,6 +130,7 @@ import AddAdmin from "./pages/masterData/admins/AddAdmin";
 import DashboardHome from "./pages/DashboardHome";
 import AdminApiLogs from "./pages/settings/apiLogs/AdminApiLogs";
 import AddOrUpdateBookingDate from "./pages/settings/AddOrUpdateBookingDate/AddOrUpdateBookingDate";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 
 const sideBarWidth = 250;
@@ -142,25 +143,45 @@ function App() {
     setMobileOpen(!mobileOpen);
   };
 
-  // Check if the current route is the login page
-  const isLoginPage = location.pathname === "/login";
+  // // Check if the current route is the login page
+  // const isLoginPage = location.pathname === "/login";
+
+  // Define routes where you don't want Navbar, Sidebar, and Footer to appear
+  const excludedRoutes = ["/login", "/Terms-and-Conditions"];
+
+  // Check if the current route is one of the excluded routes
+  const isExcludedPage = excludedRoutes.includes(location.pathname);
+
   // Retrieve the user role from localStorage or sessionStorage
   const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
   return (
     <Box sx={{ display: "flex" }}>
       <ToastContainer />
       {/* Conditionally render Navbar and Sidebar */}
-      {!isLoginPage && (
+      {/* {!isLoginPage && (
         <>
           <Navbar
             sideBarWidth={sideBarWidth}
             handleDrawerToggle={handleDrawerToggle}
           />
-          {/* <Sidebar
+          {userRole !== "gatekeeper" && (
+            <Sidebar
+              sideBarWidth={sideBarWidth}
+              mobileOpen={mobileOpen}
+              handleDrawerToggle={handleDrawerToggle}
+            />
+          )}
+        </>
+      )} */}
+
+      {/* Conditionally render Navbar and Sidebar */}
+      {!isExcludedPage && (
+        <>
+          <Navbar
             sideBarWidth={sideBarWidth}
-            mobileOpen={mobileOpen}
             handleDrawerToggle={handleDrawerToggle}
-          /> */}
+          />
+
           {userRole !== "gatekeeper" && (
             <Sidebar
               sideBarWidth={sideBarWidth}
@@ -183,6 +204,8 @@ function App() {
         <Routes>
           {/* Public Route */}
           <Route path="/login" element={<Login />} />
+          <Route path="/Terms-and-Conditions" element={<TermsAndConditions />} />
+
 
           {/* Protected Routes */}
           <Route
@@ -1237,7 +1260,9 @@ function App() {
           /> */}
         </Routes>
         {/* Conditionally render Footer */}
-        {!isLoginPage && <Footer />}
+        {/* {!isLoginPage && <Footer />} */}
+        {!isExcludedPage && <Footer />}
+
       </Box>
     </Box>
   );

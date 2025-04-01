@@ -233,7 +233,7 @@ const SingleProduct = () => {
     qrCode,
     email2,
     mobileNumber2,
-    title, activatedDate } = member;
+    title, activatedDate, createdAt, updatedAt } = member;
   console.log(member, "dfkk")
 
 
@@ -536,9 +536,13 @@ const SingleProduct = () => {
                     <TableCell><Typography variant="subtitle2">Status:</Typography></TableCell>
                     <TableCell><Typography variant="body2">{status || "N/A"}</Typography></TableCell>
                   </TableRow>
-                  <TableRow>
+                  {/* <TableRow>
                     <TableCell><Typography variant="subtitle2">Membership Activated Date:</Typography></TableCell>
                     <TableCell><Typography variant="body2">{formatDate(activatedDate)}</Typography></TableCell>
+                  </TableRow> */}
+                  <TableRow>
+                    <TableCell><Typography variant="subtitle2">Last Updated:</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{formatDateTime(updatedAt)}</Typography></TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell><Typography variant="subtitle2">Vehicle Model:</Typography></TableCell>

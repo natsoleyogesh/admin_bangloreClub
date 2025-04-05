@@ -126,7 +126,7 @@ const AllRequests = () => {
                 enableColumnDragging
                 showPreview
                 routeLink="request"
-                handleDelete={handleDeleteClick} // Trigger delete dialog
+                // handleDelete={handleDeleteClick} // Trigger delete dialog
                 pagination={{
                     page,
                     pageSize: limit,

@@ -138,10 +138,10 @@ const SingleRequest = () => {
                         <Typography variant="body1">
                             <strong>Department:</strong> {request.department || "N/A"}
                         </Typography>
-                        <Typography variant="body1">
+                        {request.department !== "profileRequest" && <Typography variant="body1">
                             <strong>Status:</strong>
                             <Chip label={request.status || "N/A"} color="primary" size="small" />
-                        </Typography>
+                        </Typography>}
                         <Typography variant="body1">
                             <strong>Description:</strong> {request.description || "N/A"}
                         </Typography>
@@ -152,7 +152,7 @@ const SingleRequest = () => {
                         {request.department === "BanquetBooking" && renderBanquetBookingDetails(request.departmentId)}
                     </Grid>
                     {/* View Department Button */}
-                    <Grid item xs={12}>
+                    {request.department !== "profileRequest" && <Grid item xs={12}>
                         <Button
                             variant="contained"
                             color="primary"
@@ -162,7 +162,7 @@ const SingleRequest = () => {
                         >
                             View {request.department}
                         </Button>
-                    </Grid>
+                    </Grid>}
                 </Grid>
             </Paper>
         </Box>

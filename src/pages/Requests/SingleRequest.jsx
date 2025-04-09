@@ -69,9 +69,9 @@ const SingleRequest = () => {
             <Typography variant="body1">
                 <strong>Payment Mode:</strong> {details.paymentMode || "N/A"}
             </Typography>
-            <Typography variant="body1">
+            {/* <Typography variant="body1">
                 <strong>Payment Status:</strong> {details.paymentStatus || "N/A"}
-            </Typography>
+            </Typography> */}
         </Box>
     );
 
@@ -100,9 +100,9 @@ const SingleRequest = () => {
             <Typography variant="body1">
                 <strong>Payment Mode:</strong> {details.paymentMode || "N/A"}
             </Typography>
-            <Typography variant="body1">
+            {/* <Typography variant="body1">
                 <strong>Payment Status:</strong> {details.paymentStatus || "N/A"}
-            </Typography>
+            </Typography> */}
         </Box>
     );
 

@@ -171,14 +171,14 @@ const SingleBooking = () => {
                         <Typography variant="body1">
                             <strong>Total Amount:</strong> ₹ {booking.ticketDetails?.totalAmount || 0}
                         </Typography>
-                        <Typography variant="body1">
+                        {/* <Typography variant="body1">
                             <strong>Payment Status:</strong>  <Chip
                                 label={booking.paymentStatus}
                                 color={booking.paymentStatus === "Completed" ? "success" : "default"} // Approved, Pending, Rejected
                                 size="small"
                             />
 
-                        </Typography>
+                        </Typography> */}
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="h6">Members</Typography>

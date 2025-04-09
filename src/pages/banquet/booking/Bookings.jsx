@@ -98,7 +98,7 @@ const Bookings = () => {
                 `${formatTime(row.original.bookingTime.from)} - ${formatTime(row.original.bookingTime.to)}`,
         },
         { accessorKey: "banquetPrice", header: "Price" },
-        { accessorKey: "paymentStatus", header: "Payment Status" },
+        // { accessorKey: "paymentStatus", header: "Payment Status" },
         {
             accessorKey: "createdAt",
             header: "Created Date & Time",

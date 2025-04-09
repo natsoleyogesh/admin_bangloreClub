@@ -200,14 +200,14 @@ const SingleRoomBooking = () => {
                                 size="small"
                             />
                         </Typography>
-                        <Typography variant="body1" sx={{ mb: 1 }}>
+                        {/* <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Payment Status:</strong>{" "}
                             <Chip
                                 label={booking.paymentStatus || "N/A"}
                                 color={booking.paymentStatus === "Completed" ? "success" : "default"}
                                 size="small"
                             />
-                        </Typography>
+                        </Typography> */}
                         <Typography variant="body1">
                             <strong>Payment Mode:</strong> {booking?.paymentMode || "N/A"}
                         </Typography>

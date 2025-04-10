@@ -144,6 +144,9 @@ const SingleBooking = () => {
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
                         <Typography variant="body1" sx={{ mb: 1 }}>
+                            <strong>Booking Id:</strong> {booking?.booking_id || "N/A"}
+                        </Typography>
+                        <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Banquet Venue:</strong> {booking?.banquetType?.banquetName?.name || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>

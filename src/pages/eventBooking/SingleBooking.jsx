@@ -108,6 +108,9 @@ const SingleBooking = () => {
                         <Typography variant="body1">
                             <strong>Event End Date:</strong> {new Date(booking.eventId?.eventEndDate).toLocaleDateString() || "N/A"}
                         </Typography> */}
+                        <Typography variant="body1" sx={{ mb: 1 }}>
+                            <strong>Booking Id:</strong> {booking?.booking_id || "N/A"}
+                        </Typography>
                         <Typography variant="body1">
                             <strong>Event Start Date:</strong> {booking.eventId?.eventStartDate
                                 ? formatDateMoment(booking.eventId.eventStartDate)

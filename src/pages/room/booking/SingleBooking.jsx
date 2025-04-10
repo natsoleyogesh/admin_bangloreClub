@@ -176,7 +176,7 @@ const SingleRoomBooking = () => {
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
                         <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Booking ID:</strong> {booking?._id || "N/A"}
+                            <strong>Booking ID:</strong> {booking?.booking_id || "N/A"}
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 1 }}>
                             <strong>Check-In:</strong>{" "}

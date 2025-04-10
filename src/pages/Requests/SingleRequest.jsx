@@ -51,6 +51,9 @@ const SingleRequest = () => {
         <Box sx={{ mt: 2 }}>
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>Room Booking Details</Typography>
             <Divider sx={{ mb: 2 }} />
+            <Typography variant="body1" sx={{ mb: 1 }}>
+                <strong>Booking Id:</strong> {details?.booking_id || "N/A"}
+            </Typography>
             <Typography variant="body1">
                 <strong>Check-In:</strong> {new Date(details.bookingDates.checkIn).toLocaleDateString() || "N/A"}
             </Typography>
@@ -82,6 +85,9 @@ const SingleRequest = () => {
             {/* <Typography variant="body1">
                 <strong>Banquet Name:</strong> {details.banquetType?.banquetName?.name || "N/A"}
             </Typography> */}
+            <Typography variant="body1" sx={{ mb: 1 }}>
+                <strong>Booking Id:</strong> {details?.booking_id || "N/A"}
+            </Typography>
             <Typography variant="body1">
                 <strong>Booking Time:</strong> {details.bookingTime ? `${details.bookingTime.from} - ${details.bookingTime.to}` : "N/A"}
             </Typography>

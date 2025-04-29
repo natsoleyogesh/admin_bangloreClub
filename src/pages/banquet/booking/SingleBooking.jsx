@@ -311,7 +311,8 @@ const SingleBooking = () => {
                     </Box>
                 )} */}
 
-                {booking.billable && booking.billableDate && booking.bookingStatus === "Pending" && (
+                {/* {booking.billable && booking.billableDate && booking.bookingStatus === "Pending" && ( */}
+                {booking.bookingStatus === "Pending" && (
                     <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                         <Button
                             variant="contained"

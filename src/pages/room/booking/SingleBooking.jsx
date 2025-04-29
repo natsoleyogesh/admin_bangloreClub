@@ -26,12 +26,24 @@ import {
     updateRoomBooking,
 } from "../../../api/room";
 import { formatDateMoment, formatDateTime } from "../../../api/config";
+import ReactQuill from "react-quill";
 
 const SingleRoomBooking = () => {
     const { id } = useParams();
     const [booking, setBooking] = useState({});
     const [availableRooms, setAvailableRooms] = useState([]);
     const [roomSelections, setRoomSelections] = useState({});
+    const [adminFeedback, setAdminfeedback] = useState('');
+
+    // Function to check if the feedback is truly empty
+    const isFeedbackEmpty = (content) => {
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = content;
+        const textContent = tempElement.textContent || tempElement.innerText || "";
+        return textContent.trim() === "";
+    };
+
+    const disableReject = isFeedbackEmpty(adminFeedback);
 
     useEffect(() => {
         getBookingById(id);
@@ -137,6 +149,7 @@ const SingleRoomBooking = () => {
             const updatedData = {
                 allocatedRooms: [],
                 bookingStatus: "Cancelled",
+                adminFeedback: adminFeedback,
             };
 
             const response = await updateRoomBooking(id, updatedData);
@@ -319,9 +332,18 @@ const SingleRoomBooking = () => {
                             </Typography>
                         ))}
                     </Grid>
+                    {booking.adminFeedback !== "" && <Grid item xs={12}>
+                        <InputLabel sx={{ fontWeight: "bold", mb: 1 }}>Admin FeedBack</InputLabel>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: booking.adminFeedback || "N/A",
+                            }}
+                        />
+                    </Grid>}
 
 
                     {booking.bookingStatus === "Pending" && (< Grid item xs={12} md={12} sx={{ mb: 4 }}>
+
                         <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>
                             Room Category Counts
                         </Typography>
@@ -370,8 +392,21 @@ const SingleRoomBooking = () => {
                         ) : (
                             <Typography>No room categories available.</Typography>
                         )}
+                        {/* Admin Feedback */}
+                        <Box sx={{ mb: 3 }}>
+                            <InputLabel sx={{ fontWeight: "bold", mb: 1 }}>Admin FeedBack</InputLabel>
+                            {booking.adminFeedback}
+                            <ReactQuill
+                                value={adminFeedback}
+                                onChange={(value) =>
+                                    setAdminfeedback(value)
+                                }
+                                placeholder="Please Enter The Admin Feedback"
+                                style={{ height: "120px", borderRadius: "8px", marginBottom: "80px" }}
+                            />
+                        </Box>
                         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-                            <Button variant="contained" color="error" onClick={handleReject}>
+                            <Button variant="contained" color="error" onClick={handleReject} disabled={disableReject}>
                                 Reject
                             </Button>
                             <Button variant="contained" color="primary" onClick={handleConfirm}>
